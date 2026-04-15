@@ -5,7 +5,9 @@ const config = {
   
   // Transformar TypeScript
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: 'tsconfig.json',
+    }],
   },
   
   // Mapeamento de módulos
@@ -49,14 +51,7 @@ const config = {
     '!**/.next/**',
   ],
   
-  // Configurações do ts-jest
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.json',
-    },
-  },
-  
-  // Setup antes dos testes
+// Setup antes dos testes
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   
   // Limpar mocks entre testes
