@@ -19,17 +19,30 @@ export default function AdminLayout({
 
   useEffect(() => {
     const checkAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session) {
-        router.push("/admin/login");
+      if (typeof window !== "undefined" && window.location.pathname === "/admin/login") {
+        setIsLoading(false);
         return;
       }
 
-      setUserEmail(session.user.email);
-      setIsLoading(false);
+      try {
+        const { data: { session } } = await Promise.race([
+          supabase.auth.getSession(),
+          new Promise<{ data: { session: null }, error: Error }>((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout")), 5000)
+          ),
+        ]).catch(() => ({ data: { session: null }, error: null }));
+
+        if (!session) {
+          router.push("/admin/login");
+          return;
+        }
+
+        setUserEmail(session.user.email);
+      } catch {
+        router.push("/admin/login");
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     checkAuth();
