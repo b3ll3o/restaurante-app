@@ -267,8 +267,45 @@ WHATSAPP_PHONE_NUMBER_ID
 5. **E2E**: Fluxos críticos testados
 
 ## Documentação de Referência
+
+### Especificações SDD
 1. `.openspec/specs/menulink-specification.md` - Regras de negócio
 2. `.openspec/specs/menulink-technical-plan.md` - Arquitetura
 3. `.openspec/specs/menulink-quality-rules.md` - Regras de qualidade
 4. `.openspec/specs/menulink-modules-documentation.md` - Documentação de módulos
 5. `.openspec/specs/menulink-unit-tests-checklist.md` - Checklist de testes
+
+### AGENTS.md por Módulo
+Cada módulo possui seu próprio AGENTS.md com documentação detalhada:
+
+1. **App Router** (`app/AGENTS.md`) - Rotas, API, layouts, autenticação
+2. **Components** (`components/AGENTS.md`) - Componentes UI e admin
+3. **Library** (`lib/AGENTS.md`) - Utils, Supabase, WhatsApp
+4. **Context** (`context/AGENTS.md`) - CartContext com localStorage
+5. **Hooks** (`hooks/AGENTS.md`) - Custom hooks (futuros)
+6. **Types** (`types/AGENTS.md`) - Definições TypeScript
+7. **Tests** (`tests/AGENTS.md`) - Infraestrutura de testes
+8. **Database** (`supabase/AGENTS.md`) - Schema PostgreSQL, RLS
+9. **OpenSpec** (`.openspec/AGENTS.md`) - SDD workflow, specs
+
+### Arquitetura de Documentação
+
+```
+AGENTS.md (este arquivo)
+├── app/AGENTS.md (rotas, API, admin)
+├── components/AGENTS.md (UI components)
+├── lib/AGENTS.md (utils, services)
+├── context/AGENTS.md (state management)
+├── hooks/AGENTS.md (custom hooks)
+├── types/AGENTS.md (TypeScript types)
+├── tests/AGENTS.md (test infrastructure)
+├── supabase/AGENTS.md (database schema)
+└── .openspec/AGENTS.md (SDD specs)
+```
+
+### Hierarquia de Documentação
+
+1. **Este arquivo (AGENTS.md)**: Visão geral e regras do projeto
+2. **Módulo AGENTS.md**: Documentação completa do módulo
+3. **Specs (.openspec/specs/)**: Especificações técnicas detalhadas
+4. **Código fonte**: Implementação com comentários em pt-BR
