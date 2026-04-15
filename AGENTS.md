@@ -64,6 +64,20 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Stack: Next.js 16.2.3 + React 19 + TypeScript (strict) + Tailwind CSS 4 + Supabase
 
+## Idioma Padrão
+- **Idioma**: Português Brasileiro (pt-BR)
+- **Documentação**: Todas as documentações em pt-BR
+- **Interface**: Textos da UI em pt-BR
+- **Código**: Comentários e mensagens em pt-BR
+- **Exceções**: Nomes técnicos (funções, variáveis, APIs) podem ser em inglês
+
+## Regras de Qualidade
+- **Cobertura mínima de testes**: 80% (unitários)
+- **Paradigmas**: TDD, BDD, ATDD, DDD, SDD
+- **Arquitetura**: Multi-tenant (cada restaurante é um tenant)
+- **Testes E2E**: 100% dos fluxos críticos
+- **Idioma**: pt-BR padrão
+
 ## Commands
 
 ```bash
@@ -130,3 +144,131 @@ WHATSAPP_PHONE_NUMBER_ID
 - Categories and Products have display_order for sorting
 - Orders have status: pending → confirmed → cancelled
 - Order total is calculated from order_items
+
+## Módulos do Sistema
+
+### 1. App Router (`app/`)
+- **Admin** (`app/admin/`): Painel administrativo (login, dashboard, categorias, produtos, pedidos, settings)
+- **Público** (`app/menu/[slug]/`): Cardápio público por slug do restaurante
+- **API** (`app/api/`): Endpoints da API (orders)
+- **Layout**: Layout raiz e configurações globais
+
+### 2. Componentes (`components/`)
+- **UI** (`components/ui/`): Componentes shadcn/ui reutilizáveis (Button, Input, Card, Dialog, Table, etc.)
+- **Admin** (`components/admin/`): Componentes específicos do painel (Header, Sidebar)
+
+### 3. Biblioteca (`lib/`)
+- **Utils** (`lib/utils.ts`): Funções utilitárias (formatação, validação, slugs)
+- **Supabase** (`lib/supabase/`): Clientes para browser e server-side
+- **WhatsApp** (`lib/whatsapp.ts`): Integração com WhatsApp API
+
+### 4. Contexto (`context/`)
+- **Carrinho** (`context/cart-context.tsx`): Gerenciamento de estado do carrinho com persistência
+
+### 5. Hooks (`hooks/`)
+- **Custom Hooks**: Lógica reutilizável (useAuth, useRestaurant - futuros)
+
+### 6. Tipos (`types/`)
+- **Tipos de Domínio**: Restaurant, Category, Product, Order, OrderItem, CartItem
+
+### 7. Testes (`tests/`)
+- **Unitários** (`tests/unit/`): ≥80% cobertura obrigatória
+- **Integração** (`tests/integration/`): Testes entre módulos
+- **E2E** (`tests/e2e/`): 100% fluxos críticos
+- **Setup** (`tests/setup.ts`): Configuração global
+
+### 8. Especificações (`.openspec/`)
+- **Specs** (`.openspec/specs/`): Fonte da verdade SDD
+- **Changes** (`.openspec/changes/`): Controle de mudanças
+
+### 9. Banco de Dados (`supabase/`)
+- **Schema** (`supabase/schema.sql`): Definição das tabelas
+
+## Paradigmas de Desenvolvimento
+
+### TDD (Test-Driven Development)
+1. **RED**: Escrever teste que falha
+2. **GREEN**: Código mínimo para passar
+3. **REFACTOR**: Melhorar mantendo testes
+
+### BDD (Behavior-Driven Development)
+- Especificações em Gherkin (Given-When-Then)
+- Linguagem ubíqua compartilhada
+- Testes derivados de cenários de negócio
+
+### ATDD (Acceptance Test-Driven Development)
+- Testes de aceitação antes da implementação
+- Validação de requisitos funcionais
+- Critérios de aceitação mensuráveis
+
+### DDD (Domain-Driven Design)
+- Modelo de domínio rico (entidades, value objects, aggregates)
+- Bounded contexts definidos
+- Linguagem ubíqua documentada
+
+### SDD (Specification-Driven Development)
+- Especificações são fonte da verdade
+- Código deriva das specs
+- Verificação contínua código↔specs
+
+## Arquitetura Multi-Tenant
+- Cada restaurante é um tenant distinto
+- Todos os tenants compartilham o mesmo banco
+- Isolamento por `restaurant_id`
+- Escalabilidade horizontal
+
+## Scripts de Desenvolvimento
+
+```bash
+# Desenvolvimento
+npm run dev          # Servidor de desenvolvimento
+npm run build        # Build de produção
+npm run start        # Iniciar produção
+npm run lint         # ESLint
+
+# Testes
+npm run test         # Todos os testes
+npm run test:unit    # Apenas unitários
+npm run test:integration  # Testes de integração
+npm run test:e2e     # Testes end-to-end
+npm run test:coverage # Testes com cobertura (≥80% obrigatório)
+npm run test:watch   # Modo watch
+```
+
+## Configuração de Ambiente
+
+### Variáveis de Ambiente Obrigatórias
+```
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+WHATSAPP_TOKEN
+WHATSAPP_PHONE_NUMBER_ID
+```
+
+### Tailwind CSS 4
+- Configuração via CSS custom properties em `app/globals.css`
+- **NÃO** criar `tailwind.config.js`
+- Usar `@theme inline {}` para customização
+
+### TypeScript Strict
+- `strict: true` no tsconfig.json
+- Tipagem rigorosa em todo o código
+
+## Regras de Commit
+- Mensagens em português (pt-BR)
+- Referenciar requisitos (REQ-XXX)
+- Incluir scope do módulo: `feat(app):`, `fix(lib):`, `test(unit):`
+
+## Gates de Qualidade
+1. **PR Checks**: Testes devem passar
+2. **Cobertura**: ≥80% unitários
+3. **Lint**: Sem erros do ESLint
+4. **Build**: Build de produção bem-sucedido
+5. **E2E**: Fluxos críticos testados
+
+## Documentação de Referência
+1. `.openspec/specs/menulink-specification.md` - Regras de negócio
+2. `.openspec/specs/menulink-technical-plan.md` - Arquitetura
+3. `.openspec/specs/menulink-quality-rules.md` - Regras de qualidade
+4. `.openspec/specs/menulink-modules-documentation.md` - Documentação de módulos
+5. `.openspec/specs/menulink-unit-tests-checklist.md` - Checklist de testes
