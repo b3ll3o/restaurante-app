@@ -49,6 +49,7 @@ export default function MenuPage() {
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "cash">("pix");
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
+  const [whatsappError, setWhatsappError] = useState<string | null>(null);
   const supabase = createClient();
   const { items, addItem, removeItem, totalItems, totalPrice, clearCart } = useCart();
 
@@ -112,6 +113,11 @@ export default function MenuPage() {
     }).format(price);
   };
 
+  const validateWhatsApp = (whatsapp: string): boolean => {
+    const cleaned = whatsapp.replace(/\D/g, "");
+    return cleaned.length >= 10 && cleaned.length <= 13;
+  };
+
   const getItemQuantity = (productId: string) => {
     const item = items.find((i) => i.product.id === productId);
     return item?.quantity || 0;
@@ -121,18 +127,27 @@ export default function MenuPage() {
     if (items.length === 0) return;
     setCheckoutStep("checkout");
     setOrderError(null);
+    setWhatsappError(null);
   };
 
   const handleBackToCart = () => {
     setCheckoutStep("cart");
     setOrderError(null);
+    setWhatsappError(null);
   };
 
   const handlePlaceOrder = async () => {
     if (!customerName || !customerWhatsapp || !menuData) return;
 
+    // Validar WhatsApp
+    if (!validateWhatsApp(customerWhatsapp)) {
+      setWhatsappError("Digite um WhatsApp válido (ex: 11999999999)");
+      return;
+    }
+
     setPlacingOrder(true);
     setOrderError(null);
+    setWhatsappError(null);
 
     try {
       const response = await fetch("/api/orders", {
@@ -194,6 +209,7 @@ export default function MenuPage() {
     setCustomerWhatsapp("");
     setPaymentMethod("pix");
     setOrderError(null);
+    setWhatsappError(null);
   };
 
   if (loading) {
@@ -334,16 +350,23 @@ export default function MenuPage() {
                         />
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="whatsapp">WhatsApp</Label>
-                        <Input
-                          id="whatsapp"
-                          type="tel"
-                          value={customerWhatsapp}
-                          onChange={(e) => setCustomerWhatsapp(e.target.value)}
-                          placeholder="+5511999999999"
-                        />
-                      </div>
+<div className="space-y-2">
+              <Label htmlFor="whatsapp">WhatsApp</Label>
+              <Input
+                id="whatsapp"
+                type="tel"
+                value={customerWhatsapp}
+                onChange={(e) => {
+                  setCustomerWhatsapp(e.target.value);
+                  setWhatsappError(null);
+                }}
+                placeholder="+5511999999999"
+                className={whatsappError ? "border-red-500 focus:border-red-500" : ""}
+              />
+              {whatsappError && (
+                <p className="text-xs text-red-500 mt-1">{whatsappError}</p>
+              )}
+            </div>
 
                       <div className="space-y-2">
                         <Label>Forma de Pagamento</Label>

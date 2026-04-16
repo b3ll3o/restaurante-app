@@ -1,80 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { sendWhatsAppMessage, formatOrderMessage } from "@/lib/whatsapp";
 
 interface OrderItem {
   product: { id: string; name: string; price: number };
   quantity: number;
-}
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(price);
-}
-
-async function sendWhatsAppNotification(
-  restaurantWhatsapp: string,
-  orderId: string,
-  customerName: string,
-  customerWhatsapp: string,
-  items: OrderItem[],
-  total: number,
-  paymentMethod: string
-): Promise<void> {
-  const token = process.env.WHATSAPP_TOKEN;
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-
-  if (!token || token === "your-whatsapp-business-token" || !phoneNumberId || phoneNumberId === "your-phone-number-id") {
-    console.log("WhatsApp Business API not configured. Skipping notification.");
-    return;
-  }
-
-  const itemsList = items
-    .map((item) => `${item.quantity}x ${item.product.name}`)
-    .join(", ");
-
-  const paymentLabel = paymentMethod === "pix" ? "PIX" : "Dinheiro";
-
-  const message = `*NOVO PEDIDO #${orderId.slice(0, 8).toUpperCase()}*
-
-*Cliente:* ${customerName}
-*WhatsApp:* ${customerWhatsapp}
-*Pagamento:* ${paymentLabel}
-
-*Itens:* ${itemsList}
-
-*Total:* ${formatPrice(total)}
-
-Acesse o painel para confirmar ou cancelar.`;
-
-  try {
-    const response = await fetch(
-      `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          messaging_product: "whatsapp",
-          to: restaurantWhatsapp.replace(/\D/g, ""),
-          type: "text",
-          text: {
-            body: message,
-          },
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.text();
-      console.error("WhatsApp API error:", error);
-    }
-  } catch (error) {
-    console.error("Failed to send WhatsApp notification:", error);
-  }
 }
 
 export async function POST(request: Request) {
@@ -131,14 +61,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: itemsError.message }, { status: 500 });
     }
 
-    await sendWhatsAppNotification(
+    // Enviar notificação via WhatsApp
+    const message = formatOrderMessage(
+      {
+        id: order.id,
+        customer_name: customerName,
+        customer_whatsapp: customerWhatsapp,
+        total,
+        payment_method: paymentMethod,
+      },
+      items.map((item: OrderItem) => ({
+        quantity: item.quantity,
+        product_name: item.product.name,
+        total_price: item.product.price * item.quantity,
+      }))
+    );
+
+    await sendWhatsAppMessage(
+      process.env.WHATSAPP_PHONE_NUMBER_ID!,
+      process.env.WHATSAPP_TOKEN!,
       restaurant.owner_whatsapp,
-      order.id,
-      customerName,
-      customerWhatsapp,
-      items,
-      total,
-      paymentMethod
+      message
     );
 
     return NextResponse.json({ success: true, order }, { status: 201 });
