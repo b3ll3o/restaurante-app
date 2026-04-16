@@ -1,229 +1,54 @@
-Após analisar o repositório `b3ll3o/restaurante-app`, preparei o **PRD.md** completo para o projeto **MenuLink**, documentando toda a arquitetura, módulos, submódulos, stack tecnológica e o modelo de dados.
-
-Você pode salvar o conteúdo abaixo como `PRD.md` na raiz do seu projeto para usar como referência com o OpenCode ou qualquer outra ferramenta de IA.
-
-```markdown
-# PRD: MenuLink - Sistema de Cardápio Digital e Gestão para Restaurantes
-
-**Projeto:** MenuLink (restaurante-app)
-**Repositório:** https://github.com/b3ll3o/restaurante-app
-**Versão do Documento:** 1.0
-**Última Atualização:** 2026-04-16
-**Autor:** Leonardo Andreazzi (b3ll3o)
+Este **PRD (Product Requirements Document)** descreve a implementação de uma estratégia de testes **100% automatizada** para uma aplicação Next.js 16, eliminando a necessidade de verificações manuais e garantindo a confiabilidade de cada deploy.
 
 ---
 
-## 1. Visão Geral da Aplicação
+# PRD: Estratégia de Automação de Testes Full-Stack (Next.js 16)
 
-O **MenuLink** é uma aplicação SaaS que permite a restaurantes criarem e gerenciarem seus cardápios digitais e receberem pedidos online. A plataforma é dividida em duas áreas principais:
+## 1. Visão Geral e Objetivos
+O objetivo principal é criar um sistema de defesa multicamadas que valide desde a lógica de negócio isolada até a interface visual final. A automação total visa **acelerar o ciclo de entrega**, reduzir o débito técnico e garantir que novos recursos não quebrem funcionalidades existentes.
 
-1.  **Painel Administrativo (`/admin`)**: Área restrita onde o dono do restaurante gerencia categorias, produtos, visualiza pedidos e configura sua loja.
-2.  **Menu Público (`/menu/[slug]`)**: Interface pública onde os clientes visualizam o cardápio, adicionam itens ao carrinho e finalizam pedidos via WhatsApp.
+## 2. Pilares Tecnológicos
+Para alcançar a automação total sem testes manuais, a stack será composta por:
+*   **Vitest:** Para testes unitários e de integração devido à sua velocidade (10-20x mais rápido que Jest) e suporte nativo a ESM e TypeScript.
+*   **Playwright:** Ferramenta principal para testes **End-to-End (E2E)** e de interface, oferecendo suporte cross-browser superior e arquitetura WebSocket resiliente.
+*   **Playwright BDD (Gherkin):** Para transformar requisitos de negócio escritos em linguagem natural em testes executáveis.
+*   **Mock Service Worker (MSW):** Para interceptar chamadas de API e RPC tanto no lado do cliente quanto no servidor, garantindo testes determinísticos.
+*   **Percy:** Para automação de **regressão visual**, detectando mudanças acidentais de CSS ou layout que testes funcionais ignoram.
 
-A aplicação segue o paradigma **SDD (Specification-Driven Development)**, onde as especificações em `.openspec/specs/` são a fonte da verdade para as regras de negócio.
+## 3. Arquitetura de Testes e Cobertura
+A aplicação seguirá a filosofia do **"Testing Trophy"**, priorizando testes de integração que verificam a colaboração entre componentes.
 
-### 1.1 Stack Tecnológica Principal
+### Metas de Cobertura Aceitáveis:
+*   **Lógica de Negócio (Core):** **90% ou mais** de cobertura através de testes unitários e de integração com Vitest.
+*   **Fluxos Críticos (E2E):** **100% de cobertura** das jornadas críticas do usuário (ex: login, checkout, criação de tarefas) via Playwright.
+*   **Interface Visual:** Cobertura de 100% das páginas principais e componentes complexos para evitar regressões visuais.
 
-| Camada | Tecnologias |
-| :--- | :--- |
-| **Framework** | Next.js 16.2.3 (App Router) |
-| **Linguagem** | TypeScript (strict mode) |
-| **UI Library** | React 19.2.4 |
-| **Estilização** | Tailwind CSS 4 (configuração via CSS) |
-| **Componentes** | shadcn/ui (Radix UI primitives) |
-| **Backend / BaaS** | Supabase (Auth, Database, Storage) |
-| **Gerenciamento de Estado** | React Context API + useReducer (Carrinho) |
-| **Ícones** | Lucide React |
+## 4. Estratégia por Camadas
 
----
+### 4.1. Unidade e Integração (Vitest + RTL)
+*   **Componentes Síncronos:** Validados com Vitest e React Testing Library, focando no comportamento e não na implementação.
+*   **Server Actions e RPC:** Testados tratando o servidor como a fronteira principal, mockando apenas chamadas de banco de dados ou RPC e não a Action em si.
 
-## 2. Estrutura de Diretórios
+### 4.2. Interface e E2E (Playwright + BDD)
+*   **Cenários em Gherkin:** Escritos no formato `Given/When/Then` para servir como documentação viva e especificação técnica.
+*   **Page Object Model (POM):** Obrigatório para encapsular seletores e lógica de interação, tornando os testes resistentes a mudanças na UI.
+*   **Locators Acessíveis:** Prioridade absoluta para `getByRole`, `getByLabel` e `getByText`, imitando a interação real do usuário.
 
-```
-/
-├── .openspec/                 # Especificações SDD (fonte da verdade)
-│   ├── specs/                 # Especificações ativas
-│   │   ├── menulink-specification.md
-│   │   └── menulink-technical-plan.md
-│   └── changes/               # Propostas de mudança
-├── app/                       # Rotas e páginas (Next.js App Router)
-│   ├── admin/                 # Área administrativa
-│   │   ├── auth/              # Autenticação (callback)
-│   │   ├── categories/        # Gestão de categorias
-│   │   ├── dashboard/         # Dashboard principal
-│   │   ├── login/             # Tela de login
-│   │   ├── orders/            # Gestão de pedidos
-│   │   ├── products/          # Gestão de produtos
-│   │   ├── settings/          # Configurações da loja
-│   │   └── layout.tsx         # Layout com Sidebar + Header (protegido)
-│   ├── api/                   # Rotas de API (Backend)
-│   │   └── orders/            # Endpoints para criação de pedidos
-│   ├── menu/[slug]/           # Menu público (futuro)
-│   ├── favicon.ico
-│   ├── globals.css            # Tema e configurações do Tailwind
-│   ├── layout.tsx             # Layout raiz (HTML)
-│   └── page.tsx               # Landing Page (placeholder)
-├── components/                # Componentes React reutilizáveis
-│   ├── admin/                 # Componentes específicos do painel admin
-│   │   ├── header.tsx
-│   │   └── sidebar.tsx
-│   └── ui/                    # Componentes shadcn/ui (Radix)
-├── context/                   # Estados globais da aplicação
-│   └── cart-context.tsx       # Gerenciamento do carrinho de compras
-├── lib/                       # Utilitários e configurações
-│   ├── supabase/              # Clientes Supabase
-│   │   ├── client.ts          # Cliente para Client Components
-│   │   └── server.ts          # Cliente para Server Components/SSR
-│   └── utils.ts               # Função `cn()` para classes CSS
-├── public/                    # Arquivos estáticos
-├── supabase/                  # Esquemas e migrações SQL
-│   └── schema.sql             # Definição das tabelas e políticas RLS
-├── types/                     # Definições de tipos TypeScript globais
-│   └── index.ts
-├── AGENTS.md                  # Guia para Agentes de IA (OpenCode)
-├── package.json
-└── tsconfig.json
-```
+### 4.3. Regressão Visual (Percy)
+*   **Baseline Management:** Comparação automática de screenshots contra uma base aprovada em cada Pull Request.
+*   **Estabilização:** Desativação de animações via `reducedMotion: 'reduce'` e uso de máscaras para ocultar dados dinâmicos como IDs ou datas.
 
----
+## 5. Mocking e Estabilidade
+*   **Ambientes Isolados:** Uso de bases de dados separadas para desenvolvimento, integração e E2E para evitar interferências e testes "flaky".
+*   **Next.js Experimental Test Mode:** Utilizar `next --experimental-test` para habilitar o proxy de rede que permite ao MSW interceptar fetches no lado do servidor.
+*   **fetchLoopback:** Ativar como "escape hatch" para garantir que requisições não mockadas não abortem o teste.
 
-## 3. Detalhamento de Módulos e Submódulos
+## 6. Integração Contínua (CI/CD)
+*   **GitHub Actions:** Pipeline automatizado que executa toda a suíte de testes (lint, unitários, integração, E2E e visual) antes de permitir o merge.
+*   **Native Sharding:** Utilizar a capacidade do Playwright de distribuir testes em múltiplos containers paralelos para reduzir o tempo de execução na CI.
+*   **Husk/Lint-Staged:** Impedir commits que violem padrões de código ou que quebrem testes unitários rápidos localmente.
 
-### 3.1 Módulo: Painel Administrativo (`/admin`)
-
-**Propósito:** Fornecer uma interface para os donos de restaurantes gerenciarem todo o conteúdo e operação do seu negócio. Rotas protegidas por autenticação Supabase Auth.
-
-| Atributo | Detalhe |
-| :--- | :--- |
-| **Caminho** | `app/admin/` |
-| **Autenticação** | Supabase Auth (Email/Senha) |
-| **Layout** | `app/admin/layout.tsx` - Gerencia a sessão e renderiza `Sidebar` + `Header`. |
-
-#### Submódulos (Rotas)
-
-1.  **`/login`**
-    *   **Arquivo:** `app/admin/login/page.tsx`
-    *   **Descrição:** Formulário de autenticação (email/senha). Redireciona para o dashboard após sucesso.
-
-2.  **`/dashboard`**
-    *   **Arquivo:** `app/admin/dashboard/page.tsx`
-    *   **Descrição:** Visão geral com métricas (total de pedidos, produtos ativos). Exibe lista resumida dos últimos pedidos e produtos mais vendidos.
-
-3.  **`/categories`**
-    *   **Arquivo:** `app/admin/categories/page.tsx`
-    *   **Descrição:** CRUD completo de categorias. Permite criar, editar, excluir e reordenar (drag-and-drop) as categorias do menu.
-
-4.  **`/products`**
-    *   **Arquivo:** `app/admin/products/page.tsx`
-    *   **Descrição:** CRUD de produtos. Inclui formulário com upload de imagem (via Supabase Storage), definição de preço, disponibilidade e associação a uma categoria.
-
-5.  **`/orders`**
-    *   **Arquivo:** `app/admin/orders/page.tsx`
-    *   **Descrição:** Kanban/Lista de pedidos recebidos. Permite ao dono visualizar detalhes e alterar o status do pedido (`pending` → `confirmed` → `cancelled`).
-
-6.  **`/settings`**
-    *   **Arquivo:** `app/admin/settings/page.tsx`
-    *   **Descrição:** Configurações do restaurante. Permite editar o nome da loja, slug da URL pública e número de WhatsApp para recebimento de pedidos.
-
-7.  **`/auth/callback`**
-    *   **Arquivo:** `app/admin/auth/callback/route.ts`
-    *   **Descrição:** Endpoint de callback OAuth para processar a resposta do Supabase Auth e estabelecer a sessão do usuário.
-
-### 3.2 Módulo: API Backend (`/api`)
-
-**Propósito:** Fornecer endpoints REST para operações que não dependem diretamente da interface administrativa (ex: criação de pedidos pelo cliente).
-
-| Método | Endpoint | Descrição |
-| :--- | :--- | :--- |
-| `POST` | `/api/orders` | Cria um novo pedido. Recebe dados do carrinho, valida o estoque/restaurante e insere em `orders` e `order_items`. |
-
-### 3.3 Módulo: Menu Público (`/menu/[slug]`) *(Em Desenvolvimento)*
-
-**Propósito:** Renderizar o cardápio público para os clientes.
-
-*   **Estrutura Prevista:**
-    *   `app/menu/[slug]/page.tsx`: Busca os dados do restaurante pelo `slug` e renderiza o cardápio com `CartProvider`.
-    *   Componentes de UI específicos: `MenuHeader`, `CategorySection`, `ProductCard`, `CartDrawer`.
-
-### 3.4 Módulo: Componentes Compartilhados (`/components`)
-
-| Submódulo | Descrição | Principais Arquivos |
-| :--- | :--- | :--- |
-| **`/admin`** | Componentes de layout exclusivos do painel administrativo. | `sidebar.tsx`: Navegação principal (Dashboard, Categorias, Produtos...).<br>`header.tsx`: Barra superior com breadcrumbs e menu do usuário. |
-| **`/ui`** | Biblioteca de componentes shadcn/ui baseados em Radix UI. | `button.tsx`, `dialog.tsx`, `dropdown-menu.tsx`, `alert-dialog.tsx`, `badge.tsx`, `avatar.tsx`, `tabs.tsx`, `toast.tsx`, `separator.tsx`. |
-
-### 3.5 Módulo: Gerenciamento de Estado (`/context`)
-
-| Arquivo | Descrição |
-| :--- | :--- |
-| **`cart-context.tsx`** | **Carrinho de Compras Global.** Utiliza `useReducer` para gerenciar o estado do carrinho. Garante que itens de diferentes restaurantes não sejam misturados (verificação `restaurantId`). Fornece funções `addItem`, `removeItem`, `updateQuantity` e calcula `totalItems` e `totalPrice`. |
-
-### 3.6 Módulo: Infraestrutura e Banco de Dados (`/supabase`)
-
-**Propósito:** Definir a estrutura do banco de dados PostgreSQL e as políticas de segurança (RLS).
-
-**Entidades Principais (schema.sql):**
-*   `restaurants`: Dados da loja (`slug`, `name`, `owner_whatsapp`, `owner_id`).
-*   `categories`: Categorias do menu (`name`, `display_order`).
-*   `products`: Itens do cardápio (`name`, `price`, `image_url`, `is_available`).
-*   `orders`: Pedidos (`customer_name`, `total`, `status`).
-*   `order_items`: Itens dentro de um pedido (`product_name`, `quantity`, `unit_price`).
-
-**Políticas de Segurança (RLS):**
-*   **Admin:** Acesso restrito aos dados apenas do restaurante cujo `owner_id` corresponde ao usuário autenticado.
-*   **Público:** Políticas `FOR SELECT` abertas (`USING (true)`) para `restaurants`, `categories` e `products` para renderizar o menu. Política `FOR INSERT` aberta para `orders` para clientes finalizarem pedidos.
-
-### 3.7 Módulo: Tipagens TypeScript (`/types`)
-
-**Propósito:** Garantir consistência e segurança de tipos em toda a aplicação.
-
-**Interfaces Exportadas (`index.ts`):** `Restaurant`, `Category`, `Product`, `Order`, `OrderItem`, `CartItem`, `MenuData`.
-
-### 3.8 Módulo: Biblioteca de Utilitários (`/lib`)
-
-| Arquivo | Descrição |
-| :--- | :--- |
-| **`supabase/client.ts`** | Cliente Supabase para **Client Components**. Utiliza `createBrowserClient` do pacote `@supabase/ssr`. |
-| **`supabase/server.ts`** | Cliente Supabase para **Server Components**. Gerencia cookies de forma assíncrona para manter a sessão no servidor. |
-| **`utils.ts`** | Função `cn()` para mesclar condicionalmente classes CSS do Tailwind (utiliza `clsx` e `tailwind-merge`). |
-
----
-
-## 4. Especificações de API (Endpoints)
-
-| Método | Endpoint | Descrição | Acesso |
-| :--- | :--- | :--- | :--- |
-| `GET` | `/admin/login` | Renderiza formulário de login | Público |
-| `POST` | `/admin/auth/callback` | Callback OAuth do Supabase | Público |
-| `GET` | `/admin/dashboard` | Página inicial do painel | Autenticado |
-| `GET` | `/admin/categories` | Gerencia categorias | Autenticado |
-| `GET` | `/admin/products` | Gerencia produtos | Autenticado |
-| `GET` | `/admin/orders` | Gerencia pedidos | Autenticado |
-| `GET` | `/admin/settings` | Configurações da loja | Autenticado |
-| `POST` | `/api/orders` | Cria um novo pedido | Público |
-| `GET` | `/menu/[slug]` | Cardápio público | Público |
-
----
-
-## 5. Requisitos Não Funcionais (Padrões de Projeto)
-
-*   **Paradigma:** Specification-Driven Development (SDD). Mudanças devem refletir primeiro nas specs em `.openspec/`.
-*   **Estilo de Código:** TypeScript `strict` mode. Uso de `async/await`. Preferência por `function` components.
-*   **Gerenciamento de Estado:** React Context + `useReducer` para carrinho; Estado do servidor gerenciado diretamente via `fetch` nos Server Components ou `supabase-js` nos Client Components.
-*   **Estilização:** Tailwind CSS 4 configurado em `app/globals.css` (não há arquivo `tailwind.config.js`).
-*   **Alias de Importação:** `@/*` mapeia para a raiz do projeto.
-
----
-
-## 6. Glossário de Domínio
-
-*   **MenuLink:** Nome do produto SaaS.
-*   **Slug:** Identificador único do restaurante na URL pública (ex: `/menu/restaurante-do-ze`).
-*   **RLS (Row Level Security):** Mecanismo do PostgreSQL/Supabase para restringir acesso a linhas do banco de dados baseado no usuário autenticado.
-*   **SDD:** Specification-Driven Development (Desenvolvimento Guiado por Especificação).
-
----
-*Documento gerado para uso com OpenCode e ferramentas de IA. Baseado na análise do repositório em 16/04/2026.*
-```
-
-Esse PRD oferece uma visão completa e estruturada do projeto, cobrindo desde a arquitetura de alto nível até os detalhes de cada módulo, exatamente como você precisa para documentar ou guiar o desenvolvimento com o OpenCode.
+## 7. Melhores Práticas de Implementação
+*   **Clean Architecture:** Manter a lógica de domínio independente do framework Next.js para facilitar mocks e testes isolados.
+*   **Explicit Caching:** Aproveitar a diretiva `'use cache'` do Next.js 16 para tornar o comportamento de dados previsível e fácil de testar.
+*   **Evitar IDs e Classes:** Não utilizar seletores CSS ou XPATH amarrados à implementação; focar em atributos que o usuário interage diretamente.

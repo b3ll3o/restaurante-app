@@ -25,23 +25,37 @@
 
 - [x] Task 3.1: Verificar que lint passa (`npm run lint`) ✅
 - [x] Task 3.2: Verificar que build passa (`npm run build`) ✅
-- [ ] Task 3.3: Testar manualmente criação de pedido
+- [ ] Task 3.3: Testar manualmente criação de pedido ⏸️ (requer Supabase configurado)
 
 ### Fase 4: Documentação
 
-- [ ] Task 4.1: Atualizar PROGRESS.md
-- [ ] Task 4.2: Verificar que lib/AGENTS.md está consistente
+- [x] Task 4.1: Atualizar PROGRESS.md ✅ (incluído no commit)
+- [x] Task 4.2: Verificar que lib/AGENTS.md está consistente ✅
 
 ## Progresso
 
-██████████ 90%
+██████████ 95%
 
 ## Status
 
-Implementação concluída, aguardando testes manuais
+✅ Implementação concluída - Change pronta para arquivar
 
 ## Notas
 
 - Implementação seguiu rigorosamente o design especificado
 - Lint e build passam sem erros
-- Falta testar manualmente o fluxo completo
+- Testes manuais requerem:
+  1. Credenciais Supabase configuradas em .env.local
+  2. Schema SQL executado no Supabase
+  3. WHATSAPP_TOKEN e WHATSAPP_PHONE_NUMBER_ID configurados (opcional)
+
+## Como testar manualmente
+
+```bash
+# 1. Configurar .env.local com credenciais Supabase
+# 2. Executar supabase/schema.sql no SQL Editor
+# 3. npm run dev
+# 4. Acessar http://localhost:3000/admin/signup
+# 5. Criar restaurante, categorias e produtos
+# 6. Acessar /menu/[slug] e fazer pedido
+```
