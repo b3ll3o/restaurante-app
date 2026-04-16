@@ -163,6 +163,133 @@ tests/
 
 ---
 
+## 5.5 Regras de Documentação (REGRA CRÍTICA)
+
+### 5.5.1 Obrigatoriedade de Documentação
+
+**TODO elemento da arquitetura DEVE ter AGENTS.md**. A documentação é parte do desenvolvimento, não um item opcional.
+
+**Elementos que DEVEM ser documentados**:
+- Módulos: `app/`, `components/`, `lib/`, `context/`, `hooks/`, `types/`, `tests/`, `supabase/`, `.openspec/`
+- Sub-módulos: `app/admin/`, `app/menu/`, `app/api/`, `components/ui/`, `components/admin/`, `lib/supabase/`
+- Rotas: `app/admin/login/`, `app/admin/dashboard/`, `app/menu/[slug]/`, `app/api/orders/`
+- Classes de negócio: Qualquer lógica de domínio em `lib/domain/`, `lib/validations/`
+- Componentes React: Todo componente em `components/ui/` ou `components/admin/`
+- Hooks customizados: Todo hook em `hooks/`
+- Contextos: Todo contexto em `context/`
+- Tipos TypeScript: Entidades como `Restaurant`, `Category`, `Product`, `Order`
+
+### 5.5.2 Princípio da Proximidade (REGRA CRÍTICA)
+
+**Os arquivos AGENTS.md DEVEM estar no nível mais próximo possível do elemento que documentam.**
+
+**Estrutura correta**:
+```
+app/admin/login/
+├── page.tsx          ← Rota
+└── AGENTS.md         ← Documentação junto à rota (NÍVEL CORRETO)
+
+app/admin/
+├── AGENTS.md         ← Visão geral do módulo admin (NÍVEL CORRETO)
+└── login/
+    ├── page.tsx
+    └── AGENTS.md     ← Documentação específica da rota
+```
+
+**Estrutura incorreta**:
+```
+app/admin/AGENTS.md         ← NÍVEL ERRADO - longe da rota
+app/admin/login/page.tsx    ← Rota longe da documentação
+```
+
+### 5.5.3 Arquivos BDD com Proximidade
+
+**Arquivos `.feature` DEVEM estar no nível mais próximo do módulo que documentam.**
+
+**Estrutura correta**:
+```
+app/admin/orders/
+├── page.tsx              ← Rota
+├── AGENTS.md             ← Documentação
+└── orders.feature        ← Cenários BDD (NÍVEL CORRETO)
+```
+
+**Link BDD ↔ Testes de Integração**:
+- TODO cenário BDD DEVE ter tag `@integration-test` apontando para o teste que o valida
+- Exemplo: `@integration-test="tests/integration/orders.test.ts"`
+
+### 5.5.4 Template de AGENTS.md
+
+Todo AGENTS.md deve seguir este template:
+
+```markdown
+# [Nome do Elemento] - MenuLink
+
+## Visão Geral
+[Descrição breve e responsabilidade]
+
+**Idioma**: Português Brasileiro (pt-BR)
+**Stack**: [Stack tecnológica]
+
+---
+
+## Estrutura de Diretórios
+[Árvore de arquivos]
+
+---
+
+## Funcionalidade
+### Propósito
+[O que este elemento faz]
+
+### Fluxo de Usuário
+[Passos do fluxo]
+
+### Estados
+[Tabela de estados]
+
+---
+
+## Interface Pública
+[Props, métodos, eventos]
+
+---
+
+## Regras de Implementação
+1. [Regra 1]
+2. [Regra 2]
+
+---
+
+## Arquivos Relacionados
+[Tabela de arquivos relacionados]
+
+---
+
+## Métricas de Qualidade
+| Métrica | Target | Prioridade |
+|---------|--------|------------|
+| Cobertura | ≥80% | Alta |
+
+---
+
+**Versão**: 1.0
+**Última Atualização**: [YYYY-MM-DD]
+**Autor**: AI Agent
+```
+
+### 5.5.5 Checklist de Documentação
+
+Ao criar/modificar código, verificar:
+- [ ] AGENTS.md existe no nível mais próximo do elemento documentado?
+- [ ] AGENTS.md do módulo/pai está atualizado?
+- [ ] Nova API pública está documentada?
+- [ ] Exemplos de uso estão corretos?
+- [ ] Cenários BDD têm tag `@integration-test`?
+- [ ] Props, estados, callbacks documentados (para componentes)?
+
+---
+
 ## 6. Monitoramento de Qualidade
 
 ### 6.1 Métricas Monitoradas
@@ -238,6 +365,7 @@ npx eslint --format json --output-file eslint-report.json
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
 | 1.0 | 2026-04-15 | AI Agent | Versão inicial com regras de qualidade |
+| 1.1 | 2026-04-16 | AI Agent | Adicionadas regras de documentação (proximidade, BDD) |
 
 ---
 

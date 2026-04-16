@@ -2,11 +2,26 @@
 
 ## Fonte da Verdade
 
-Este arquivo contém os cenários de comportamento em sintaxe Gherkin (Dado/Quando/Então), derivados da `menulink-specification.md`.
+Este arquivo contém os cenários de comportamento históricos em sintaxe Gherkin (Dado/Quando/Então), derivados da `menulink-specification.md`.
+
+**ATENÇÃO**: A partir de 2026-04-16, os cenários BDD DEVEM seguir a **regra de proximidade**:
+- Arquivos `.feature` DEVEM estar no nível mais próximo do módulo que documentam
+- Ex: `app/admin/orders/orders.feature` para cenários de pedidos
+- Cada cenário DEVE ter tag `@integration-test` apontando para o teste de integração
+
+**Cenários migrados para proximidade**:
+- `app/admin/login/login.feature` - Autenticação
+- `app/admin/signup/signup.feature` - Cadastro
+- `app/admin/dashboard/dashboard.feature` - Dashboard
+- `app/admin/categories/categories.feature` - Categorias
+- `app/admin/products/products.feature` - Produtos
+- `app/admin/orders/orders.feature` - Pedidos
+- `app/menu/[slug]/menu.feature` - Cardápio público
+- `app/api/orders/orders.feature` - API de pedidos
 
 ---
 
-## Funcionalidade: Gestão de Restaurante
+## Funcionalidade: Gestão de Restaurante (Histórico)
 
 ### Cenário: Cadastro de novo restaurante
 

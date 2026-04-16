@@ -13,6 +13,21 @@ O módulo **OpenSpec** contém todas as especificações e artefatos do SDD (Spe
 
 ```
 .openspec/
+├── specs/ # Especificações ativas (Source of Truth)
+│ ├── menulink-specification.md # Regras de negócio (RFC 2119)
+│ ├── menulink-technical-plan.md # Plano técnico e arquitetura
+│ ├── menulink-quality-rules.md # Regras de qualidade
+│ ├── menulink-modules-documentation.md # Documentação de módulos
+│ ├── menulink-unit-tests-checklist.md # Checklist de testes unitários
+│ └── menulink-acceptance-tests.feature # Cenários BDD (Gherkin)
+├── templates/ # Templates OpenSpec
+│ ├── prb-template.md # Template de PRB.md
+│ ├── design-template.md # Template de design.md
+│ └── tasks-template.md # Template de tasks.md
+└── changes/ # Mudanças em andamento
+└── README.md # Guia de controle de mudanças
+```
+.openspec/
 ├── specs/                           # Especificações ativas (Source of Truth)
 │   ├── menulink-specification.md    # Regras de negócio (RFC 2119)
 │   ├── menulink-technical-plan.md   # Plano técnico e arquitetura
@@ -129,19 +144,38 @@ Documentar de forma rigorosa todas as especificações do sistema, incluindo reg
 
 **Formato**: Gherkin (Given-When-Then)
 
+**Localização (REGRA DE PROXIMIDADE)**: Arquivos `.feature` DEVEM estar no nível mais próximo do módulo que documentam.
+
+**Estrutura de Proximidade**:
+```
+app/admin/orders/
+├── page.tsx              ← Rota
+├── AGENTS.md             ← Documentação
+└── orders.feature        ← Cenários BDD (mesmo nível)
+
+app/admin/
+└── orders/
+    ├── page.tsx
+    ├── AGENTS.md
+    └── orders.feature    ← Cenários BDD específicos
+```
+
+**Link com Testes de Integração (REGRA)**: TODO cenário BDD DEVE ter tag `@integration-test` apontando para o teste de integração que o valida.
+
 **Exemplo**:
 ```gherkin
+@integration-test="tests/integration/orders.test.ts"
 Funcionalidade: Criação de Pedido
 
-  Cenário: Cliente cria pedido com dados válidos
-    Dado que o cliente está na página do cardápio
-    E adicionou "Pizza Grande" ao carrinho
-    Quando preenche "Maria Silva" no campo nome
-    E preenche "5511888888888" no campo WhatsApp
-    E seleciona "PIX" como forma de pagamento
-    E clica em "Confirmar Pedido"
-    Então o pedido deve ser criado com status "pending"
-    E deve aparecer mensagem de confirmação
+Cenário: Cliente cria pedido com dados válidos
+Dado que o cliente está na página do cardápio
+E adicionou "Pizza Grande" ao carrinho
+Quando preenche "Maria Silva" no campo nome
+E preenche "5511888888888" no campo WhatsApp
+E seleciona "PIX" como forma de pagamento
+E clica em "Confirmar Pedido"
+Então o pedido deve ser criado com status "pending"
+E deve aparecer mensagem de confirmação
 ```
 
 ---
@@ -317,12 +351,44 @@ Ao criar PR, verificar:
 
 | Artefato | Descrição | Status |
 |----------|-----------|--------|
+| `PRB.md` | Product Requirement Brief (concepção) | ✅/❌ |
 | `proposal.md` | Proposta inicial | ✅/❌ |
 | `spec.md` | Especificação formal | ✅/❌ |
 | `design.md` | Design técnico | ✅/❌ |
 | `tasks.md` | Lista de tarefas | ✅/❌ |
 | `verification.md` | Relatório de verificação | ✅/❌ |
 | `archive.md` | Arquivamento | ✅/❌ |
+
+### Template: PRB.md (Product Requirement Brief)
+
+```markdown
+# PRB: [Título da Iniciativa]
+
+**Status:** Rascunho
+**Autor:** [Nome/Time]
+**Data:** [YYYY-MM-DD]
+
+## 1. Problema / Oportunidade
+[Descrição concisa do problema ou oportunidade]
+
+## 2. Público-Alvo Impactado
+[Quem será afetado pela mudança?]
+
+## 3. Resultado Esperado (Alto Nível)
+[O que se espera alcançar]
+
+## 4. Critérios de Sucesso Preliminares
+- [ ] Critério 1
+- [ ] Critério 2
+
+## 5. Análise Inicial
+### Viabilidade Técnica
+- [ ] Viável com arquitetura atual?
+- [ ] Módulos afetados?
+
+## 6. Urgência
+- [ ] Crítica / [ ] Alta / [ ] Média / [ ] Baixa
+```
 
 ### Template: proposal.md
 

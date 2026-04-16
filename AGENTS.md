@@ -279,26 +279,95 @@ WHATSAPP_PHONE_NUMBER_ID
 
 ## Regras de Documentação
 
-### Obrigatoriedade de Documentação
+### Obrigatoriedade de Documentação (REGRA CRÍTICA)
 
-**TODO módulo DEVE ter AGENTS.md**. A documentação é parte do desenvolvimento, não um item opcional.
+**TODO elemento da arquitetura DEVE ter AGENTS.md**. A documentação é parte do desenvolvimento, não um item opcional. Não existe exceção: se existe código, existe documentação.
 
-Módulos que **DEVEM** ter AGENTS.md:
-- `app/` - App Router completo
-- `app/admin/` - Painel administrativo
-- `app/api/` - API Routes
-- `app/menu/` - Cardápio público
-- `components/` - Componentes
-- `components/ui/` - Componentes UI
-- `components/admin/` - Componentes admin
-- `lib/` - Biblioteca
-- `lib/supabase/` - Clientes Supabase
-- `context/` - Contextos React
-- `types/` - Definições TypeScript
-- `tests/` - Infraestrutura de testes
-- `supabase/` - Schema do banco
-- `.openspec/` - Workflow SDD
-- `hooks/` - Custom hooks
+#### Elementos que DEVEM ser documentados:
+- **Módulos**: `app/`, `components/`, `lib/`, `context/`, `hooks/`, `types/`, `tests/`, `supabase/`, `.openspec/`
+- **Sub-módulos**: `app/admin/`, `app/menu/`, `app/api/`, `components/ui/`, `components/admin/`, `lib/supabase/`
+- **Rotas**: `app/admin/login/`, `app/admin/dashboard/`, `app/menu/[slug]/`, `app/api/orders/`
+- **Classes de negócio**: Qualquer lógica de domínio em `lib/domain/`, `lib/validations/`
+- **Componentes React**: Todo componente em `components/ui/` ou `components/admin/`
+- **Hooks customizados**: Todo hook em `hooks/`
+- **Contextos**: Todo contexto em `context/`
+- **Tipos TypeScript**: Entidades como `Restaurant`, `Category`, `Product`, `Order`
+- **Utilitários**: Funções em `lib/utils.ts`, `lib/whatsapp.ts`
+- **Clientes Supabase**: `lib/supabase/client.ts`, `lib/supabase/server.ts`
+
+### Princípio da Proximidade (REGRA CRÍTICA)
+
+**Os arquivos AGENTS.md DEVEM estar no nível mais próximo possível do elemento que documentam.**
+
+#### Estrutura de Proximidade:
+```
+# ✅ CORRETO - Documentação junto ao código
+app/admin/login/page.tsx
+app/admin/login/AGENTS.md          ← Mesma pasta da rota
+
+app/admin/login/
+├── page.tsx                      ← Arquivo da rota
+└── AGENTS.md                     ← Documentação da rota
+
+# ❌ INCORRETO - Documentação longe do código
+app/admin/AGENTS.md               ← Nível muito alto
+app/admin/login/page.tsx          ← Rota longe da documentação
+```
+
+#### Hierarquia de Proximidade:
+1. **Rota (page.tsx, route.ts)** → AGENTS.md na mesma pasta
+2. **Componente** → AGENTS.md na mesma pasta do componente
+3. **Hook** → AGENTS.md na mesma pasta do hook
+4. **Tipo/Entidade** → AGENTS.md na pasta do tipo
+5. **Módulo** → AGENTS.md no nível do módulo (visão geral)
+
+### Regras de Documentação BDD (REGRA CRÍTICA)
+
+**Arquivos `.feature` DEVEM estar no nível mais próximo do módulo que documentam.**
+
+#### Estrutura de Proximidade BDD:
+```
+# ✅ CORRETO - BDD junto ao módulo que documenta
+app/admin/orders/
+├── page.tsx              ← Rota
+├── AGENTS.md             ← Documentação
+└── orders.feature        ← Cenários BDD (mesmo nível)
+
+# ❌ INCORRETO - BDD longe do módulo
+tests/e2e/orders.feature  ← Longe do domínio
+app/admin/orders/page.tsx ← Rota longe dos cenários
+```
+
+#### Link BDD ↔ Testes de Integração (REGRA):
+- **TODO cenário BDD DEVE ter tag `@integration-test`** apontando para o teste que o valida
+- **Formato**: `@integration-test="tests/integration/orders.test.ts"`
+- A documentação em `tests/integration/AGENTS.md` DEVE listar todos os cenários BDD e seus testes correspondentes
+
+#### Exemplo de Cenário BDD com Link:
+```gherkin
+@integration-test="tests/integration/orders.test.ts"
+Funcionalidade: Criação de Pedido
+
+Cenário: Cliente cria pedido com dados válidos
+Dado que o cliente está na página do cardápio
+Quando preenche "Maria Silva" no campo nome
+E clica em "Confirmar Pedido"
+Então o pedido deve ser criado com status "pending"
+```
+
+#### Arquivos BDD por Módulo (proximidade):
+| Módulo | Arquivo BDD |
+|--------|-------------|
+| `app/admin/login/` | `login.feature` |
+| `app/admin/signup/` | `signup.feature` |
+| `app/admin/dashboard/` | `dashboard.feature` |
+| `app/admin/categories/` | `categories.feature` |
+| `app/admin/products/` | `products.feature` |
+| `app/admin/orders/` | `orders.feature` |
+| `app/menu/[slug]/` | `menu.feature` |
+| `app/api/orders/` | `orders.feature` |
+
+### Template de AGENTS.md por Tipo
 
 ### Padrão de Documentação AGENTS.md
 
@@ -380,11 +449,14 @@ Todo AGENTS.md deve seguir este template:
 ### Checklist de Documentação
 
 Ao criar/modificar código, verificar:
-- [ ] AGENTS.md do módulo está atualizado?
+- [ ] AGENTS.md existe no nível mais próximo do elemento documentado?
+- [ ] AGENTS.md do módulo/pai está atualizado com referência ao novo AGENTS.md?
 - [ ] Nova API pública está documentada?
 - [ ] Exemplos de uso estão corretos?
 - [ ] Dependências estão listadas?
 - [ ] Regras de implementação estão claras?
+- [ ] Parâmetros, request/response, códigos de erro documentados (para rotas)?
+- [ ] Props, estados, callbacks documentados (para componentes)?
 
 ## Fluxo OpenSpec para Mudanças
 
@@ -410,9 +482,412 @@ Ao criar/modificar código, verificar:
 - Documentação (exceto specs)
 - Testes (desde que não mudem comportamento)
 
-### Fluxo Completo
+### Fluxo Completo (REGRA OBRIGATÓRIA)
+
+**TODO mudança significativa DEVE seguir este fluxo na ordem EXATA:**
 
 ```
+PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
+```
+
+**verification = código + documentação** (verificação completa, não apenas código)
+
+---
+
+## Descrição Detalhada das Etapas do Fluxo SDD
+
+### Etapa 1: PRB.md (Product Requirement Brief)
+
+**Objetivo**: Capturar a essência da ideia, o problema ou oportunidade identificada.
+
+**Responsável**: Product Owner / Tech Lead / Equipe
+
+**Entrada**: Necessidade de negócio identificada
+
+**Atividades**:
+1. Descrever o problema/oportunidade de forma concisa
+2. Identificar o público-alvo impactado
+3. Definir resultado esperado de alto nível (sem detalhamento técnico)
+4. Estabelecer critérios de sucesso preliminares
+5. Classificar urgência (Crítica/Alta/Média/Baixa)
+
+**Saída**: Documento `PRB.md` com:
+- Título da iniciativa
+- Descrição do problema/oportunidade
+- Público-alvo impactado
+- Resultado esperado de alto nível
+- Critérios de sucesso preliminares
+- Classificação de urgência
+
+**Exemplo**:
+```markdown
+# PRB: Adicionar Notificação Push
+
+## Problema
+Clientes não são notificados quando o status do pedido muda.
+
+## Público-Alvo
+Clientes do restaurante que fazem pedidos pelo cardápio digital.
+
+## Resultado Esperado
+Aumentar satisfação do cliente com transparência sobre status do pedido.
+
+## Critérios de Sucesso
+- [ ] Notificação enviada em até 5 segundos após mudança de status
+- [ ] Taxa de entrega > 95%
+```
+
+---
+
+### Etapa 2: Análise (PRD.md + Codebase)
+
+**Objetivo**: Confrontar a ideia do PRB.md com a realidade atual da aplicação.
+
+**Responsável**: Tech Lead / Arquiteto
+
+**Entrada**: PRB.md aprovado, PRD.md existente, codebase
+
+**Atividades**:
+1. Ler PRD.md (Product Requirement Document) existente
+2. Analisar codebase atual e arquitetura
+3. Avaliar viabilidade técnica
+4. Identificar módulos/serviços afetados
+5. Identificar dependências e débitos técnicos bloqueantes
+6. Documentar síntese da análise
+
+**Saída**: Síntese de análise respondendo:
+- A ideia é viável com a arquitetura atual?
+- Quais módulos/serviços serão afetados?
+- Existem dependências ou débitos técnicos bloqueantes?
+- Impacto estimado (breaking changes, migração, novos dependencies)?
+
+---
+
+### Etapa 3: proposal.md (Proposta Formal)
+
+**Objetivo**: Formalizar a intenção de desenvolvimento enriquecida com contexto.
+
+**Responsável**: Tech Lead / Equipe
+
+**Entrada**: PRB.md, Análise, PRD.md
+
+**Atividades**:
+1. Criar `proposal.md` seguindo template
+2. Referenciar PRB.md e análise realizada
+3. Definir scope (in/out)
+4. Identificar riscos e mitigações
+5. Definir critérios de sucesso
+
+**Saída**: Documento `proposal.md` com:
+- Intent (propósito)
+- Scope (in/out)
+- Approach (abordagem)
+- Affected Areas (áreas afetadas)
+- Risks (riscos)
+- Rollback Plan (plano de rollback)
+- Success Criteria (critérios de sucesso)
+
+---
+
+### Etapa 4: spec.md (Especificação Formal)
+
+**Objetivo**: Transformar proposta em requisitos testáveis usando RFC 2119.
+
+**Responsável**: Tech Lead / Product Owner
+
+**Entrada**: proposal.md aprovado
+
+**Atividades**:
+1. Escrever requisitos usando palavras-chave RFC 2119 (MUST, SHOULD, MAY)
+2. Criar cenários Given/When/Then para cada requisito
+3. Definir critérios de aceitação (CA-XXX)
+4. Garantir que todo requisito seja testável
+
+**Saída**: Documento `spec.md` com:
+- Requisitos numerados (REQ-XXX)
+- Cenários Gherkin para cada requisito
+- Critérios de aceitação (CA-XXX)
+
+**Exemplo**:
+```markdown
+### REQ-XXX: Notificação ao Confirmar Pedido
+
+O sistema DEVE enviar notificação push ao cliente quando o status do pedido mudar.
+
+#### Cenário: Notificação enviada ao confirmar
+- **GIVEN** um pedido com status "pending"
+- **WHEN** o admin clica em "Confirmar"
+- **THEN** o sistema DEVE enviar notificação push para o cliente
+```
+
+---
+
+### Etapa 5: design.md (Design Técnico com Qualidade)
+
+**Objetivo**: Detalhar a solução técnica com estratégia de qualidade integrada.
+
+**Responsável**: Tech Lead / Arquiteto
+
+**Entrada**: spec.md aprovada
+
+**Atividades**:
+1. Documentar decisões de arquitetura (com rationale)
+2. Definir estratégia de testes (TDD/BDD/ATDD/DDD)
+3. Criar diagramas de fluxo e estrutura
+4. Mapear file changes (criar/modificar/deletar)
+5. Definir interfaces e contratos
+6. Documentar estratégia de migração/rollback
+
+**Saída**: Documento `design.md` com seções obrigatórias:
+
+#### 5.1 TDD (Test-Driven Development)
+- Cobertura mínima obrigatória (80% linhas, 100% branches críticos)
+- Ferramentas (Vitest)
+- Estratégia de Mock/Stub
+
+#### 5.2 BDD (Behavior-Driven Development)
+- Cenários Gherkin (arquivos .feature)
+- Ferramenta (Playwright)
+- Cobertura E2E (100% fluxos críticos)
+- **Localização**: Arquivos `.feature` no nível do módulo (REGRA DE PROXIMIDADE)
+
+#### 5.3 ATDD (Acceptance Test-Driven Development)
+- Critérios de aceitação por tarefa
+- Checklist QA (testes exploratórios, segurança, performance)
+
+#### 5.4 DDD (Domain-Driven Design)
+- Bounded Context
+- Agregados, Entidades, Value Objects
+- Linguagem Ubíqua
+
+---
+
+### Etapa 6: tasks.md (Decomposição DDD)
+
+**Objetivo**: Gerar checklist de tarefas a partir do design orientado a DDD.
+
+**Responsável**: Tech Lead / Equipe
+
+**Entrada**: design.md aprovado
+
+**Atividades**:
+1. Decompor em tarefas por camada DDD
+2. Estruturar em fases (Infraestrutura, Domínio, Aplicação, Infraestrutura, Interface, Documentação)
+3. Definir critérios de conclusão (código + testes + documentação)
+
+**Saída**: Documento `tasks.md` com estrutura:
+
+```markdown
+### Fase 1: Infraestrutura de Testes
+- [ ] 1.1: Configurar suíte de testes com cobertura mínima de 80%
+
+### Fase 2: Domínio (DDD)
+- [ ] 2.1: Implementar Agregado `Entidade` com regras de negócio
+
+### Fase 3: Aplicação (Casos de Uso)
+- [ ] 3.1: Implementar Caso de Uso `NomeDoCasoDeUso`
+
+### Fase 4: Infraestrutura
+- [ ] 4.1: Implementar Repositório `EntidadeRepository`
+
+### Fase 5: Interface
+- [ ] 5.1: Expor endpoint REST `/recurso`
+
+### Fase 6: Documentação
+- [ ] 6.1: Criar `pasta/AGENTS.md`
+- [ ] 6.2: Criar `pasta/nome.feature`
+```
+
+**Critério de Conclusão (REGRA)**:
+Uma tarefa só é `[x]` quando:
+1. ✅ Código de produção escrito
+2. ✅ Testes unitários/integração obrigatórios passam
+3. ✅ Testes E2E referentes passam localmente
+4. ✅ AGENTS.md do módulo atualizado com proximidade
+5. ✅ Cenários BDD criados com tag `@integration-test`
+
+---
+
+### Etapa 7: implementation (Implementação)
+
+**Objetivo**: Implementar código seguindo tasks.md e specs.
+
+**Responsável**: Equipe de Desenvolvimento
+
+**Entrada**: tasks.md, spec.md, design.md
+
+**Atividades**:
+1. Implementar código seguindo ordem das tarefas
+2. Escrever testes antes do código (TDD)
+3. Executar testes frequentemente
+4. Manter cobertura ≥80%
+5. Atualizar documentação em paralelo
+
+**Saída**:
+- Código implementado
+- Testes passando
+- Documentação atualizada
+
+---
+
+### Etapa 8: verification (Verificação Completa - REGRA CRÍTICA)
+
+**Objetivo**: Verificar código E documentação antes de archivar.
+
+**Responsável**: Tech Lead / QA
+
+**Entrada**: implementation completa
+
+**Atividades**:
+
+#### 8.1 Verificação de Código
+- Build passa sem erros
+- Lint passa sem warnings
+- Testes passam (unitários, integração, E2E)
+- Cobertura ≥80%
+
+#### 8.2 Verificação de Documentação
+- AGENTS.md existe no nível mais próximo do elemento
+- AGENTS.md do módulo/pai está atualizado
+- Cenários BDD têm tag `@integration-test`
+- Arquivos `.feature` estão no nível correto (proximidade)
+
+#### 8.3 Correção de Documentação (se necessário)
+- Se AGENTS.md faltando: criar
+- Se BDD fora do nível: mover
+- Se tag faltando: adicionar
+
+#### 8.4 Compliance Report
+- Mapear cada requisito (REQ-XXX) à evidência
+- Mapear cada critério de aceitação (CA-XXX) à evidência
+- Documentar issues encontrados
+
+**Saída**: Documento `verify-report.md` com:
+- Completeness (artefatos criados)
+- Build and Test Evidence
+- Compliance Matrix (REQ-XXX → evidência)
+- Design Coherence
+- Issues Found
+- Verdict (PASS/PASS WITH WARNINGS/FAIL)
+
+**REGRA**: verification = código + documentação. Não é apenas verificar código.
+
+---
+
+### Etapa 9: archive (Arquivamento)
+
+**Objetivo**: Consolidar mudanças e arquivar artefatos.
+
+**Responsável**: Tech Lead
+
+**Entrada**: verify-report.md com PASS
+
+**Atividades**:
+1. Mover artefatos para `.openspec/changes/archive/{data}/{change-name}/`
+2. Consolidar mudanças nas specs principais (se aplicável)
+3. Atualizar changelog
+4. Criar archive-report.md com resumo
+
+**Saída**:
+- Diretório arquivado
+- Archive report
+- Specs principais atualizadas (se necessário)
+
+---
+
+## Fluxo Visual Completo
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        FLUXO SDD MENULINK (OBRIGATÓRIO)                     │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────┐    ┌─────────┐    ┌──────────┐    ┌────────┐    ┌──────────┐
+  │ PRB.md  │───▶│ Análise │───▶│ proposal │───▶│ spec   │───▶│ design   │
+  └─────────┘    └─────────┘    └──────────┘    └────────┘    └──────────┘
+       │              │              │               │              │
+       │         PRD.md +        RFC 2119      TDD/BDD/       TDD/BDD/
+       │         Codebase        requisitos     ATDD/DDD      ATDD/DDD
+       │              │              │               │              │
+       ▼              ▼              ▼               ▼              ▼
+  ┌─────────┐    ┌─────────┐    ┌──────────┐    ┌────────┐    ┌──────────┐
+  │Concepção│    │Viabilid.│    │Formaliz. │    │Testável│    │Técnico   │
+  │Inicial  │    │Técnica  │    │          │    │        │    │+ Qualidade│
+  └─────────┘    └─────────┘    └──────────┘    └────────┘    └──────────┘
+
+  ┌──────────┐    ┌──────────────────┐    ┌──────────────┐    ┌──────────┐
+  │ tasks    │───▶│ implementation   │───▶│ verification │───▶│ archive  │
+  └──────────┘    └──────────────────┘    └──────────────┘    └──────────┘
+       │                  │                    │                  │
+       │            Código +              Código +              Consolidado
+       │            Testes +              Documentação           e Arquivado
+       │            Documentação          = Compliance
+       │                  │                    │
+       ▼                  ▼                    ▼
+  ┌──────────┐    ┌──────────────────┐    ┌──────────────┐
+  │ DDD      │    │ Tarefas check    │    │ verify-      │
+  │ Fases    │    │ quando código    │    │ report.md    │
+  │          │    │ + testes + docs  │    │              │
+  └──────────┘    │ passam           │    │ PASS ✅      │
+                  └──────────────────┘    └──────────────┘
+
+  verification = código + documentação (não é só código)
+```
+
+---
+
+## Gates de Aprovação por Etapa
+
+| Etapa | Gate | Responsável |
+|-------|------|-------------|
+| PRB.md | Análise inicial | Orchestrator |
+| Análise | Viabilidade confirmada | Tech Lead |
+| proposal | Scope definido, riscos identificados | Tech Lead |
+| spec | Revisão técnica (RFC 2119) | Oracle |
+| design | Revisão de arquitetura (TDD/BDD/ATDD/DDD) | Oracle |
+| tasks | Verificação de completude | Orchestrator |
+| implementation | Testes passam + lint + build | CI/CD |
+| verification | Compliance report (código + docs) | Deep agent |
+| archive | Consolidado e arquivado | Tech Lead |
+
+---
+
+## Proibições (REGRA)
+
+- **NÃO** pular etapas do fluxo
+- **NÃO** implementar sem PRB.md e análise
+- **NÃO** implementar sem spec aprovada
+- **NÃO** pular verification (código + documentação)
+- **NÃO** archivar sem verification com PASS
+- **NÃO** modificar specs sem passar pelo fluxo de mudança
+PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
+   │        │           │           │         │          │            │              │           │
+   │        │           │           │         │          │            │              │           │
+   │        ▼           ▼           ▼         ▼          ▼            ▼              ▼           ▼
+   │   Viabilid.   Formaliz.   RFC 2119   TDD/BDD    DDD         Código         Código +     Consolidado
+   │   Técnica      da ideia    Requisitos ATDD/DDD   Fases      + Testes       Documentação  e Arquivado
+   │   + Codebase                            Qualidade              + Docs
+   │
+   ▼
+Concepção
+Inicial
+```
+
+#### Etapas Detalhadas:
+
+1. **PRB.md** - Product Requirement Brief: Concepção inicial da ideia (o quê e por quê)
+2. **Análise** - Viabilidade técnica confrontada com PRD.md e codebase
+3. **proposal.md** - Proposta formal com scope, riscos, rollback
+4. **spec.md** - Requisitos RFC 2119 com cenários Given/When/Then
+5. **design.md** - Design técnico com TDD/BDD/ATDD/DDD integrados
+6. **tasks.md** - Decomposição DDD (Infraestrutura, Domínio, Aplicação, Interface, Documentação)
+7. **implementation** - Código + Testes + Documentação (AGENTS.md, BDD)
+8. **verification** - Verificação COMPLETA (código + documentação):
+   - Build, lint, testes, cobertura (código)
+   - Proximidade AGENTS.md, BDD com tags @integration-test (documentação)
+   - Correção de documentação se necessário
+   - Compliance report
+9. **archive** - Arquivamento e consolidação nas specs principais
 proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
      ↓           ↓          ↓          ↓              ↓               ↓
   Proposta    Spec RFC   Design     Tarefas      Código          Testes       Arquivar
