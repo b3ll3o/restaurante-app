@@ -72,15 +72,15 @@ Este documento contém o checklist de testes unitários para a lógica mínima n
 ```typescript
 // Mock do Supabase Client
 const mockSupabase = {
-  from: jest.fn().mockReturnThis(),
-  insert: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  single: jest.fn(),
+  from: vi.fn().mockReturnThis(),
+  insert: vi.fn().mockReturnThis(),
+  select: vi.fn().mockReturnThis(),
+  single: vi.fn(),
 };
 
 // Mock do WhatsApp Service
 const mockWhatsAppService = {
-  sendMessage: jest.fn().mockResolvedValue({ success: true }),
+  sendMessage: vi.fn().mockResolvedValue({ success: true }),
 };
 ```
 
@@ -275,26 +275,26 @@ const mockWhatsAppService = {
 
 ```bash
 # Instalar dependências de teste
-npm install --save-dev jest @testing-library/react @testing-library/jest-dom
+npm install --save-dev vitest @testing-library/react @vitest/jest-dom
 
 # Executar todos os testes
 npm run test
 
 # Executar com coverage
-npm run test -- --coverage
+npm run test:coverage
 
 # Executar em watch mode
-npm run test -- --watch
+npm run test:watch
 ```
 
 ---
 
 ## Notas de Implementação
 
-1. **Mocks para Supabase**: Usar `jest.mock('@/lib/supabase/client')` para isolar testes da dependência real do banco
-2. **Mocks para WhatsApp API**: Isolar com `jest.mock('@/lib/whatsapp')` 
+1. **Mocks para Supabase**: Usar `vi.mock('@/lib/supabase/client')` para isolar testes da dependência real do banco
+2. **Mocks para WhatsApp API**: Isolar com `vi.mock('@/lib/whatsapp')`
 3. **Mocks para localStorage**: Criar mock de `window.localStorage`
-4. **Testes de API Routes**: Usar `supertest` ou `fetch` direto em `/api/orders`
+4. **Testes de API Routes**: Usar `fetch` direto em `/api/orders` ou supertest com Vitest
 
 ---
 

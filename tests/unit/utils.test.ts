@@ -1,3 +1,4 @@
+import { describe, it, expect } from 'vitest';
 import { formatPrice, generateSlug, isValidWhatsApp, isValidPrice, isValidName } from '@/lib/utils';
 
 describe('Utils', () => {

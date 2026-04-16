@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CartProvider, useCart } from '@/context/cart-context';
@@ -57,11 +58,11 @@ describe('CartContext', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(screen.getByText('Add Pizza'));
+      await user.click(screen.getAllByText('Add Pizza')[0]);
 
-      expect(screen.getByTestId('items-count')).toHaveTextContent('1');
-      expect(screen.getByTestId('total-items')).toHaveTextContent('1');
-      expect(screen.getByTestId('total-price')).toHaveTextContent('45.9');
+      expect(screen.getAllByTestId('items-count')[0].textContent).toContain('1');
+      expect(screen.getAllByTestId('total-items')[0].textContent).toContain('1');
+      expect(screen.getAllByTestId('total-price')[0].textContent).toContain('45.9');
     });
 
     it('should increment quantity for existing item', async () => {
@@ -72,12 +73,12 @@ describe('CartContext', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(screen.getByText('Add Pizza'));
-      await user.click(screen.getByText('Add Pizza'));
+      await user.click(screen.getAllByText('Add Pizza')[0]);
+      await user.click(screen.getAllByText('Add Pizza')[0]);
 
-      expect(screen.getByTestId('items-count')).toHaveTextContent('1');
-      expect(screen.getByTestId('total-items')).toHaveTextContent('2');
-      expect(screen.getByTestId('total-price')).toHaveTextContent('91.8');
+      expect(screen.getAllByTestId('items-count')[0].textContent).toContain('1');
+      expect(screen.getAllByTestId('total-items')[0].textContent).toContain('2');
+      expect(screen.getAllByTestId('total-price')[0].textContent).toContain('91.8');
     });
 
     it('should add different products', async () => {
@@ -88,12 +89,12 @@ describe('CartContext', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(screen.getByText('Add Pizza'));
-      await user.click(screen.getByText('Add Refrigerante'));
+      await user.click(screen.getAllByText('Add Pizza')[0]);
+      await user.click(screen.getAllByText('Add Refrigerante')[0]);
 
-      expect(screen.getByTestId('items-count')).toHaveTextContent('2');
-      expect(screen.getByTestId('total-items')).toHaveTextContent('2');
-      expect(screen.getByTestId('total-price')).toHaveTextContent('53.9');
+      expect(screen.getAllByTestId('items-count')[0].textContent).toContain('2');
+      expect(screen.getAllByTestId('total-items')[0].textContent).toContain('2');
+      expect(screen.getAllByTestId('total-price')[0].textContent).toContain('53.9');
     });
   });
 
@@ -106,12 +107,12 @@ describe('CartContext', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(screen.getByText('Add Pizza'));
-      await user.click(screen.getByText('Remove Pizza'));
+      await user.click(screen.getAllByText('Add Pizza')[0]);
+      await user.click(screen.getAllByText('Remove Pizza')[0]);
 
-      expect(screen.getByTestId('items-count')).toHaveTextContent('0');
-      expect(screen.getByTestId('total-items')).toHaveTextContent('0');
-      expect(screen.getByTestId('total-price')).toHaveTextContent('0');
+      expect(screen.getAllByTestId('items-count')[0].textContent).toContain('0');
+      expect(screen.getAllByTestId('total-items')[0].textContent).toContain('0');
+      expect(screen.getAllByTestId('total-price')[0].textContent).toContain('0');
     });
   });
 
@@ -124,11 +125,11 @@ describe('CartContext', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(screen.getByText('Add Pizza'));
-      await user.click(screen.getByText('Update Pizza to 2'));
+      await user.click(screen.getAllByText('Add Pizza')[0]);
+      await user.click(screen.getAllByText('Update Pizza to 2')[0]);
 
-      expect(screen.getByTestId('total-items')).toHaveTextContent('2');
-      expect(screen.getByTestId('total-price')).toHaveTextContent('91.8');
+      expect(screen.getAllByTestId('total-items')[0].textContent).toContain('2');
+      expect(screen.getAllByTestId('total-price')[0].textContent).toContain('91.8');
     });
   });
 
@@ -141,20 +142,20 @@ describe('CartContext', () => {
       );
 
       const user = userEvent.setup();
-      await user.click(screen.getByText('Add Pizza'));
-      await user.click(screen.getByText('Add Refrigerante'));
-      await user.click(screen.getByText('Clear'));
+      await user.click(screen.getAllByText('Add Pizza')[0]);
+      await user.click(screen.getAllByText('Add Refrigerante')[0]);
+      await user.click(screen.getAllByText('Clear')[0]);
 
-      expect(screen.getByTestId('items-count')).toHaveTextContent('0');
-      expect(screen.getByTestId('total-items')).toHaveTextContent('0');
-      expect(screen.getByTestId('total-price')).toHaveTextContent('0');
+      expect(screen.getAllByTestId('items-count')[0].textContent).toContain('0');
+      expect(screen.getAllByTestId('total-items')[0].textContent).toContain('0');
+      expect(screen.getAllByTestId('total-price')[0].textContent).toContain('0');
     });
   });
 
   describe('useCart', () => {
     it('should throw error when used outside CartProvider', () => {
       // Suprimir erro do console para este teste
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       expect(() => {
         render(<TestComponent />);

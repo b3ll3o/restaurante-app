@@ -77,6 +77,44 @@ Stack: Next.js 16.2.3 + React 19 + TypeScript (strict) + Tailwind CSS 4 + Supaba
 - **Arquitetura**: Multi-tenant (cada restaurante é um tenant)
 - **Testes E2E**: 100% dos fluxos críticos
 - **Idioma**: pt-BR padrão
+- **npm install**: **DEVE** funcionar sem `--legacy-peer-deps`. Conflitos de peer dependencies devem ser resolvidos atualizando ou removendo packages incompatíveis, nunca usando flags de bypass.
+
+## Paradigmas de Desenvolvimento
+
+### Prioridade: Testes (TDD, BDD, ATDD)
+
+**TDD (Test-Driven Development)** — Testes Unitários
+- **Quando**: Toda lógica de negócio, utilitários, hooks, e funções puras.
+- **Fluxo**: RED (escrever teste que falha) → GREEN (código mínimo para passar) → REFACTOR (melhorar mantendo testes).
+- **Foco**: Cobertura ≥80%, testes rápidos e isolados.
+
+**BDD (Behavior-Driven Development)** — Testes de Integração
+- **Quando**: Interação entre módulos, API routes, contexto de carrinho.
+- **Formato**: Gherkin (Given-When-Then) para documentar comportamento.
+- **Foco**: Cenários de negócio derivam dos requisitos (REQ-XXX).
+
+**ATDD (Acceptance Test-Driven Development)** — Testes de Interface (E2E)
+- **Quando**: Fluxos críticos do usuário (criar pedido, gerenciar cardápio).
+- **Foco**: 100% dos fluxos críticos automatizados com Playwright.
+- **Validação**: Critérios de aceitação (CA-XXX) verificáveis.
+
+### Prioridade: Especificação (SDD)
+
+**SDD (Specification-Driven Development)** — Specs e Documentação
+- **Quando**: Toda mudança significativa (nova funcionalidade, API, regra de negócio).
+- **Fluxo**: proposal → spec (RFC 2119) → design → tasks → implementation → verification → archive.
+- **Foco**: Especificações são fonte da verdade; código deriva das specs.
+
+### Prioridade: Domínio (DDD)
+
+**DDD (Domain-Driven Design)** — Modelagem de Domínio
+- **Quando**: Definir entidades, value objects, aggregates, e bounded contexts.
+- **Foco**: Linguagem ubíqua (pt-BR) refletida em tipos, funções e documentação.
+- **Domínios do MenuLink**:
+  - **Gestão de Restaurante**: Restaurant, Owner
+  - **Cardápio**: Category, Product
+  - **Pedidos**: Order, OrderItem, Cart, CartItem
+  - **Pagamento**: PaymentMethod, PaymentStatus
 
 ## Commands
 
@@ -184,33 +222,6 @@ WHATSAPP_PHONE_NUMBER_ID
 ### 9. Banco de Dados (`supabase/`)
 - **Schema** (`supabase/schema.sql`): Definição das tabelas
 
-## Paradigmas de Desenvolvimento
-
-### TDD (Test-Driven Development)
-1. **RED**: Escrever teste que falha
-2. **GREEN**: Código mínimo para passar
-3. **REFACTOR**: Melhorar mantendo testes
-
-### BDD (Behavior-Driven Development)
-- Especificações em Gherkin (Given-When-Then)
-- Linguagem ubíqua compartilhada
-- Testes derivados de cenários de negócio
-
-### ATDD (Acceptance Test-Driven Development)
-- Testes de aceitação antes da implementação
-- Validação de requisitos funcionais
-- Critérios de aceitação mensuráveis
-
-### DDD (Domain-Driven Design)
-- Modelo de domínio rico (entidades, value objects, aggregates)
-- Bounded contexts definidos
-- Linguagem ubíqua documentada
-
-### SDD (Specification-Driven Development)
-- Especificações são fonte da verdade
-- Código deriva das specs
-- Verificação contínua código↔specs
-
 ## Arquitetura Multi-Tenant
 - Cada restaurante é um tenant distinto
 - Todos os tenants compartilham o mesmo banco
@@ -265,6 +276,278 @@ WHATSAPP_PHONE_NUMBER_ID
 3. **Lint**: Sem erros do ESLint
 4. **Build**: Build de produção bem-sucedido
 5. **E2E**: Fluxos críticos testados
+
+## Regras de Documentação
+
+### Obrigatoriedade de Documentação
+
+**TODO módulo DEVE ter AGENTS.md**. A documentação é parte do desenvolvimento, não um item opcional.
+
+Módulos que **DEVEM** ter AGENTS.md:
+- `app/` - App Router completo
+- `app/admin/` - Painel administrativo
+- `app/api/` - API Routes
+- `app/menu/` - Cardápio público
+- `components/` - Componentes
+- `components/ui/` - Componentes UI
+- `components/admin/` - Componentes admin
+- `lib/` - Biblioteca
+- `lib/supabase/` - Clientes Supabase
+- `context/` - Contextos React
+- `types/` - Definições TypeScript
+- `tests/` - Infraestrutura de testes
+- `supabase/` - Schema do banco
+- `.openspec/` - Workflow SDD
+- `hooks/` - Custom hooks
+
+### Padrão de Documentação AGENTS.md
+
+Todo AGENTS.md deve seguir este template:
+
+```markdown
+# [Nome do Módulo] - MenuLink
+
+## Visão Geral
+[Descrição breve do módulo e sua responsabilidade]
+
+**Idioma**: Português Brasileiro (pt-BR)
+**Stack**: [Stack tecnológica usada]
+
+---
+
+## Estrutura de Diretórios
+[Árvore de arquivos do módulo]
+
+---
+
+## Sub-módulo: [Nome]
+### Responsabilidade
+[O que o sub-módulo faz]
+
+### Arquitetura
+[Código de exemplo da arquitetura]
+
+### Interface Pública
+[Funções, componentes, tipos exportados]
+
+### Uso
+[Exemplos de uso]
+
+---
+
+## Regras de Implementação
+1. [Regra 1]
+2. [Regra 2]
+
+---
+
+## Métricas de Qualidade
+| Métrica | Target | Prioridade |
+|---------|--------|------------|
+| Cobertura | ≥80% | Alta |
+
+---
+
+## Dependências
+| Dependência | Versão | Uso |
+|-------------|--------|-----|
+| [nome] | [versão] | [uso] |
+
+---
+
+## Referências
+- [Link 1]
+- [Link 2]
+
+---
+
+**Versão**: 1.0
+**Última Atualização**: [YYYY-MM-DD]
+**Autor**: AI Agent
+```
+
+### Atualização de Documentação
+
+**Documentação deve ser ATUALIZADA quando**:
+- Nova funcionalidade é adicionada
+- API pública muda
+- Regras de negócio mudam
+- Dependências são adicionadas/removidas
+- Após conclusão de cada change OpenSpec
+
+**Frequência mínima**: A cada PR que modifica um módulo
+
+### Checklist de Documentação
+
+Ao criar/modificar código, verificar:
+- [ ] AGENTS.md do módulo está atualizado?
+- [ ] Nova API pública está documentada?
+- [ ] Exemplos de uso estão corretos?
+- [ ] Dependências estão listadas?
+- [ ] Regras de implementação estão claras?
+
+## Fluxo OpenSpec para Mudanças
+
+### Regra de Ouro
+
+**TODO mudança significativa DEVE passar pelo fluxo OpenSpec**. Não se implementa sem spec aprovada.
+
+### O que é "mudança significativa"?
+
+- Nova funcionalidade de negócio
+- Nova API route
+- Novo componente com lógica complexa
+- Mudança em regras de negócio
+- Nova integração externa
+- Alteração de schema de banco
+- Mudança de arquitetura
+
+### O que NÃO precisa de OpenSpec?
+
+- Correções de bugs simples (sem mudança de comportamento)
+- Refatorações internas (sem mudança de API)
+- Updates de dependências
+- Documentação (exceto specs)
+- Testes (desde que não mudem comportamento)
+
+### Fluxo Completo
+
+```
+proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
+     ↓           ↓          ↓          ↓              ↓               ↓
+  Proposta    Spec RFC   Design     Tarefas      Código          Testes       Arquivar
+  2119       2119      técnico    checkadas    implementado    passam
+```
+
+### Como iniciar uma mudança
+
+```bash
+# 1. Criar diretório da change
+mkdir -p .openspec/changes/minha-mudanca
+
+# 2. Criar proposal.md seguindo template
+# 3. Obter aprovação
+# 4. Criar spec.md
+# 5. Criar design.md
+# 6. Criar tasks.md
+# 7. Implementar seguindo tasks
+# 8. Verificar (sdd-verify)
+# 9. Arquivar (sdd-archive)
+```
+
+### Templates OpenSpec
+
+**proposal.md**:
+```markdown
+# Proposta: [Nome da Mudança]
+
+## Problema
+[Descrição do problema que esta mudança resolve]
+
+## Solução Proposta
+[Descrição da solução]
+
+## Impacto
+- [ ] Breaking changes?
+- [ ] Migração necessária?
+- [ ] Novos dependencies?
+
+## Alternativas Consideradas
+[Outras soluções consideradas e por que foram descartadas]
+
+## Urgência
+- [ ] Crítica
+- [ ] Alta
+- [ ] Média
+- [ ] Baixa
+
+## Status
+Proposta
+```
+
+**spec.md**:
+```markdown
+# Spec: [Nome da Mudança]
+
+## Fonte da Verdade
+Este documento é parte das especificações do MenuLink.
+
+## Requisitos
+### REQ-XXX: [Título]
+[Descrição em RFC 2119]
+
+## Critérios de Aceitação
+### CA-XXX: [Título]
+[Condição verificável]
+
+## Status
+Especificação
+```
+
+**design.md**:
+```markdown
+# Design: [Nome da Mudança]
+
+## Decisões de Arquitetura
+[Arquitetura técnica]
+
+## Arquitetura
+[Diagramas se necessário]
+
+## Arquivos a Modificar
+- `caminho/arquivo1.ts`
+- `caminho/arquivo2.ts`
+
+## Dependências
+[Lista de dependências]
+
+## Riscos e Mitigações
+| Risco | Mitigação |
+|-------|-----------|
+| [risco] | [mitigação] |
+```
+
+**tasks.md**:
+```markdown
+# Tasks: [Nome da Mudança]
+
+## Pré-condições
+- [ ] Spec aprovada
+- [ ] Design aprovado
+
+## Tarefas
+
+### Fase 1: [Nome]
+- [ ] Task 1.1
+- [ ] Task 1.2
+
+### Fase 2: [Nome]
+- [ ] Task 2.1
+
+## Progresso
+░░░░░░░░░░ 0%
+
+## Status
+Em Andamento
+```
+
+### Gates de Aprovação
+
+| Fase | Gate | Responsável |
+|------|------|-------------|
+| proposal | Análise inicial | Orchestrator |
+| spec | Revisão técnica | Oracle |
+| design | Revisão de arquitetura | Oracle |
+| tasks | Verificação de completude | Orchestrator |
+| implementation | Testes passam + lint + build | CI/CD |
+| verification | Compliance report | Deep agent |
+
+### Proibições
+
+- **NÃO** pular fases do fluxo
+- **NÃO** implementar sem spec aprovada
+- **NÃO** modificar specs sem passar pelo fluxo de mudança
+- **NÃO** commitar código que viola spec existente
 
 ## Documentação de Referência
 

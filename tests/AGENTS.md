@@ -5,12 +5,31 @@
 O módulo **Tests** contém toda a infraestrutura de testes automatizados do projeto MenuLink, incluindo testes unitários, de integração e E2E. O projeto segue rigorosos padrões de qualidade com cobertura mínima de 80% para testes unitários.
 
 **Idioma**: Português Brasileiro (pt-BR)  
-**Stack**: Jest + Testing Library + Playwright
+**Stack**: Vitest + Testing Library + Playwright
 
 ---
 
 ## Estrutura de Diretórios
 
+```
+tests/
+├── setup.ts # Configuração global dos testes
+├── unit/ # Testes unitários (≥80% cobertura)
+│ ├── utils.test.ts # Testes de funções utilitárias
+│ ├── context/
+│ │ └── cart-context.test.tsx # Testes do contexto do carrinho
+│ └── lib/
+│ └── whatsapp.test.ts # Testes do serviço WhatsApp
+├── integration/ # Testes de integração (a criar)
+│ ├── api.test.ts # Testes de API routes
+│ └── database.test.ts # Testes de banco de dados
+└── e2e/ # Testes end-to-end
+├── admin/
+│ └── login.spec.ts # Testes de login do admin
+├── public/
+│ └── checkout.spec.ts # Fluxo de checkout
+└── support/
+└── page-objects/ # Page Objects para E2E
 ```
 tests/
 ├── setup.ts                    # Configuração global dos testes
@@ -31,55 +50,55 @@ tests/
 
 ## Configuração
 
-### Jest (`jest.config.js`)
+### Vitest (`vitest.config.ts`)
 
-```javascript
-/** @type {import('jest').Config} */
-const config = {
-  testEnvironment: 'jsdom',
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
+```typescript
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['<rootDir>/tests/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
+      include: [
+        'app/**/*.{ts,tsx}',
+        'components/**/*.{ts,tsx}',
+        'lib/**/*.{ts,tsx}',
+        'hooks/**/*.{ts,tsx}',
+        'context/**/*.{ts,tsx}',
+      ],
+      exclude: [
+        '**/*.d.ts',
+        '**/node_modules/**',
+        '**/.next/**',
+        '**/tests/**',
+      ],
+    },
+    include: [
+      'tests/**/*.test.{ts,tsx}',
+      'tests/**/*.spec.{ts,tsx}',
+    ],
+    globals: true,
+    clearMocks: true,
+    resetMocks: true,
+    restoreMocks: true,
   },
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1',
-    '^@/components/(.*)$': '<rootDir>/components/$1',
-    '^@/lib/(.*)$': '<rootDir>/lib/$1',
-    '^@/hooks/(.*)$': '<rootDir>/hooks/$1',
-    '^@/context/(.*)$': '<rootDir>/context/$1',
-    '^@/types/(.*)$': '<rootDir>/types/$1',
-  },
-  testMatch: [
-    '<rootDir>/tests/**/*.test.ts',
-    '<rootDir>/tests/**/*.test.tsx',
-    '<rootDir>/tests/**/*.spec.ts',
-    '<rootDir>/tests/**/*.spec.tsx',
-  ],
-  collectCoverage: true,
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './'),
     },
   },
-  collectCoverageFrom: [
-    'app/**/*.{ts,tsx}',
-    'components/**/*.{ts,tsx}',
-    'lib/**/*.{ts,tsx}',
-    'hooks/**/*.{ts,tsx}',
-    'context/**/*.{ts,tsx}',
-    '!**/*.d.ts',
-    '!**/node_modules/**',
-    '!**/.next/**',
-  ],
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-  clearMocks: true,
-  resetMocks: true,
-  restoreMocks: true,
-};
-
-module.exports = config;
+});
 ```
 
 ### Setup Global (`tests/setup.ts`)
@@ -88,47 +107,47 @@ module.exports = config;
 import '@testing-library/jest-dom';
 
 // Mock do Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    prefetch: jest.fn(),
-    back: jest.fn(),
-    forward: jest.fn(),
-    refresh: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
 }));
 
 // Mock do Supabase
-jest.mock('@/lib/supabase/client', () => ({
-  createClient: jest.fn(() => ({
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({
     auth: {
-      getSession: jest.fn(),
-      getUser: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signUp: jest.fn(),
-      signOut: jest.fn(),
+      getSession: vi.fn(),
+      getUser: vi.fn(),
+      signInWithPassword: vi.fn(),
+      signUp: vi.fn(),
+      signOut: vi.fn(),
     },
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(),
-          order: jest.fn(),
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(),
+          order: vi.fn(),
         })),
       })),
-      insert: jest.fn(() => ({
-        select: jest.fn(),
+      insert: vi.fn(() => ({
+        select: vi.fn(),
       })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(),
+      update: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(),
         })),
       })),
-      delete: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(),
+      delete: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(),
         })),
       })),
     })),
@@ -138,20 +157,20 @@ jest.mock('@/lib/supabase/client', () => ({
 // Mock do localStorage
 Object.defineProperty(window, 'localStorage', {
   value: {
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
   },
   writable: true,
 });
 
 // Mock do fetch
-global.fetch = jest.fn();
+global.fetch = vi.fn();
 
 // Limpar mocks após cada teste
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 ```
 
@@ -613,13 +632,13 @@ test.describe('Painel Administrativo', () => {
 ```json
 {
   "scripts": {
-    "test": "jest",
-    "test:unit": "jest --testPathPattern=unit",
-    "test:integration": "jest --testPathPattern=integration",
+    "test": "vitest",
+    "test:unit": "vitest --run tests/unit",
+    "test:integration": "vitest --run tests/integration",
     "test:e2e": "playwright test",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch",
-    "test:e2e:ui": "playwright test --ui"
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui"
   }
 }
 ```
@@ -645,8 +664,8 @@ npm run test:coverage
 # Modo watch
 npm run test:watch
 
-# E2E com UI
-npm run test:e2e:ui
+# UI interativa
+npm run test:ui
 ```
 
 ---
@@ -775,7 +794,7 @@ it('should remove item', () => {
 
 ```typescript
 // ✅ Bom: Mock específico
-jest.mock('@/lib/supabase/client', () => ({
+vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
     from: () => ({
       select: () => ({
@@ -788,7 +807,7 @@ jest.mock('@/lib/supabase/client', () => ({
 }));
 
 // ❌ Ruim: Mock genérico
-jest.mock('@/lib/supabase/client');
+vi.mock('@/lib/supabase/client');
 ```
 
 ---
@@ -797,25 +816,26 @@ jest.mock('@/lib/supabase/client');
 
 | Dependência | Versão | Uso |
 |-------------|--------|-----|
-| jest | ^29.7.0 | Test runner |
-| ts-jest | ^29.2.5 | TypeScript transform |
+| vitest | ^4.1.4 | Test runner |
+| @vitest/ui | ^4.1.4 | UI de testes |
+| @vitest/coverage-v8 | ^4.1.4 | Cobertura V8 |
 | @testing-library/react | ^15.0.7 | Testes de React |
-| @testing-library/jest-dom | ^6.4.2 | Matchers DOM |
-| @testing-library/user-event | ^14.5.2 | Simular usuário |
-| @playwright/test | ^1.45.3 | Testes E2E |
-| jest-environment-jsdom | ^29.7.0 | Ambiente jsdom |
+| @testing-library/jest-dom | ^6.9.1 | Matchers DOM |
+| @testing-library/user-event | ^14.6.1 | Simular usuário |
+| @playwright/test | ^1.59.1 | Testes E2E |
+| jsdom | ^29.0.2 | Ambiente jsdom |
 
 ---
 
 ## Referências
 
-- [Jest Documentation](https://jestjs.io/pt-BR/docs)
+- [Vitest Documentation](https://vitest.dev/)
 - [Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Playwright](https://playwright.dev/docs/intro)
 - [menulink-unit-tests-checklist.md](../.openspec/specs/menulink-unit-tests-checklist.md)
 
 ---
 
-**Versão**: 1.0  
-**Última Atualização**: 2026-04-15  
+**Versão**: 1.1
+**Última Atualização**: 2026-04-16
 **Autor**: AI Agent

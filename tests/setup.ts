@@ -1,52 +1,58 @@
-// Configuração global para testes
-import '@testing-library/jest-dom';
+import { vi, afterEach } from 'vitest';
+import { cleanup } from '@testing-library/react';
+
+// Limpar DOM após cada teste para evitar estado acumulado
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
 // Mock do Next.js router
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
-    replace: jest.fn(),
-    prefetch: jest.fn(),
-    back: jest.fn(),
-    forward: jest.fn(),
-    refresh: jest.fn(),
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
 }));
 
 // Mock do Supabase
-jest.mock('@/lib/supabase/client', () => ({
-  createClient: jest.fn(() => ({
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({
     auth: {
-      getSession: jest.fn(),
-      getUser: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signUp: jest.fn(),
-      signOut: jest.fn(),
+      getSession: vi.fn(),
+      getUser: vi.fn(),
+      signInWithPassword: vi.fn(),
+      signUp: vi.fn(),
+      signOut: vi.fn(),
     },
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(),
-          order: jest.fn(() => ({
-            limit: jest.fn(() => ({
-              then: jest.fn(),
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(),
+          order: vi.fn(() => ({
+            limit: vi.fn(() => ({
+              then: vi.fn(),
             })),
           })),
         })),
       })),
-      insert: jest.fn(() => ({
-        select: jest.fn(),
+      insert: vi.fn(() => ({
+        select: vi.fn(),
       })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(),
+      update: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(),
         })),
       })),
-      delete: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(),
+      delete: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          select: vi.fn(),
         })),
       })),
     })),
@@ -56,18 +62,18 @@ jest.mock('@/lib/supabase/client', () => ({
 // Mock do localStorage
 Object.defineProperty(window, 'localStorage', {
   value: {
-    getItem: jest.fn(),
-    setItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn(),
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    removeItem: vi.fn(),
+    clear: vi.fn(),
   },
   writable: true,
 });
 
-// Mock do fetch para testes de API
-global.fetch = jest.fn();
+// Mock do fetch
+global.fetch = vi.fn();
 
-// Limpar todos os mocks após cada teste
+// Limpar mocks após cada teste
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });

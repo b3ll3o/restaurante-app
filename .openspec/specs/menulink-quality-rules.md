@@ -116,22 +116,22 @@ tests/
 ```
 
 ### 4.2 Ferramentas
-- **Jest**: Testes unitários e integração
+- **Vitest**: Testes unitários e integração
 - **Testing Library**: Testes de componentes React
 - **Playwright**: Testes E2E
-- **Supertest**: Testes de API
 - **MSW**: Mock de APIs externas
 
 ### 4.3 Scripts de Teste
 ```json
 {
   "scripts": {
-    "test": "jest",
-    "test:unit": "jest --testPathPattern=unit",
-    "test:integration": "jest --testPathPattern=integration",
+    "test": "vitest",
+    "test:unit": "vitest --run tests/unit",
+    "test:integration": "vitest --run tests/integration",
     "test:e2e": "playwright test",
-    "test:coverage": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test:coverage": "vitest --run --coverage",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui"
   }
 }
 ```
