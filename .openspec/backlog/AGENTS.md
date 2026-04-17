@@ -109,6 +109,107 @@ IDEA → PROMPT → PRD (draft) → INTERVIEW → PRD (approved) → SDD → DON
 | 001 | 2026-04-17 | Email Confirmation Auth Issue   | PRD      | in-interview |
 ```
 
+### REGRA 6: Arquivamento obrigatório de PRDs (REGRA CRÍTICA)
+
+**TODO PRD DEVE ser arquivado quando:**
+1. ✅ **Concluído (done)**: Change criada e implementada com sucesso
+2. ❌ **Rejeitado (rejected)**: PRD não aprovado, inviável ou descartado
+
+**Fluxo de Arquivamento:**
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    FLUXO DE ARQUIVAMENTO DO BACKLOG                         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
+  │ PRD Draft   │───▶│ PRD Approved│───▶│ Change SDD  │
+  │ (prds/)    │    │ (prds/)     │    │ (changes/)  │
+  └─────────────┘    └─────────────┘    └─────────────┘
+                                                 │
+                         ┌───────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────────┐
+  │                    APÓS CONCLUSÃO DA CHANGE                  │
+  │  1. SDD completo (proposal → spec → design → tasks →      │
+  │     implementation → verification → archive)                 │
+  │  2. Commit com todas as mudanças feito                    │
+  │  3. PRD original em prds/ deve ser ARQUIVADO              │
+  └─────────────────────────────────────────────────────────────┘
+                         │
+                         ▼
+  ┌─────────────────────────────────────────────────────────────┐
+  │              BACKLOG ARCHIVE (obrigatório)                   │
+  │                                                              │
+  │  De: .openspec/backlog/prds/{id}/prd.md                    │
+  │  Para: .openspec/backlog/archive/{id}-{date}-{slug}/prd.md  │
+  │                                                              │
+  │  OU (se rejeitado):                                         │
+  │  Para: .openspec/backlog/archive/{id}-rejected/prd.md       │
+  └─────────────────────────────────────────────────────────────┘
+```
+
+**Procedimento de Arquivamento (ao concluir PRD):**
+
+1. **Verificar se change foi criada:**
+   ```bash
+   # Change existe em .openspec/changes/?
+   ls .openspec/changes/{change-id}/
+   ```
+
+2. **Mover PRD para archive:**
+   ```bash
+   # Concluído
+   mkdir -p .openspec/backlog/archive/{id}-{date}-{slug}
+   mv .openspec/backlog/prds/{id}-{date}-{slug}/prd.md \
+      .openspec/backlog/archive/{id}-{date}-{slug}/prd.md
+   
+   # Rejeitado
+   mkdir -p .openspec/backlog/archive/{id}-rejected
+   mv .openspec/backlog/prds/{id}-{date}-{slug}/prd.md \
+      .openspec/backlog/archive/{id}-rejected/prd.md
+   ```
+
+3. **Atualizar `backlog.md`:**
+   - Remover da seção "PRDs em Andamento"
+   - Adicionar à seção "PRDs Arquivados" com status `done` ou `rejected`
+
+4. **Adicionar ao PRD arquivado:**
+   ```markdown
+   ## Histórico de Fases
+   
+   | Data | Fase | Status | Notas |
+   |------|------|--------|-------|
+   | YYYY-MM-DD | prompt | done | ... |
+   | YYYY-MM-DD | approved | done | Change criada |
+   | YYYY-MM-DD | SDD | done | Implementado |
+   | YYYY-MM-DD | archive | done | Movido para backlog/archive |
+   ```
+
+### REGRA 7: Checklist de Arquivamento (OBRIGATÓRIO)
+
+**Antes de fechar uma change SDD, verificar:**
+
+- [ ] PRD foi movido de `prds/` para `backlog/archive/`
+- [ ] `backlog.md` atualizado (PRD removido da lista ativa)
+- [ ] Status do PRD em `backlog.md` = `done` ou `rejected`
+- [ ] Commit menciona "archive PRD {id}"
+
+**REGRA DE OURO:** O backlog NUNCA deve ter PRDs "órfãos" - PRDs que:
+- Viraram changes mas não foram arquivados
+- Foram rejeitados mas não foram movidos para rejected/
+
+### REGRA 8: Prazo de Arquivamento
+
+| Situação | Prazo Máximo |
+|----------|--------------|
+| Change SDD concluída | Arquivar PRD imediatamente após commit |
+| PRD rejeitado | Arquivar no mesmo dia da rejeição |
+| PRD "concluído" sem change | Investigar - não deve acontecer |
+
+**REGRA:** Arquivar PRDs é **OBRIGATÓRIO**, não opcional. O backlog limpo é sinal de disciplina de processo.
+
 ---
 
 ## Template de PRD
