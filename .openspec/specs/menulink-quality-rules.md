@@ -97,6 +97,127 @@ CREATE INDEX idx_categories_restaurant ON categories(restaurant_id);
 
 ---
 
+## 3.5 Arquitetura Mobile-First (REGRA OBRIGATÓRIA)
+
+### 3.5.1 Princípios Mobile-First
+- **SEMPRE** desenvolver para mobile primeiro, depois escalar para desktop
+- Touch-friendly: todos os elementos devem ter no mínimo 44x44px de área de toque
+- Layout responsivo obrigatório em todas as páginas
+- Performance otimizada para conexões mobile (3G+)
+
+### 3.5.2 Implementação Mobile-First
+```css
+/* ✅ CORRETO - Mobile first */
+.container {
+  padding: 1rem; /* Mobile */
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 2rem; /* Tablet/Desktop */
+  }
+}
+
+/* ❌ INCORRETO - Desktop first */
+.container {
+  padding: 2rem; /* Desktop */
+}
+
+@media (max-width: 767px) {
+  .container {
+    padding: 1rem; /* Mobile - legacy */
+  }
+}
+```
+
+### 3.5.3 Breakpoints
+| Dispositivo | Largura | Uso |
+|-------------|---------|-----|
+| Mobile | < 640px | Primeiro passo (base) |
+| Tablet | 640px - 1023px | `md` |
+| Desktop | 1024px - 1279px | `lg` |
+| Large Desktop | ≥ 1280px | `xl` |
+
+### 3.5.4 Requisitos de Performance Mobile
+- First Contentful Paint (FCP) < 1.8s em 3G
+- Largest Contentful Paint (LCP) < 2.5s
+- Time to Interactive (TTI) < 3.5s
+- Cumulative Layout Shift (CLS) < 0.1
+
+---
+
+## 3.6 Arquitetura Offline-First (REGRA OBRIGATÓRIA)
+
+### 3.6.1 Princípios Offline-First
+- **O aplicativo DEVE funcionar offline** com funcionalidades reduzidas
+- **NUNCA** bloquear usuário com mensagens de erro de rede
+- Sincronização em background quando conexão disponível
+- Estado local (localStorage/IndexedDB) como fonte primária
+
+### 3.6.2 Implementação Offline-First
+```typescript
+// ✅ CORRETO - Offline-first pattern
+async function fetchMenu() {
+  try {
+    // Tentar rede primeiro
+    const response = await fetch('/api/menu');
+    const data = await response.json();
+    // Salvar localmente para offline
+    await localStorage.setItem('menu', JSON.stringify(data));
+    return data;
+  } catch (error) {
+    // Fallback para dados locais
+    const cached = await localStorage.getItem('menu');
+    if (cached) {
+      return JSON.parse(cached);
+    }
+    // Se não há cache, retornar vazio (não bloquear)
+    return { categories: [], products: [] };
+  }
+}
+```
+
+### 3.6.3 Estratégia de Cache
+| Recurso | Estratégia | Tempo de Expiração |
+|---------|------------|-------------------|
+| Cardápio (menu) | Cache-first | 24 horas |
+| Imagens de produtos | Cache-first com service worker | 7 dias |
+| Dados do restaurante | Network-first | 1 hora |
+| Carrinho (local) | localStorage | Persistente |
+
+### 3.6.4 Service Worker
+```javascript
+// sw.js - Service Worker para offline
+const CACHE_NAME = 'menulink-v1';
+const OFFLINE_URLS = [
+  '/offline.html',
+  '/manifest.json'
+];
+
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        return caches.match('/offline.html');
+      })
+    );
+  }
+});
+```
+
+### 3.6.5 Indicadores de Status
+- Mostrar indicador visual quando offline (ícone na header)
+- Toast/notification suave quando conexão restaurada
+- Nunca bloquear UI por falta de conexão
+
+### 3.6.6 Testes Offline
+- Testes E2E DEVEM incluir cenários offline
+- Simular `navigator.onLine = false` nos testes
+- Verificar que carrinho funciona offline
+- Verificar sincronização após reconexão
+
+---
+
 ## 4. Estrutura de Testes
 
 ### 4.1 Níveis de Teste
@@ -366,6 +487,7 @@ npx eslint --format json --output-file eslint-report.json
 |--------|------|-------|----------|
 | 1.0 | 2026-04-15 | AI Agent | Versão inicial com regras de qualidade |
 | 1.1 | 2026-04-16 | AI Agent | Adicionadas regras de documentação (proximidade, BDD) |
+| 1.2 | 2026-04-17 | AI Agent | Adicionadas regras Mobile-First e Offline-First |
 
 ---
 

@@ -13,7 +13,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Workflow
 
-1. **Read**: Consult `.openspec/specs/menulink-specification.md` for business rules
+1. **Read**: Consult `.openspec/specs/menulink-rules.md` for all rules (centralized)
 2. **Plan**: Check `.openspec/specs/menulink-technical-plan.md` for architecture decisions
 3. **Implement**: Write code that fulfills the specifications
 4. **Verify**: Ensure implementation matches SPEC before calling complete
@@ -1027,11 +1027,14 @@ Em Andamento
 ## Documentação de Referência
 
 ### Especificações SDD
-1. `.openspec/specs/menulink-specification.md` - Regras de negócio
-2. `.openspec/specs/menulink-technical-plan.md` - Arquitetura
-3. `.openspec/specs/menulink-quality-rules.md` - Regras de qualidade
-4. `.openspec/specs/menulink-modules-documentation.md` - Documentação de módulos
-5. `.openspec/specs/menulink-unit-tests-checklist.md` - Checklist de testes
+> **PRINCIPAL**: `.openspec/specs/menulink-rules.md` — Fonte centralizada de todas as regras.
+
+1. `.openspec/specs/menulink-rules.md` - **FONTE CENTRALIZADA** (todas as regras)
+2. `.openspec/specs/menulink-specification.md` - Requisitos de negócio (REQ-XXX)
+3. `.openspec/specs/menulink-technical-plan.md` - Arquitetura e modelos
+4. `.openspec/specs/menulink-quality-rules.md` - Regras de qualidade (legacy)
+5. `.openspec/specs/menulink-modules-documentation.md` - Documentação de módulos
+6. `.openspec/specs/menulink-unit-tests-checklist.md` - Checklist de testes
 
 ### AGENTS.md por Módulo
 Cada módulo possui seu próprio AGENTS.md com documentação detalhada:

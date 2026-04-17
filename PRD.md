@@ -1,174 +1,193 @@
-# PRD: Estruturação de Rules, Workflows e Skills no OpenCode
+# PRD: Página Inicial do App de Cardápio Online para Restaurantes
 
-**Status:** Em Refinamento
-**Autor:** Time de Plataforma
+**Status:** Rascunho
+**Autor:** Time de Produto
 **Data:** 2026-04-17
 **Última Revisão:** 2026-04-17
-**Versão:** 1.0
+**Versão:** 2.0
 
 ## 0. Objetivos de Negócio
 
-Padronizar a forma como o OpenCode interage com o código-fonte e automatiza tarefas repetitivas, reduzindo o tempo de onboarding de novos desenvolvedores e garantindo consistência nos processos de desenvolvimento, revisão e entrega. Esta iniciativa visa aumentar a produtividade do time em pelo menos 30% ao eliminar configurações manuais e retrabalho causado por inconsistências de estilo e fluxo.
+- **Objetivo 1:** Aumentar a taxa de conversão de visitantes (donos de restaurantes) em leads qualificados em 25% nos primeiros 3 meses.
+- **Objetivo 2:** Reduzir o ciclo de vendas, permitindo que o restaurante entenda o valor do SaaS em menos de 30 segundos de visita.
+- **Objetivo 3:** Estabelecer confiança e credibilidade através de prova social, demonstração visual e proposta de valor clara (zero comissão, setup rápido).
 
 ## 1. Problema
 
-Atualmente, cada desenvolvedor ou projeto mantém suas próprias regras de linting, comandos de shell e scripts de automação de forma ad-hoc. Isso causa:
-
-- **Inconsistência:** Diferentes padrões de código, mensagens de commit e estruturas de arquivo convivem no mesmo repositório.
-- **Retrabalho:** Agentes de IA (OpenCode) precisam ser instruídos repetidamente sobre as mesmas preferências.
-- **Baixa reutilização:** Boas práticas encapsuladas em skills ou workflows não são compartilhadas entre projetos.
-- **Onboarding lento:** Novos membros gastam horas configurando seu ambiente e entendendo os fluxos locais.
-
-**Dados de baseline:** Em levantamento interno, 25% do tempo de desenvolvimento é gasto com tarefas de configuração e alinhamento de padrões. O tempo médio para implementar uma história simples é de 4 horas, sendo 1 hora apenas com atividades de "setup mental" e adequação ao estilo do projeto.
+Donos de restaurantes visitam a página inicial do app, mas não se convencem a contratar porque:
+- A proposta de valor não fala diretamente às suas dores (comissões altas, erros de pedido, complexidade de implementação).
+- A página não responde às principais objeções (vai dar trabalho? vai custar caro? funciona com o que já uso?).
+- Falta prova social relevante (depoimentos, cases, números) que gere confiança.
+- O preço e o plano não são claros ou estão escondidos.
+- O CTA (chamada para ação) é fraco ou compete com outros links de navegação.
 
 ## 2. Oportunidade
 
-Ao criar uma estrutura canônica de **Rules** (regras de comportamento), **Workflows** (processos automatizados) e **Skills** (capacidades sob demanda) dentro do OpenCode, podemos:
+A oportunidade é capturar restaurantes que estão insatisfeitos com comissões de marketplaces (iFood, Uber Eats) ou que ainda usam cardápios físicos/PDF, perdendo vendas e eficiência. Ao projetar uma página inicial que:
+- Comunique em segundos “aumente vendas diretas sem comissão”
+- Mostre visualmente como o app funciona (QR Code, pedido direto para a cozinha)
+- Exiba depoimentos em vídeo de donos reais
+- Ofereça teste gratuito com baixo risco
 
-- Ter um "cérebro compartilhado" que orienta todos os agentes e desenvolvedores de forma uniforme.
-- Acelerar o ciclo de desenvolvimento, permitindo que o OpenCode execute tarefas complexas com um simples comando.
-- Facilitar a governança técnica, pois as regras passam a ser versionadas junto com o código.
-- Possibilitar que o próprio modelo MiniMax M2.7 crie, refine e salve novas skills baseadas no uso real.
+…o SaaS pode converter um percentual significativamente maior do tráfego orgânico e pago.
 
 ## 3. Personas e Stakeholders
 
 ### 3.1 Personas Primárias
 
-- **Desenvolvedor Full‑Stack (Ana):** Quer se concentrar na lógica de negócio, não em configurações. Precisa que o OpenCode siga automaticamente os padrões do time e que possa invocar habilidades complexas (ex: "criar release") sem memorizar sintaxes.
-- **Tech Lead / Arquiteto (Carlos):** Responsável por manter a qualidade e a consistência técnica. Precisa definir regras que sejam aplicadas de forma obrigatória e poder auditar os workflows utilizados.
-- **Agente de IA do OpenCode (PM-Bot, Dev-Bot):** Consumirá este PRD e a estrutura resultante para orquestrar tarefas. Necessita de instruções claras, semanticamente estruturadas e localizáveis no sistema de arquivos.
+- **Persona 1:** Carlos, dono de restaurante de médio porte
+  - Perfil: 35-50 anos, opera restaurante com 15-30 funcionários, vende por delivery e balcão. Paga ~28% de comissão ao iFood. Tem pouco tempo para aprender tecnologia.
+  - Necessidades: Reduzir custos, manter controle do estoque, evitar erros de pedido, ter um sistema simples e confiável.
+
+- **Persona 2:** Mariana, gerente de food truck
+  - Perfil: 28-40 anos, opera food truck com 3-5 funcionários, alta rotatividade de cardápio. Usa WhatsApp para pedidos.
+  - Necessidades: Atualizar cardápio rapidamente, receber pedidos organizados, não perder vendas por falta de visualização.
 
 ### 3.2 Stakeholders Impactados
 
-- **Equipe de Desenvolvimento:** Será a principal beneficiária da automação e padronização.
-- **Equipe de QA:** Os workflows incluirão etapas de teste e validação, melhorando a previsibilidade das entregas.
-- **OpenCode (sistema):** A implementação correta desta estrutura depende de hooks e convenções que o próprio OpenCode reconhece.
+- Time de marketing (precisa da página para campanhas)
+- Time de vendas (precisa de leads qualificados)
+- Desenvolvedores front-end (implementam a página)
+- Designer de produto (UX/UI)
+- Donos de restaurantes (usuários finais)
 
 ## 4. Resultado Esperado (Alto Nível)
 
-Uma estrutura de diretórios padronizada (`.opencode/`) versionada no repositório, contendo:
-
-- **Rules:** Comportamento padrão do assistente (estilo de código, linguagem preferida, mensagens de commit).
-- **Skills:** Conjuntos de instruções para tarefas específicas (ex: gerar changelog, revisar segurança, criar diagramas).
-- **Workflows:** Processos multi-etapas orquestrados (ex: pipeline de revisão de PR, release automatizado).
-
-Espera-se que, ao abrir o projeto no OpenCode, o assistente automaticamente carregue essas definições e que os comandos (ex: `/release`, `/review`) estejam disponíveis e funcionais. A meta é reduzir o tempo de ciclo de desenvolvimento de uma história padrão de 4h para 2,5h.
+Uma landing page de alta conversão que leva o visitante a agendar uma demonstração ou iniciar um teste gratuito. A página deve ser responsiva (mobile-first), carregar em menos de 2 segundos e seguir a estrutura definida na seção de backlog.
 
 ### 4.1 Fora do Escopo
 
-- Criação de um servidor centralizado de skills (isso será tratado futuramente via plugins ou repositórios compartilhados).
-- Integração com ferramentas de CI/CD externas além do suporte nativo a comandos shell e APIs.
-- Customização da interface gráfica do OpenCode.
+- Blog, área “Sobre nós”, página de suporte ou FAQ completo (links mínimos apenas no rodapé)
+- Integração com gateways de pagamento na página inicial (apenas CTA para teste/demo)
+- Sistema de login/área do cliente (será outra página)
+- Personalização avançada por tipo de restaurante (versão única para todos inicialmente)
 
 ## 5. Critérios de Sucesso
 
 ### 5.1 Critérios de Aceitação do Produto (Checklist)
 
-- [ ] A estrutura de diretórios `.opencode/` está presente na raiz do projeto e versionada.
-- [ ] O arquivo `AGENTS.md` ou as regras em `.opencode/rules/` são carregadas automaticamente pelo OpenCode ao iniciar.
-- [ ] Ao menos **3 skills** documentadas e funcionais estão disponíveis (ex: `git-release`, `pr-review`, `generate-diagram`).
-- [ ] Ao menos **1 workflow** multi-agente está definido e pode ser disparado via comando de barra.
-- [ ] O modelo MiniMax M2.7 consegue, via prompt, criar uma nova skill e salvá-la na pasta correta.
-- [ ] A documentação (`README.md` ou `CONTRIBUTING.md`) explica como utilizar e estender as skills.
+- [ ] **CRIT-01:** A hero section contém headline com “zero comissão” ou “aumente vendas diretas”.
+- [ ] **CRIT-02:** Existem três bullet points respondendo objeções principais (setup rápido, sem comissão, integra com POS/WhatsApp).
+- [ ] **CRIT-03:** O formulário de lead (ou botão CTA) está visível sem necessidade de rolagem (acima da dobra).
+- [ ] **CRIT-04:** Existe uma seção de prova social com contador de clientes (+X restaurantes) e logos de marcas conhecidas.
+- [ ] **CRIT-05:** Há pelo menos um depoimento em vídeo de dono de restaurante real.
+- [ ] **CRIT-06:** A página contém uma demonstração visual (GIF, mockup ou tour interativo) do app funcionando.
+- [ ] **CRIT-07:** Os planos de preço são exibidos de forma clara, separados por estágio do restaurante (Start / Crescer / Escalar).
+- [ ] **CRIT-08:** O CTA final repete o botão principal e inclui elemento de urgência (teste grátis de 14 dias, 1 mês grátis no plano anual).
+- [ ] **CRIT-09:** A página não possui menu de navegação que desvie o foco (apenas links de rodapé essenciais).
+- [ ] **CRIT-10:** A página é totalmente responsiva e testada em dispositivos móveis (Chrome, Safari, Android).
 
 ### 5.2 Métricas de Sucesso (KPIs)
 
-- **Tempo de implementação de história:** Redução de 4h para ≤ 2,5h (medido em 10 histórias após a adoção).
-- **Adoção:** 100% dos desenvolvedores do time utilizando os comandos padronizados em até 2 semanas.
-- **Consistência:** Zero revisões de código rejeitadas por violação de estilo que já estejam cobertas pelas Rules.
-- **Criação de skills:** Pelo menos uma nova skill criada por um desenvolvedor (não só pelo time de plataforma) no primeiro mês.
+- **KPI-01:** Taxa de conversão (visitante → lead = preenchimento de formulário ou clique em “teste grátis”) ≥ 5% nos primeiros 30 dias.
+- **KPI-02:** Tempo médio de carregamento da página (LCP) < 2,5 segundos.
+- **KPI-03:** Taxa de rejeição (bounce rate) < 40%.
+- **KPI-04:** Percentual de leads que agendam demonstração após preencher formulário ≥ 30%.
 
 ## 6. Backlog Inicial (Épicos e Histórias de Usuário)
 
-### Épico 1: Fundação da Estrutura de Configuração
+### Épico 1: Estrutura e Conteúdo da Página Inicial
 
-- **História Exemplo 1:** "Como um **Tech Lead**, quero que exista uma pasta `.opencode/rules/` versionada, para que as regras de estilo de código sejam aplicadas consistentemente."
-  - **Critérios de Aceitação (Exemplo Gherkin):**
-    - **Dado** que o repositório foi clonado, **Quando** abro o projeto no OpenCode, **Então** o assistente segue as regras definidas em `.opencode/rules/coding-style.md`.
-- **História Exemplo 2:** "Como um **Desenvolvedor**, quero poder executar `/skill-create "gerar changelog"` e ter a skill salva em `.opencode/skills/`, para que eu possa reutilizá-la depois."
-  - **Critérios:** O comando gera um arquivo `SKILL.md` válido dentro do diretório nomeado corretamente.
+- **História 1.1:** Como um dono de restaurante, eu quero ver na primeira tela uma proposta clara de aumento de vendas sem comissão para que eu decida continuar lendo.
+  - *Critérios de Aceitação:*
+    - **Dado** que o usuário acessa a página, **Quando** ele visualiza a hero section, **Então** ele vê uma headline com “Aumente suas vendas diretas sem pagar comissão” e um subtítulo explicativo.
+    - **Dado** que o usuário está na hero, **Quando** ele procura o CTA, **Então** o botão “Começar teste gratuito” está laranja/vermelho e visível sem rolagem.
 
-### Épico 2: Implementação de Skills Essenciais
+- **História 1.2:** Como um dono de restaurante cético, eu quero ver respostas diretas para minhas objeções (setup, custo, integração) para confiar na solução.
+  - *Critérios de Aceitação:*
+    - **Dado** que o usuário rola a página, **Quando** ele encontra a seção de três pilares, **Então** cada pilar tem um ícone, um título curto (ex: “Setup em minutos”) e uma frase de benefício.
 
-- **Skill: `git-release`**
-  - **Descrição:** Gera automaticamente uma tag de versão baseada em commits convencionais, cria um changelog e faz o push.
-  - **Formato:** `Como um dev, quero executar /git-release para que uma nova versão seja publicada com documentação automática.`
-- **Skill: `pr-review`**
-  - **Descrição:** Analisa um Pull Request em busca de problemas de segurança, complexidade ciclomática e aderência às regras.
-  - **Formato:** `Como um revisor, quero executar /pr-review #123 para obter um relatório automatizado de qualidade.`
+### Épico 2: Prova Social e Demonstração
 
-### Épico 3: Workflow Multi-Agente de Revisão
+- **História 2.1:** Como um visitante, eu quero ver que outros restaurantes já usam o app para me sentir seguro em contratar.
+  - *Critérios de Aceitação:*
+    - **Dado** que o usuário acessa a página, **Quando** ele rola até o meio, **Então** existe um contador dinâmico mostrando “+2.500 restaurantes” e logos de parceiros.
+    - **Dado** que o usuário clica no depoimento em vídeo, **Então** um modal abre com o vídeo de um dono real falando.
 
-- **Workflow: Revisão Completa de Código**
-  - **Descrição:** Orquestra três agentes: `@style-checker` (rules), `@security-bot` (skill), `@complexity-analyzer` (skill), gerando um relatório consolidado.
-  - **Formato:** `Como um autor de PR, quero que ao marcar um PR como "ready for review", o workflow seja disparado automaticamente.`
+- **História 2.2:** Como um dono de restaurante prático, eu quero ver o app funcionando antes de testar para saber se é fácil de usar.
+  - *Critérios de Aceitação:*
+    - **Dado** que o usuário está na seção de demonstração, **Quando** ele vê o mockup do celular, **Então** um GIF ou vídeo curto mostra o fluxo: cliente escaneia QR Code → vê cardápio → faz pedido → cozinha recebe.
+    - **Dado** que a página é carregada em desktop, **Quando** o usuário passa o mouse sobre o mockup, **Então** o vídeo inicia automaticamente.
+
+### Épico 3: Planos e Chamada Final
+
+- **História 3.1:** Como um dono de restaurante, eu quero ver preços claros e transparentes para decidir se cabe no meu orçamento.
+  - *Critérios de Aceitação:*
+    - **Dado** que o usuário rola até a seção de planos, **Quando** ele visualiza os cards, **Então** cada plano tem nome por estágio (Start / Crescer / Escalar), preço mensal e lista de recursos principais.
+    - **Dado** que o usuário está indeciso, **Quando** ele clica em “Comparar planos”, **Então** uma tabela comparativa é exibida (ou modal).
+
+- **História 3.2:** Como um visitante pronto para contratar, eu quero um CTA final com urgência para não adiar a decisão.
+  - *Critérios de Aceitação:*
+    - **Dado** que o usuário está no final da página, **Quando** ele vê o botão de CTA repetido, **Então** o botão tem texto como “Teste grátis por 14 dias – Cancele a qualquer momento” e um elemento de urgência (ex: “Ative hoje e ganhe 1 mês grátis”).
+    - **Dado** que o usuário clica no CTA, **Então** ele é direcionado para um formulário curto de cadastro (apenas nome, e-mail, telefone, nome do restaurante).
 
 ## 7. Análise Inicial
 
 ### 7.1 Viabilidade Técnica
 
-- O OpenCode suporta nativamente a leitura de `.opencode/` e `AGENTS.md`.
-- O modelo MiniMax M2.7 possui capacidade de geração de arquivos estruturados e pode ser instruído a salvá-los no local correto.
-- A criação de comandos de barra customizados pode ser feita via arquivos de configuração JSON na pasta `commands/`.
+- [X] Viável com arquitetura atual? Sim, página estática com HTML/CSS/JS e integração com formulário (CRM ou ferramenta de leads).
+- [X] Módulos/Serviços afetados? Landing page standalone; pode usar CDN, analytics, vídeo hospedado.
+- [X] Débitos técnicos bloqueantes? Nenhum, desde que haja designer e desenvolvedor front-end.
 
 ### 7.2 Impacto Estimado
 
-- **Esforço de implementação:** 2-3 dias para estruturar as pastas, escrever as primeiras skills e documentar.
-- **Curva de aprendizado:** 1 hora de workshop para o time.
+- [X] Breaking changes? Não, é uma nova página.
+- [X] Migração necessária? Não.
+- [X] Novos dependencies? Player de vídeo (ex: YouTube/Vimeo), biblioteca de animação (opcional).
 
 ### 7.3 Riscos e Mitigações
 
 | Risco | Probabilidade | Impacto | Mitigação |
 | :--- | :--- | :--- | :--- |
-| Regras muito restritivas irritarem devs | Média | Médio | Incluir período de adaptação e canal para sugestões de ajuste nas próprias rules. |
-| Conflito entre rules locais e globais | Baixa | Baixo | Documentar a precedência (projeto > usuário) e permitir sobrescrita explícita. |
-| Skills geradas automaticamente serem de baixa qualidade | Média | Médio | Incluir etapa de validação humana (code review da própria skill) antes de mergear. |
+| A página não converte por mensagem fraca | Média | Alto | Realizar testes A/B de headline e CTAs antes do lançamento |
+| Vídeos de depoimento não estão disponíveis | Alta | Médio | Usar depoimentos textuais com foto e avaliações estrela como fallback |
+| Carregamento lento em dispositivos móveis | Baixa | Alto | Otimizar imagens (WebP, lazy loading), usar CDN |
+| Donos não preenchem formulário por desconfiança | Média | Médio | Garantir selo de segurança e política de privacidade no rodapé |
 
 ### 7.4 Dependências Externas
 
-- Nenhuma dependência externa obrigatória. O funcionamento básico depende apenas do OpenCode e do MiniMax M2.7.
-- Para workflows que disparam ações no GitHub, será necessário configurar um token de acesso (já existente no ambiente de CI).
+- Hospedagem da página (Vercel, Netlify, próprio servidor)
+- Serviço de captura de leads (HubSpot, Typeform, Google Forms ou integração com CRM)
+- Aprovação legal: termos de uso e política de privacidade
+- Fornecimento de logos de clientes parceiros e depoimentos (time de marketing)
 
 ## 8. Urgência e Justificativa
 
-- [x] **Alta**
-- **Justificativa:** O time está crescendo e a falta de padronização já está causando atrasos visíveis nas entregas do Q2. A implementação desta estrutura é um pré-requisito para outros projetos de automação planejados para o próximo mês.
+- [X] **Alta** - Alto impacto no negócio
+- **Justificativa:** O time de marketing planeja campanhas pagas (Google Ads, Instagram) para as próximas 4 semanas. Sem uma página inicial otimizada, o custo por lead será muito alto e a conversão baixa, desperdiçando orçamento e atrasando a aquisição de clientes. Além disso, concorrentes diretos (iFood, GloriaFood) já possuem landing pages agressivas.
 
-## 9. Instruções para Orquestração de Agentes (OpenCode)
+## 9. Instruções para Orquestração de Agentes (se aplicável)
 
-- **Comando de Início:** `/prd implement "Estruturação de Rules, Workflows e Skills"`
-- **Pipeline Esperado:**
-    1. `@pm` lê este PRD e gera um backlog detalhado em `backlog.md`.
-    2. `@architect` define a estrutura exata dos arquivos `.opencode/` e valida as dependências.
-    3. `@dev` implementa as pastas, arquivos de exemplo e skills iniciais utilizando TDD (testando os comandos manualmente).
-    4. `@critic` revisa se a estrutura está conforme as convenções do OpenCode e se as skills são acionáveis.
-- **Contexto Obrigatório:** Os agentes devem ler `OPENCODE.md` (se existir) e `AGENTS.md` antes de iniciar qualquer modificação.
-- **Práticas Obrigatórias:**
-    - **Refinamento contínuo:** As histórias geradas devem ser validadas com a técnica **SPIDR** (Spike, Path, Iterate, Demo, Retro).
-    - **Validação INVEST:** Cada história deve ser Independente, Negociável, Valiosa, Estimável, Pequena e Testável.
-    - **TDD:** Para skills que geram código ou comandos, os agentes devem simular a execução e validar a saída esperada.
+- **Comando de Início:** `npm run dev` ou `yarn start` (para ambiente de desenvolvimento da landing page)
+- **Pipeline Esperado:** Design → Revisão UX → Implementação HTML/CSS/JS → Testes responsivos → A/B test (otimização)
+- **Contexto Obrigatório:** Este PRD, arquivos de design (Figma), copywriting aprovado, assets de imagens/vídeos
+- **Práticas Obrigatórias:** INVEST para histórias, TDD para componentes interativos (ex: modal de vídeo), mobile-first
 
 ## 10. Definição de Pronto (DoR e DoD)
 
-### Definition of Ready (DoR) para uma História
+### 10.1 Definition of Ready (DoR)
 
-- [ ] A história está no formato "Como... quero... para que...".
-- [ ] Os critérios de aceitação estão escritos em Gherkin (Dado-Quando-Então).
-- [ ] A história está estimada (S, M, L) e priorizada no backlog.
-- [ ] Não há dependências externas não resolvidas.
-- [ ] A história foi compreendida e aceita pelo agente `@dev` designado.
+Uma história está "pronta" quando:
 
-### Definition of Done (DoD) para o Incremento
+- [ ] Formato: "Como um [ator], eu quero [ação] para que [benefício]"
+- [ ] Atende critérios INVEST (Independente, Negociável, Valiosa, Estimável, Pequena, Testável)
+- [ ] Critérios de aceitação em Given-When-Then
+- [ ] Estimada pelo time (ex: 3 pontos)
+- [ ] Sem dependências bloqueantes
 
-- [ ] A estrutura de diretórios foi criada e commitada.
-- [ ] As skills implementadas foram testadas manualmente (ex: `/git-release --dry-run` retorna sucesso).
-- [ ] O código da skill ou workflow foi revisado por um par humano ou pelo agente `@critic`.
-- [ ] A documentação (`README.md` ou `docs/skills.md`) foi atualizada com exemplos de uso.
-- [ ] O time foi notificado sobre a nova funcionalidade.
+### 10.2 Definition of Done (DoD)
+
+Uma tarefa está "pronta" quando:
+
+- [ ] Código implementado e revisado por pelo menos outro membro do time
+- [ ] Testes passando (testes manuais de navegadores e dispositivos)
+- [ ] Cobertura >= 85% (quando aplicável a componentes JavaScript)
+- [ ] Segue padrões em AGENTS.md (se houver)
+- [ ] Documentação atualizada (README da landing page)
+- [ ] Change arquivada no OpenSpec (ou sistema de versionamento)
 
 ## 11. Referências
 
-- **Template de PRD utilizado:** Baseado no modelo melhorado para desenvolvimento com agentes de IA.
-- **Especificação OpenCode Skills:** [Link para documentação oficial](https://opencode.ai/docs/skills)
-- **Backlog do Projeto:** [Link para o board no Jira/GitHub Projects]
-- **Issue relacionada:** #456 - "Padronizar configurações do OpenCode"
+- **Template PRD:** Este documento
+- **Issues Relacionadas:** #LAND-01 (hero section), #LAND-02 (prova social), #LAND-03 (planos)
+- **Documentação:** Guia de estilo da marca, personas (arquivo em anexo), pesquisa de concorrência (análise de iFood, GloriaFood, Craver)

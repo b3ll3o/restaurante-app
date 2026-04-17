@@ -11,6 +11,11 @@
 - Storage: Supabase Storage
 - Notificações: WhatsApp Business API (Graph API v18.0)
 
+**Princípios de Arquitetura (REGRAS OBRIGATÓRIAS):**
+- **Mobile-First**: Todo desenvolvimento começa em mobile, escala para desktop
+- **Offline-First**: Aplicação funciona offline com sincronização posterior
+- **详见**: `.openspec/specs/menulink-quality-rules.md` seções 3.5 e 3.6
+
 **Arquitetura de Camadas:**
 ```
 ┌─────────────────────────────────────┐

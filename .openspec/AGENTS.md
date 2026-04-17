@@ -25,9 +25,10 @@ O projeto MenuLink utiliza uma arquitetura multi-agente para execução do fluxo
 ### Fluxo de Interação
 
 ```
-Orchestrator → Oracle → Deep Agent/Coder → verification → archive
-    ↓             ↓            ↓                ↓
-  proposal      spec        tasks           verify-report
+Orchestrator → Oracle → Deep Agent/Coder → verification → archive → post-archive-review
+    ↓             ↓            ↓                ↓              ↓                    ↓
+  proposal      spec        tasks           verify-report    ↓              PRONTO/NOVA CHANGE
+                                                           (obrigatório)
 ```
 
 ### Skills Disponíveis
@@ -42,6 +43,7 @@ Orchestrator → Oracle → Deep Agent/Coder → verification → archive
 | `sdd-apply` | Deep Agent | Executar tasks SDD |
 | `sdd-verify` | Deep Agent | Verificar implementação contra specs |
 | `sdd-archive` | Orchestrator | Arquivar change concluída |
+| `post-archive-review` | Orchestrator | Revisão pós-archive: build, testes, docs (obrigatório) |
 | `plan-reviewer` | Oracle | Revisar planos para blockers |
 | `requirements-interview` | Orchestrator | Descoberta de requisitos |
 | `executing-plans` | Deep Agent | Executar listas de tarefas |
@@ -58,9 +60,10 @@ Orchestrator → Oracle → Deep Agent/Coder → verification → archive
 ├── docs/ # Documentação adicional
 │   └── ai-workflow.md # Workflow de desenvolvimento IA
 ├── specs/ # Especificações ativas (Source of Truth)
+│ ├── menulink-rules.md # **FONTE CENTRALIZADA** (todas as regras)
 │ ├── menulink-specification.md # Regras de negócio (RFC 2119)
 │ ├── menulink-technical-plan.md # Plano técnico e arquitetura
-│ ├── menulink-quality-rules.md # Regras de qualidade
+│ ├── menulink-quality-rules.md # Regras de qualidade (legacy)
 │ ├── menulink-modules-documentation.md # Documentação de módulos
 │ ├── menulink-unit-tests-checklist.md # Checklist de testes unitários
 │ └── menulink-acceptance-tests.feature # Cenários BDD (Gherkin)
@@ -239,7 +242,7 @@ changes/
 Fluxo completo do SDD (Specification-Driven Development):
 
 ```
-PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive
+PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive → post-archive-review
 ```
 
 #### Etapas Detalhadas
@@ -255,6 +258,7 @@ PRD.md → Análise → proposal → spec → design → tasks → implementatio
 | 7 | implementation | Código + Testes + Documentação | CI/CD |
 | 8 | verification | Compliance report (código + documentação) | Deep agent |
 | 9 | archive | Consolidado e arquivado | Tech Lead |
+| 10 | post-archive-review | Verificação: build, testes, docs, consolidação specs | Obrigatório |
 
 #### Gates de Aprovação
 
@@ -305,7 +309,7 @@ cat .openspec/changes/{change-name}/status.md
 ### Fluxo Completo SDD
 
 ```
-PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive
+PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive → post-archive-review
 ```
 
 ### 1. PRD.md (Product Requirements Document)
@@ -391,6 +395,20 @@ Consolidar mudanças após verificação completa:
 # Mover para archive
 mv .openspec/changes/minha-mudanca .openspec/changes/archive/{data}/minha-mudanca
 ```
+
+### 8. Post-Archive Review (OBRIGATÓRIO)
+
+**Após archivar, DEVE executar `post-archive-review` skill antes de iniciar nova change.**
+
+Verificações:
+- Build, lint, type check passam
+- Testes unitários passam (cobertura ≥80%)
+- E2E fluxos críticos passam
+- AGENTS.md atualizado nos módulos
+- BDD scenarios atualizados
+- Spec principal consolidada
+
+Consulte `.openspec/templates/post-archive-review-template.md` para workflow completo.
 
 ---
 

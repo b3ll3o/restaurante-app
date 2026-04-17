@@ -19,7 +19,8 @@ tests/e2e/
 ├── admin/
 │   └── login.spec.ts       # Fluxos de autenticação admin
 ├── public/
-│   └── checkout.spec.ts    # Fluxo de checkout público
+│   ├── checkout.spec.ts    # Fluxo de checkout público
+│   └── offline.spec.ts     # Testes offline-first
 ├── support/
 │   └── page-objects/
 │       └── index.ts        # Page Objects reutilizáveis
@@ -106,6 +107,12 @@ export class NomePage {
 | 4 | Adicionar produto ao carrinho | public | ✅ `public/checkout.spec.ts` |
 | 5 | Checkout completo | public | ✅ `public/checkout.spec.ts` |
 | 6 | Validação de campos obrigatórios | public | ✅ `public/checkout.spec.ts` |
+| 7 | Indicador offline quando desconectado | public | ✅ `public/offline.spec.ts` |
+| 8 | Carrinho funciona offline | public | ✅ `public/offline.spec.ts` |
+| 9 | Carrinho persiste após reload offline | public | ✅ `public/offline.spec.ts` |
+| 10 | Toast de reconexão | public | ✅ `public/offline.spec.ts` |
+| 11 | Service Worker registrado | public | ✅ `public/offline.spec.ts` |
+| 12 | localStorage persiste carrinho | public | ✅ `public/offline.spec.ts` |
 
 ### Fluxos a Implementar
 
@@ -273,6 +280,8 @@ await expect(page.locator('.message')).toBeVisible();
 - [x] Adição ao carrinho
 - [x] Checkout completo
 - [x] Validação de campos
+- [x] Offline-First (indicador, carrinho, localStorage)
+- [x] Service Worker cache
 - [ ] Cadastro admin
 - [ ] CRUD categorias
 - [ ] CRUD produtos

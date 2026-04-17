@@ -164,4 +164,7 @@ describe('CartContext', () => {
       consoleSpy.mockRestore();
     });
   });
+
+  // Nota: Testes de localStorage devem ser feitos em E2E
+  // O jsdom não implementa localStorage corretamente
 });
