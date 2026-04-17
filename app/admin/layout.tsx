@@ -15,15 +15,18 @@ export default function AdminLayout({
   const [isLoading, setIsLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>();
   const router = useRouter();
+
+  // ✅ useMemo para referência estável
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      if (typeof window !== "undefined" && window.location.pathname === "/admin/login") {
-        setIsLoading(false);
-        return;
-      }
+    // ✅ Verificação NO INÍCIO para evitar redirect loop
+    if (typeof window !== "undefined" && window.location.pathname === "/admin/login") {
+      setIsLoading(false);
+      return;
+    }
 
+    const checkAuth = async () => {
       try {
         const { data: { session } } = await Promise.race([
           supabase.auth.getSession(),
@@ -56,7 +59,8 @@ export default function AdminLayout({
     });
 
     return () => subscription.unsubscribe();
-  }, [router, supabase.auth]);
+    // ✅ REMOVIDO: supabase.auth da dependency array
+  }, [router, supabase]);
 
   if (isLoading) {
     return (
