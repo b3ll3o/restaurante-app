@@ -15,7 +15,8 @@ Este documento descreve todas as **pipelines** (fluxos de trabalho automatizados
 2. [Pipeline CI/CD (GitHub Actions)](#2-pipeline-cicd-github-actions)
 3. [Pipeline Post-Archive Review](#3-pipeline-post-archive-review)
 4. [Pipeline Error Handling (RCA)](#4-pipeline-error-handling-rca)
-5. [Pipeline Code Quality Gates](#5-pipeline-code-quality-gates)
+5. [Pipeline PRD de Correção (Bug Fix PRD)](#4b-pipeline-prd-de-correção-bug-fix-prd)
+6. [Pipeline Code Quality Gates](#5-pipeline-code-quality-gates)
 
 ---
 
@@ -567,6 +568,218 @@ Erro Reportado
 
 ---
 
+## 4B. Pipeline PRD de Correção (Bug Fix PRD)
+
+### Descrição
+
+Pipeline específico para PRDs de correção de bugs. **PRDs de correção DEVEM seguir o fluxo RCA antes de implementar**.
+
+### Gatilho (Trigger)
+
+- Bug reportado que requer PRD
+- Erro com severidade High ou Critical
+- Funcionalidade quebrada
+
+### Fluxo
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│               PIPELINE PRD DE CORREÇÃO (BUG FIX PRD)                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+  │ Bug          │───▶│ RCA Criado   │───▶│ PRD Criado   │
+  │ Reportado    │    │ (obrigatório)│    │ (type=fix)  │
+  └──────────────┘    └──────────────┘    └──────────────┘
+                                                    │
+         ┌──────────────────────────────────────────┘
+         │
+         ▼
+  ┌─────────────────────────────────────────────────────────────┐
+  │                 REGRAS OBRIGATÓRIAS                        │
+  │  1. RCA deve existir ANTES de criar PRD                  │
+  │  2. PRD deve referenciar o RCA ID                        │
+  │  3. PRD.status = "approved" automaticamente (bug = alta) │
+  │  4. Implementação pode começar após RCA + PRD ready       │
+  └─────────────────────────────────────────────────────────────┘
+         │
+         ▼
+  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+  │ Implementação │───▶│ Correção    │───▶│ Validação    │
+  │              │    │ Aplicada    │    │              │
+  └──────────────┘    └──────────────┘    └──────────────┘
+         │                                       │
+         └───────────────────────────────────────┘
+                             │
+                             ▼
+  ┌─────────────────────────────────────────────────────────────┐
+  │                    ATUALIZAÇÕES OBRIGATÓRIAS                │
+  │  1. RCA.status = "Completed"                              │
+  │  2. RCA.Seção 8 = "Correção Aplicada" atualizada        │
+  │  3. PRD movido para backlog/archive/ (REGRA 6-8)         │
+  │  4. Commit menciona RCA ID e PRD ID                      │
+  └─────────────────────────────────────────────────────────────┘
+```
+
+### Regras Obrigatórias (REGRA CRÍTICA)
+
+#### REGRA 1: RCA Primeiro
+
+**Antes de criar PRD de correção, DEVE existir RCA:**
+
+```
+❌ ERRADO:
+PRD criado → implementação → correção aplicada → RCA criado
+
+✅ CORRETO:
+RCA criado → PRD criado (referenciando RCA) → implementação → correção aplicada
+```
+
+#### REGRA 2: PRD deve Referenciar RCA
+
+No PRD, seção de rastreabilidade:
+
+```markdown
+## Rastreabilidade
+
+| Campo | Valor |
+|-------|-------|
+| RCA ID | RCA-YYYY-MM-DD-NNN |
+| Change ID | bug-fix-{slug} |
+| Commit | TBD |
+```
+
+#### REGRA 3: Atualização do RCA
+
+Após implementação, **obrigatório** atualizar o RCA:
+
+```markdown
+## 8. Correção Aplicada
+
+[Descrição da correção implementada com arquivos modificados]
+
+## Status
+
+| Campo | Valor |
+|-------|-------|
+| Status | Completed |
+| Commit | {hash} |
+| Data Finalização | {YYYY-MM-DD HH:MM} |
+```
+
+#### REGRA 4: Arquivamento do PRD
+
+PRD de correção **DEVE** ser arquivado seguindo REGRA 6-8 do backlog:
+
+```
+PRD (backlog/prds/) → Após implementação → PRD movido para backlog/archive/
+```
+
+### Critérios de Aceitação
+
+| Critério | Descrição |
+|----------|----------|
+| RCA existe antes do PRD | RCA-YYYY-MM-DD-NNN.md em `.openspec/root-causes/` |
+| PRD referencia RCA ID | Campo `RCA ID` preenchido no PRD |
+| RCA.status = Completed | Após implementação |
+| PRD arquivado | Em `.openspec/backlog/archive/` |
+| Commit menciona RCA | Mensagem: `fix: ... (RCA-YYYY-MM-DD-NNN, PRD-XXX)` |
+
+### Diretórios
+
+```
+.openspec/
+├── root-causes/
+│   └── RCA-YYYY-MM-DD-NNN.md    # RCA obrigatório
+└── backlog/
+    └── prds/
+        └── XXX-YYYY-MM-DD-bug-fix/   # PRD de correção
+            └── prd.md
+```
+
+### Template PRD de Correção
+
+```markdown
+# PRD: {order} - Fix {Título do Bug}
+
+**ID:** {order}-{YYYY-MM-DD}-{slug}
+**Status:** approved
+**Phase:** bug-fix
+**Tipo:** Correção de Bug
+**RCA ID:** RCA-YYYY-MM-DD-NNN  <!-- Obrigatório -->
+
+---
+
+## 0. Problema
+
+### 0.1 Descrição do Bug
+[Descrição clara do bug]
+
+### 0.2 RCA Associado
+- **ID:** RCA-YYYY-MM-DD-NNN
+- **Severidade:** Critical | High
+
+---
+
+## 1. Causa Raiz (do RCA)
+
+[Resumir causa raiz do RCA]
+
+---
+
+## 2. Correção Proposta
+
+[Descrição da correção técnica]
+
+---
+
+## 3. Critérios de Aceitação
+
+- [ ] CA-01: Bug corrigido
+- [ ] CA-02: Sem side effects
+- [ ] CA-03: Build passa
+- [ ] CA-04: Lint passa
+- [ ] CA-05: Testes passam
+```
+
+### Integração com Outras Pipelines
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    PIPELINE PRDs DE CORREÇÃO                                │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────┐
+  │ Bug Reportado│
+  └──────────────┘
+         │
+         ▼
+  ┌──────────────┐    ┌──────────────┐
+  │ RCA Criado    │───▶│ PRD Criado   │
+  │ (obrigatório)│    │ (type=fix)  │
+  └──────────────┘    └──────────────┘
+                            │
+                            ▼
+                    ┌──────────────┐
+                    │ Implementação│
+                    └──────────────┘
+                            │
+         ┌──────────────────┼──────────────────┐
+         ▼                  ▼                  ▼
+  ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+  │ RCA Update   │    │ PRD Archive  │    │ Commit +     │
+  │ (Seção 8)   │    │ (backlog/)  │    │ Push         │
+  └──────────────┘    └──────────────┘    └──────────────┘
+                                                    │
+                                                    ▼
+                                            ┌──────────────┐
+                                            │ CI/CD        │
+                                            │ (automático) │
+                                            └──────────────┘
+```
+
+---
+
 ## 5. Pipeline Code Quality Gates
 
 ### Descrição
@@ -646,10 +859,11 @@ npx tsc --noEmit      # TypeScript rápido
 
 | Pipeline | Trigger | Executor | Frequência |
 |----------|---------|---------|------------|
-| **SDD** | Nova change | Orchestrator + Deep | A cada mudança significativa |
+| **SDD** | Nova change (feature) | Orchestrator + Deep | A cada mudança significativa |
 | **CI/CD** | Push/PR | GitHub Actions | A cada push |
 | **Post-Archive** | Change arquivada | Orchestrator | A cada change concluída |
 | **RCA** | Bug reportado | Orchestrator + Deep | A cada erro |
+| **PRD Correção** | Bug que requer PRD | Orchestrator + Deep | A cada bug fix |
 | **Quality Gates** | Pre-commit | Dev (local) | A cada commit |
 
 ---
@@ -705,6 +919,6 @@ npx tsc --noEmit      # TypeScript rápido
 
 ---
 
-**Versão**: 1.0
+**Versão**: 1.1
 **Última Atualização**: 2026-04-17
 **Autor**: AI Agent

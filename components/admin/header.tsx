@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 interface HeaderProps {
   userEmail?: string;
@@ -11,7 +11,7 @@ interface HeaderProps {
 
 export function Header({ userEmail }: HeaderProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const handleSignOut = async () => {
     setIsLoading(true);
