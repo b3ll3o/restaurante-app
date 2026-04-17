@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sidebar } from "@/components/admin/sidebar";
@@ -15,7 +15,7 @@ export default function AdminLayout({
   const [isLoading, setIsLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>();
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     const checkAuth = async () => {
