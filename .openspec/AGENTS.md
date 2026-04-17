@@ -21,7 +21,7 @@ O módulo **OpenSpec** contém todas as especificações e artefatos do SDD (Spe
 │ ├── menulink-unit-tests-checklist.md # Checklist de testes unitários
 │ └── menulink-acceptance-tests.feature # Cenários BDD (Gherkin)
 ├── templates/ # Templates OpenSpec
-│ ├── prb-template.md # Template de PRB.md
+│ ├── prd-template.md # Template de PRD.md
 │ ├── design-template.md # Template de design.md
 │ └── tasks-template.md # Template de tasks.md
 └── changes/ # Mudanças em andamento

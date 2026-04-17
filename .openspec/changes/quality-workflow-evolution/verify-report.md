@@ -23,7 +23,7 @@
 
 | Template | Status | Evidência |
 |----------|--------|-----------|
-| `prb-template.md` | ✅ Criado | `.openspec/templates/prb-template.md` |
+| `prd-template.md` | ✅ Criado | `.openspec/templates/prd-template.md` |
 | `design-template.md` | ✅ Criado | `.openspec/templates/design-template.md` com TDD/BDD/ATDD/DDD |
 | `tasks-template.md` | ✅ Criado | `.openspec/templates/tasks-template.md` com decomposição DDD |
 

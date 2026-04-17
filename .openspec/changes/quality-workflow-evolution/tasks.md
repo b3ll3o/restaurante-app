@@ -8,7 +8,7 @@
 
 ### Fase 1: Templates OpenSpec
 
-- [x] 1.1: Criar `.openspec/templates/prb-template.md` com estrutura de PRB (título, problema/oportunidade, público-alvo, resultado esperado, critérios de sucesso)
+- [x] 1.1: Criar `.openspec/templates/prd-template.md` com estrutura de PRD (título, problema/oportunidade, público-alvo, resultado esperado, critérios de sucesso)
 - [x] 1.2: Criar `.openspec/templates/design-template.md` com seções obrigatórias de TDD, BDD, ATDD, DDD
 - [x] 1.3: Criar `.openspec/templates/tasks-template.md` com decomposição DDD (Infraestrutura de Testes, Domínio, Aplicação, Infraestrutura, Interface, Documentação)
 - [x] 1.4: Atualizar `.openspec/AGENTS.md` para refletir novos templates e fluxo completo

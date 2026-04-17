@@ -384,7 +384,7 @@ Uma tarefa só é `[x]` quando:
 
 ### Componentes a Criar/Modificar
 
-1. **Template PRB.md** (novo) - `.openspec/templates/prb-template.md`
+1. **Template PRD.md** (novo) - `.openspec/templates/prd-template.md`
 2. **Template design.md** (atualizado) - `.openspec/templates/design-template.md`
 3. **Template tasks.md** (atualizado) - `.openspec/templates/tasks-template.md`
 4. **Atualização do AGENTS.md principal** - fluxo de documentação
@@ -583,7 +583,7 @@ Funcionalidade: Criação de Pedido
 
 | Arquivo | Descrição |
 |---------|-----------|
-| `.openspec/templates/prb-template.md` | Template de PRB.md |
+| `.openspec/templates/prd-template.md` | Template de PRD.md |
 | `.openspec/templates/design-template.md` | Template atualizado de design.md com seções de qualidade |
 | `.openspec/templates/tasks-template.md` | Template atualizado de tasks.md com decomposição DDD |
 
