@@ -5,7 +5,8 @@ test.describe('Checkout', () => {
   // Slug de exemplo - em teste real, seria criado via API ou fixture
   const testRestaurantSlug = 'restaurante-teste';
 
-  test.beforeEach(async ({ page }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  test.beforeEach(async ({ page: _page }) => {
     // Skip se não houver restaurante de teste
     test.skip(process.env.SKIP_E2E_PUBLIC === 'true', 'Requer restaurante de teste');
   });

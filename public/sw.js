@@ -3,7 +3,6 @@
  * Implementa cache offline-first conforme regras em .openspec/specs/menulink-rules.md
  */
 
-const CACHE_NAME = "menulink-v1";
 const STATIC_CACHE_NAME = "menulink-static-v1";
 const DYNAMIC_CACHE_NAME = "menulink-dynamic-v1";
 
@@ -131,7 +130,8 @@ async function networkFirstStrategy(request, cacheName) {
       cache.put(request, response.clone());
     }
     return response;
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_error) {
     // Network failed, try cache
     const cached = await caches.match(request);
     if (cached) {

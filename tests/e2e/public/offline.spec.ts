@@ -12,7 +12,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Offline-First', () => {
   const testRestaurantSlug = 'restaurante-teste';
 
-  test.beforeEach(async ({ page }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  test.beforeEach(async ({ page: _page }) => {
     test.skip(process.env.SKIP_E2E_PUBLIC === 'true', 'Requer restaurante de teste');
   });
 
@@ -104,7 +105,6 @@ test.describe('Offline-First', () => {
 
     // Verifica toast ou indicador de volta online
     // O toast pode ter timing variável
-    const toast = page.locator('[class*="toast"]');
     
     // Aceita tanto sucesso quanto indicador de volta online
     // Se não aparecer toast, o teste ainda passa pois o indicador offline sumiu
@@ -180,7 +180,8 @@ test.describe('Service Worker Cache', () => {
 test.describe('Carrinho localStorage', () => {
   const testRestaurantSlug = 'restaurante-teste';
 
-  test.beforeEach(async ({ page }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  test.beforeEach(async ({ page: _page }) => {
     test.skip(process.env.SKIP_E2E_PUBLIC === 'true', 'Requer restaurante de teste');
   });
 

@@ -5,7 +5,7 @@
 Este documento é a **fonte centralizada de todas as regras** do projeto MenuLink. Todas as implementações, decisões técnicas e processos derivam deste documento.
 
 **Última Atualização**: 2026-04-17
-**Versão**: 1.0
+**Versão**: 1.1
 
 ---
 
@@ -1106,6 +1106,209 @@ Gates de Aprovação:
 3. **NUNCA** implementar sem spec aprovada
 4. **verification = código + documentação** (não é só código)
 5. **POST-ARCHIVE-REVIEW é obrigatório** após cada archive
+
+---
+
+8. [Regras de Commits](#8-regras-de-commits)
+9. [Fluxos Procedimentais](#9-fluxos-procedimentais)
+10. [Regras de Reutilização de Código](#10-regras-de-reutilização-de-código)
+
+---
+
+## 10. Regras de Reutilização de Código
+
+O princípio fundamental é: **quanto menos código, menos manutenção**. Cada linha de código é uma liability. Antes de escrever código novo, verificar se já existe solução no codebase.
+
+### 10.1 Princípios Fundamentais
+
+| Princípio | Descrição | Aplicação |
+|-----------|-----------|-----------|
+| **DRY** | Don't Repeat Yourself | Qualquer lógica duplicada deve ser extraída |
+| **YAGNI** | You Aren't Gonna Need It | Não implementar funcionalidades "por via das dúvidas" |
+| **KISS** | Keep It Simple, Stupid | Preferir soluções simples às complexas |
+| **Single Source of Truth** | Cada conceito existe em um único lugar | Types, constants, utils |
+
+### 10.2 Hierarquia de Componentes
+
+**Ordem de prioridade (do mais reutilizável ao mais específico):**
+
+```
+1. shadcn/ui primitives     (button, input, dialog, table)
+        │
+        ▼
+2. components/ui/            (offline-indicator, custom components)
+        │
+        ▼
+3. lib/utils.ts             (formatPrice, generateSlug, isValidWhatsApp)
+        │
+        ▼
+4. lib/constants.ts         (ORDER_STATUS, STATUS_LABELS, LOCALE)
+        │
+        ▼
+5. hooks/                   (useOnlineStatus - browser APIs)
+        │
+        ▼
+6. context/                 (CartContext - estado complexo)
+        │
+        ▼
+7. components/{module}/     (admin/*, landing/* - específicos)
+```
+
+### 10.3 Regras de Reutilização
+
+#### 10.3.1 Antes de Criar Componente
+
+**Verificar SE existe:**
+
+| Recurso | Onde Procurar |
+|---------|---------------|
+| Componente UI | `components/ui/` |
+| Utilidade | `lib/utils.ts` |
+| Hook | `hooks/` |
+| Type | `types/` |
+| Constant | `lib/constants.ts` |
+| Feature | `components/landing/`, `components/admin/` |
+
+**Se existir, USAR. Se não existir, verificar se deve ser criado.**
+
+#### 10.3.2 Ao Criar Componente Novo
+
+1. **É realmente novo?** Ou é variação de algo existente?
+2. **Pode ser genérico?** Evitar código específico se pode ser reutilizado
+3. **Tem apenas uma responsabilidade?** Single Responsibility Principle
+4. **Pode ser compuesto?** Preferir composição a herança
+
+#### 10.3.3 Ao Duplicar Código
+
+**ANTES de copiar código, considerar:**
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  QUERO COPIAR ESTE CÓDIGO                                 │
+│                                                             │
+│  ❌ 1. Copiar e colar                                     │
+│  ❌ 2. Fazer similar                                       │
+│                                                             │
+│  ✅ 3. Extrair para função/utils                            │
+│  ✅ 4. Criar componente genérico                           │
+│  ✅ 5. Usar composição (children, slots)                   │
+│  ✅ 6. Mover para camada compartilhada (lib/, hooks/)      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 10.4 Padrões de Reutilização
+
+#### 10.4.1 Componentes Genéricos
+
+```tsx
+// ❌ RUIM: Componente específico demais
+function PizzaOrderCard() {
+  return (
+    <div className="pizza-card">
+      <h3>{pizza.name}</h3>
+      <span className="pizza-price">R$ {pizza.price}</span>
+    </div>
+  );
+}
+
+// ✅ BOM: Componente genérico reutilizável
+function ProductCard({ product, formatPrice }: ProductCardProps) {
+  return (
+    <div className="product-card">
+      <h3>{product.name}</h3>
+      <span className="product-price">{formatPrice(product.price)}</span>
+    </div>
+  );
+}
+```
+
+#### 10.4.2 Props como Extensão
+
+```tsx
+// ❌ RUIM: Props fixos
+function ButtonSubmit() {
+  return <button className="btn btn-primary">Enviar</button>;
+}
+
+// ✅ BOM: Props reutilizáveis com defaults
+function Button({
+  children,
+  variant = 'default',
+  size = 'md',
+  className,
+  ...props
+}: ButtonProps) {
+  return (
+    <button
+      className={cn('btn', `btn-${variant}`, `btn-${size}`, className)}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+```
+
+#### 10.4.3 Custom Hooks para Lógica Reutilizável
+
+```tsx
+// ❌ RUIM: Lógica dentro do componente
+function MenuPage() {
+  const [isOnline, setIsOnline] = useState(true);
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+  // ... resto do componente
+}
+
+// ✅ BOM: Hook reutilizável
+function MenuPage() {
+  const isOnline = useOnlineStatus();
+  // ... resto do componente
+}
+```
+
+### 10.5 Critérios de Avaliação
+
+| Pergunta | Se SIM | Se NÃO |
+|----------|--------|--------|
+| Já existe algo similar? | Usar existente | Continuar avaliação |
+| Pode ser genérico? | Criar genérico | Criar específico |
+| É complexidade necessária? | Manter | Simplificar |
+| Há duplicação? | Extrair | Manter |
+
+### 10.6 Checklist de Reutilização
+
+**Antes de criar novo código:**
+
+- [ ] Procurei em `components/ui/`?
+- [ ] Procurei em `lib/utils.ts`?
+- [ ] Procurei em `lib/constants.ts`?
+- [ ] Procurei em `hooks/`?
+- [ ] Procurei em `types/`?
+- [ ] O código pode ser genérico?
+- [ ] Posso usar composição ao invés de duplicação?
+- [ ] Existe prop/interface que já uso e posso estender?
+
+**Se respondeu SIM a qualquer "procurei", USAR o existente.**
+
+### 10.7 Exceptions
+
+**Quando NÃO aplicar reutilização:**
+
+| Situação | Exemplo | Motivo |
+|----------|---------|--------|
+| Performance crítica | Loop emero em 100k items | Overhead de abstração |
+| Código temporário | Quick fix | Técnico debt aceito |
+| Contexto muito específico | Landing page única | Não compensa abstrair |
+| Abração adiciona complexidade | 2 linhas duplicadas | KISS |
 
 ---
 
