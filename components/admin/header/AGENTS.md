@@ -50,6 +50,71 @@ interface HeaderProps {
 
 ---
 
+## Uso
+
+### Exemplo Básico
+
+```tsx
+import { Header } from "@/components/admin/header";
+
+export default function AdminPage() {
+  return (
+    <Header />
+  );
+}
+```
+
+### Exemplo com Email do Usuário
+
+```tsx
+import { Header } from "@/components/admin/header";
+
+export default function AdminPage() {
+  const userEmail = "admin@restaurante.com";
+  
+  return (
+    <Header userEmail={userEmail} />
+  );
+}
+```
+
+### Uso no Layout Admin
+
+```tsx
+// app/admin/layout.tsx
+"use client";
+
+import { Header } from "@/components/admin/header";
+import { Sidebar } from "@/components/admin/sidebar";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const [userEmail, setUserEmail] = useState<string>();
+  const supabase = createClient();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email);
+    });
+  }, []);
+
+  return (
+    <div className="flex h-screen bg-background">
+      <Sidebar />
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Header userEmail={userEmail} />
+        <main className="flex-1 overflow-y-auto p-6">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
 ## Arquitetura
 
 ```typescript
@@ -111,6 +176,6 @@ export function Header({ userEmail }: HeaderProps) {
 
 ---
 
-**Versão**: 1.0
-**Última Atualização**: 2026-04-16
+**Versão**: 1.1
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

@@ -2,8 +2,8 @@
 
 ## Visão Geral
 
-**Contexto**: `context/cart-context/CartContext`
-**Responsabilidade**: Gerenciamento de estado do carrinho de compras com persistência em localStorage
+**Contexto**: `context/cart-context.tsx`
+**Responsabilidade**: Gerenciamento de estado do carrinho de compras com suporte a multi-tenant (restaurantId)
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Next.js 16.2.3 + React 19 + TypeScript
 
@@ -12,36 +12,34 @@
 ## Estrutura de Diretórios
 
 ```
-context/cart-context/
-├── CartContext.tsx    # Provider e contexto
-└── AGENTS.md          # Esta documentação
+context/
+├── cart-context.tsx # Provider e contexto
+└── AGENTS.md # Esta documentação
 ```
 
 ---
 
 ## Responsabilidade
 
-Gerencia o estado do carrinho de compras do cliente. Mantém persistência em localStorage para que o carrinho não seja perdido ao recarregar a página.
+Gerencia o estado do carrinho de compras do cliente com suporte a restaurantId para isolamento por restaurante.
 
 ### Interface Pública
 
 ```typescript
 interface CartItem {
-  id: string;
-  productId: string;
-  name: string;
-  price: number;
+  product: Product;
   quantity: number;
 }
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (product: Omit<CartItem, 'id' | 'quantity'>) => void;
-  removeItem: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  restaurantId: string | null;
+  addItem: (product: Product, restaurantId: string) => void;
+  removeItem: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  getTotal: () => number;
-  itemCount: number;
+  totalItems: number;
+  totalPrice: number;
 }
 ```
 
@@ -53,87 +51,106 @@ interface CartContextType {
 </CartProvider>
 ```
 
+### Hook
+
+```typescript
+const {
+  items,
+  restaurantId,
+  addItem,
+  removeItem,
+  updateQuantity,
+  clearCart,
+  totalItems,
+  totalPrice,
+} = useCart();
+```
+
 ---
 
 ## Arquitetura
 
+### Estado
+
 ```typescript
-// context/cart-context/CartContext.tsx
-"use client";
-
-import { createContext, useContext, useReducer, useEffect } from "react";
-
-type CartState = {
+interface CartState {
   items: CartItem[];
-};
-
-type CartAction =
-  | { type: "ADD_ITEM"; payload: CartItem }
-  | { type: "REMOVE_ITEM"; payload: string }
-  | { type: "UPDATE_QUANTITY"; payload: { id: string; quantity: number } }
-  | { type: "CLEAR_CART" }
-  | { type: "LOAD_CART"; payload: CartItem[] };
-
-const cartReducer = (state: CartState, action: CartAction): CartState => {
-  switch (action.type) {
-    case "ADD_ITEM":
-      const existing = state.items.find(item => item.productId === action.payload.productId);
-      if (existing) {
-        return {
-          items: state.items.map(item =>
-            item.productId === action.payload.productId
-              ? { ...item, quantity: item.quantity + 1 }
-              : item
-          ),
-        };
-      }
-      return { items: [...state.items, action.payload] };
-    case "REMOVE_ITEM":
-      return { items: state.items.filter(item => item.id !== action.payload) };
-    case "UPDATE_QUANTITY":
-      return {
-        items: state.items.map(item =>
-          item.id === action.payload.id
-            ? { ...item, quantity: action.payload.quantity }
-            : item
-        ),
-      };
-    case "CLEAR_CART":
-      return { items: [] };
-    case "LOAD_CART":
-      return { items: action.payload };
-    default:
-      return state;
-  }
-};
+  restaurantId: string | null;
+}
 ```
+
+### Ações do Reducer
+
+| Ação | Payload | Comportamento |
+|------|---------|---------------|
+| ADD_ITEM | `{ product: Product, restaurantId: string }` | Adiciona produto ou incrementa quantidade |
+| REMOVE_ITEM | `{ productId: string }` | Remove item do carrinho |
+| UPDATE_QUANTITY | `{ productId: string, quantity: number }` | Atualiza quantidade (se ≤0, remove) |
+| CLEAR_CART | - | Limpa todos os itens e restaurantId |
+
+### Regras de Negócio
+
+- Ao adicionar item de outro restaurante, o carrinho é limpo antes (isolamento por tenant)
+- UPDATE_QUANTITY com quantity ≤ 0 remove o item automaticamente
+- totalItems: soma das quantidades de todos os itens
+- totalPrice: soma de (preço × quantidade) de todos os itens
 
 ---
 
-## Persistência
+## Exemplos de Uso
 
-O carrinho é persistido em `localStorage` com a chave `menulink-cart`:
+### Adicionar item ao carrinho
 
 ```typescript
-useEffect(() => {
-  const saved = localStorage.getItem("menulink-cart");
-  if (saved) {
-    dispatch({ type: "LOAD_CART", payload: JSON.parse(saved) });
-  }
-}, []);
+const { addItem } = useCart();
 
-useEffect(() => {
-  localStorage.setItem("menulink-cart", JSON.stringify(state.items));
-}, [state.items]);
+const handleAdd = (product: Product) => {
+  addItem(product, restaurantId);
+};
 ```
 
----
+### Atualizar quantidade
 
-## Métricas de Qualidade
+```typescript
+const { updateQuantity } = useCart();
 
-| Métrica | Target | Prioridade |
-|---------|--------|------------|
-| Cobertura unitária | ≥80% | Alta |
+const handleIncrease = (productId: string, currentQty: number) => {
+  updateQuantity(productId, currentQty + 1);
+};
+
+const handleDecrease = (productId: string, currentQty: number) => {
+  updateQuantity(productId, currentQty - 1);
+};
+```
+
+### Remover item
+
+```typescript
+const { removeItem } = useCart();
+
+const handleRemove = (productId: string) => {
+  removeItem(productId);
+};
+```
+
+### Limpar carrinho
+
+```typescript
+const { clearCart } = useCart();
+
+const handleCheckout = async () => {
+  // ...lógica de checkout
+  clearCart();
+};
+```
+
+### Exibir total
+
+```typescript
+const { totalItems, totalPrice } = useCart();
+
+console.log(`${totalItems} itens - R$ ${totalPrice.toFixed(2)}`);
+```
 
 ---
 
@@ -142,10 +159,20 @@ useEffect(() => {
 | Arquivo | Relação |
 |---------|---------|
 | `app/menu/[slug]/page.tsx` | Usa CartProvider |
-| `lib/utils.ts` | Função cn() |
+| `types/index.ts` | Define tipo `Product` |
+| `tests/unit/context/cart-context.test.tsx` | Testes unitários |
 
 ---
 
-**Versão**: 1.0
-**Última Atualização**: 2026-04-16
+## Métricas de Qualidade
+
+| Métrica | Target | Prioridade |
+|---------|--------|------------|
+| Cobertura unitária | ≥80% | Alta |
+| Re-renders desnecessários | 0 | Alta |
+
+---
+
+**Versão**: 2.0
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

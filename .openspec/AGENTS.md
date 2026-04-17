@@ -9,10 +9,54 @@ O módulo **OpenSpec** contém todas as especificações e artefatos do SDD (Spe
 
 ---
 
+## Arquitetura de Agentes IA
+
+### Papéis dos Agentes
+
+O projeto MenuLink utiliza uma arquitetura multi-agente para execução do fluxo SDD:
+
+| Agente | Responsabilidade | Gate |
+|--------|------------------|------|
+| **Orchestrator** | Coordena o fluxo SDD, cria branches, gerencia changes | Análise inicial |
+| **Oracle** | Revisa specs (RFC 2119) e design (arquitetura) | spec, design |
+| **Deep Agent** | Executa tasks, implementa código, cria testes | implementation |
+| **Coder** | Executa tarefas específicas de código | implementation |
+
+### Fluxo de Interação
+
+```
+Orchestrator → Oracle → Deep Agent/Coder → verification → archive
+    ↓             ↓            ↓                ↓
+  proposal      spec        tasks           verify-report
+```
+
+### Skills Disponíveis
+
+| Skill | Agente | Descrição |
+|-------|--------|-----------|
+| `sdd-init` | Orchestrator | Bootstrap OpenSpec structure e SDD context |
+| `sdd-propose` | Orchestrator | Criar proposal.md |
+| `sdd-spec` | Oracle | Escrever specs RFC 2119 |
+| `sdd-design` | Oracle | Criar design.md com arquitetura |
+| `sdd-tasks` | Orchestrator | Gerar tasks.md de specs e design |
+| `sdd-apply` | Deep Agent | Executar tasks SDD |
+| `sdd-verify` | Deep Agent | Verificar implementação contra specs |
+| `sdd-archive` | Orchestrator | Arquivar change concluída |
+| `plan-reviewer` | Oracle | Revisar planos para blockers |
+| `requirements-interview` | Orchestrator | Descoberta de requisitos |
+| `executing-plans` | Deep Agent | Executar listas de tarefas |
+| `cartography` | Coder | Mapear estrutura do repositório |
+
+---
+
 ## Estrutura de Diretórios
 
 ```
 .openspec/
+├── skills/ # Skills SDD para cada agente
+│   └── AGENTS.md # Documentação de skills
+├── docs/ # Documentação adicional
+│   └── ai-workflow.md # Workflow de desenvolvimento IA
 ├── specs/ # Especificações ativas (Source of Truth)
 │ ├── menulink-specification.md # Regras de negócio (RFC 2119)
 │ ├── menulink-technical-plan.md # Plano técnico e arquitetura
@@ -25,18 +69,8 @@ O módulo **OpenSpec** contém todas as especificações e artefatos do SDD (Spe
 │ ├── design-template.md # Template de design.md
 │ └── tasks-template.md # Template de tasks.md
 └── changes/ # Mudanças em andamento
-└── README.md # Guia de controle de mudanças
-```
-.openspec/
-├── specs/                           # Especificações ativas (Source of Truth)
-│   ├── menulink-specification.md    # Regras de negócio (RFC 2119)
-│   ├── menulink-technical-plan.md   # Plano técnico e arquitetura
-│   ├── menulink-quality-rules.md    # Regras de qualidade
-│   ├── menulink-modules-documentation.md # Documentação de módulos
-│   ├── menulink-unit-tests-checklist.md # Checklist de testes unitários
-│   └── menulink-acceptance-tests.feature # Cenários BDD (Gherkin)
-└── changes/                          # Mudanças em andamento
-    └── README.md                     # Guia de controle de mudanças
+    ├── README.md # Guia de controle de mudanças
+└── AGENTS.md # Regras e padrões das changes
 ```
 
 ---
@@ -190,20 +224,51 @@ Controlar mudanças em andamento no projeto.
 
 ```
 changes/
-├── README.md                    # Guia de controle de mudanças
-└── {change-name}/               # Diretório da mudança
-    ├── proposal.md              # Proposta da mudança
-    ├── spec.md                  # Especificação delta
-    ├── design.md                # Design técnico
-    ├── tasks.md                 # Lista de tarefas
-    └── status.md                # Status da mudança
+├── README.md # Guia de controle de mudanças
+├── AGENTS.md # Regras e padrões das changes
+└── {change-name}/ # Diretório da mudança
+    ├── proposal.md # Proposta da mudança
+    ├── spec.md # Especificação delta
+    ├── design.md # Design técnico
+    ├── tasks.md # Lista de tarefas
+    └── status.md # Status da mudança
 ```
 
 ### Fluxo de Mudanças
 
+Fluxo completo do SDD (Specification-Driven Development):
+
 ```
-proposal → spec → design → tasks → implementation → verification → archive
+PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive
 ```
+
+#### Etapas Detalhadas
+
+| Etapa | Artefato | Descrição | Gate |
+|-------|----------|-----------|------|
+| 1 | PRD.md | Product Requirements Document - Concepção inicial da ideia | Análise inicial |
+| 2 | Análise | Viabilidade técnica confrontada com PRD.md e codebase | Tech Lead |
+| 3 | proposal.md | Proposta formal com scope, riscos, rollback | Scope definido |
+| 4 | spec.md | Requisitos RFC 2119 com cenários Given/When/Then | Revisão técnica |
+| 5 | design.md | Design técnico com TDD/BDD/ATDD/DDD | Revisão arquitetura |
+| 6 | tasks.md | Decomposição DDD (Infraestrutura, Domínio, Aplicação, Interface, Documentação) | Completude |
+| 7 | implementation | Código + Testes + Documentação | CI/CD |
+| 8 | verification | Compliance report (código + documentação) | Deep agent |
+| 9 | archive | Consolidado e arquivado | Tech Lead |
+
+#### Gates de Aprovação
+
+| Fase | Gate | Responsável |
+|------|------|-------------|
+| PRD.md | Análise inicial da viabilidade | Orchestrator |
+| Análise | Viabilidade confirmada | Tech Lead |
+| proposal | Scope definido, riscos identificados | Tech Lead |
+| spec | Revisão técnica (RFC 2119) | Oracle |
+| design | Revisão de arquitetura (TDD/BDD/ATDD/DDD) | Oracle |
+| tasks | Verificação de completude | Orchestrator |
+| implementation | Testes passam + lint + build | CI/CD |
+| verification | Compliance report (código + docs) | Deep agent |
+| archive | Consolidado e arquivado | Tech Lead |
 
 ### Arquivo: README.md
 
@@ -237,7 +302,37 @@ cat .openspec/changes/{change-name}/status.md
 
 ## SDD Workflow
 
-### 1. Read (Ler)
+### Fluxo Completo SDD
+
+```
+PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive
+```
+
+### 1. PRD.md (Product Requirements Document)
+
+Conceber a ideia inicial:
+
+```bash
+# Criar diretório da change
+mkdir -p .openspec/changes/minha-mudanca
+
+# Copiar template PRD
+cp .openspec/templates/prd-template.md .openspec/changes/minha-mudanca/PRD.md
+```
+
+### 2. Análise (PRD.md + Codebase)
+
+Confrontar PRD com realidade técnica:
+
+```bash
+# Ler PRD criado
+cat .openspec/changes/minha-mudanca/PRD.md
+
+# Analisar viabilidade com codebase
+# Verificar módulos afetados, dependências, débitos técnicos
+```
+
+### 3. Read (Ler Specs)
 
 Antes de implementar, consultar as especificações:
 
@@ -252,7 +347,7 @@ cat .openspec/specs/menulink-technical-plan.md
 cat .openspec/specs/menulink-quality-rules.md
 ```
 
-### 2. Plan (Planejar)
+### 4. Plan (Planejar)
 
 Verificar se feature existe nas specs:
 
@@ -264,7 +359,7 @@ grep -n "REQ-XXX" .openspec/specs/menulink-specification.md
 grep -n "CA-XXX" .openspec/specs/menulink-specification.md
 ```
 
-### 3. Implement (Implementar)
+### 5. Implement (Implementar)
 
 Implementar código que cumpra as especificações:
 
@@ -273,7 +368,7 @@ Implementar código que cumpra as especificações:
 // REQ-XXX: O sistema DEVE fazer X
 ```
 
-### 4. Verify (Verificar)
+### 6. Verify (Verificar)
 
 Garantir que implementação corresponde à spec:
 
@@ -286,6 +381,15 @@ npm run test:coverage
 
 # Verificar lint
 npm run lint
+```
+
+### 7. Archive (Arquivar)
+
+Consolidar mudanças após verificação completa:
+
+```bash
+# Mover para archive
+mv .openspec/changes/minha-mudanca .openspec/changes/archive/{data}/minha-mudanca
 ```
 
 ---
@@ -329,11 +433,15 @@ v1.0.0
 
 Ao criar PR, verificar:
 
+- [ ] PRD.md criado e aprovado?
+- [ ] Análise de viabilidade realizada?
 - [ ] Spec foi atualizada?
 - [ ] Testes foram adicionados?
 - [ ] Cobertura ≥80%?
+- [ ] 100% fluxos críticos E2E?
 - [ ] Documentação atualizada?
 - [ ] Lint passa?
+- [ ] Build passa?
 
 ### Spec Review Checklist
 
@@ -345,13 +453,80 @@ Ao criar PR, verificar:
 
 ---
 
+## Sub-módulo: Templates (`.openspec/templates/`)
+
+### Responsabilidade
+
+Fornecer modelos padronizados para criação de artefatos SDD.
+
+### Arquivos
+
+#### 1. prd-template.md
+
+**Descrição**: Template para Product Requirements Document (PRD.md)
+
+**Uso**:
+```bash
+cp .openspec/templates/prd-template.md .openspec/changes/{change-name}/PRD.md
+```
+
+**Conteúdo**: Estrutura para capturar essência da ideia, problema/oportunidade, público-alvo, resultados esperados, critérios de sucesso preliminares e classificação de urgência.
+
+#### 2. design-template.md
+
+**Descrição**: Template para design.md
+
+**Uso**:
+```bash
+cp .openspec/templates/design-template.md .openspec/changes/{change-name}/design.md
+```
+
+**Conteúdo**: Estrutura para documentar decisões de arquitetura, TDD/BDD/ATDD/DDD integrados, diagramas, mapear file changes e interfaces.
+
+#### 3. tasks-template.md
+
+**Descrição**: Template para tasks.md
+
+**Uso**:
+```bash
+cp .openspec/templates/tasks-template.md .openspec/changes/{change-name}/tasks.md
+```
+
+**Conteúdo**: Estrutura para decomposição DDD em fases (Infraestrutura, Domínio, Aplicação, Interface, Documentação) com checklist de tarefas.
+
+---
+
+## Qualidade SDD
+
+### Paradigmas de Desenvolvimento
+
+| Paradigma | Descrição | Foco |
+|-----------|-----------|------|
+| **TDD** | Test-Driven Development | Testes unitários com ciclo RED→GREEN→REFACTOR |
+| **BDD** | Behavior-Driven Development | Testes de integração com Gherkin (Given-When-Then) |
+| **ATDD** | Acceptance Test-Driven Development | Testes E2E com Playwright (100% fluxos críticos) |
+| **DDD** | Domain-Driven Design | Linguagem ubíqua, agregados, entidades, bounded contexts |
+| **SDD** | Specification-Driven Development | Spec como fonte da verdade |
+
+### Métricas de Qualidade
+
+| Métrica | Target | Prioridade |
+|---------|--------|------------|
+| Cobertura de testes unitários | ≥80% | Crítica |
+| Cobertura de fluxos críticos E2E | 100% | Crítica |
+| Testes de integração | 100% requisitos | Alta |
+| Lint passa | 0 erros | Crítica |
+| Build produção | Sucesso | Crítica |
+
+---
+
 ## Artefatos SDD
 
 ### Checklist de Artefatos
 
 | Artefato | Descrição | Status |
 |----------|-----------|--------|
-| `PRB.md` | Product Requirement Brief (concepção) | ✅/❌ |
+| `PRD.md` | Product Requirements Document (concepção) | ✅/❌ |
 | `proposal.md` | Proposta inicial | ✅/❌ |
 | `spec.md` | Especificação formal | ✅/❌ |
 | `design.md` | Design técnico | ✅/❌ |
@@ -359,23 +534,23 @@ Ao criar PR, verificar:
 | `verification.md` | Relatório de verificação | ✅/❌ |
 | `archive.md` | Arquivamento | ✅/❌ |
 
-### Template: PRB.md (Product Requirement Brief)
+### Template: PRD.md (Product Requirements Document)
 
 ```markdown
-# PRB: [Título da Iniciativa]
+# PRD: [Título da Iniciativa]
 
 **Status:** Rascunho
 **Autor:** [Nome/Time]
 **Data:** [YYYY-MM-DD]
 
 ## 1. Problema / Oportunidade
-[Descrição concisa do problema ou oportunidade]
+[Descrição concisa do problema ou oportunidade identificada]
 
 ## 2. Público-Alvo Impactado
 [Quem será afetado pela mudança?]
 
 ## 3. Resultado Esperado (Alto Nível)
-[O que se espera alcançar]
+[O que se espera alcançar sem detalhamento técnico]
 
 ## 4. Critérios de Sucesso Preliminares
 - [ ] Critério 1
@@ -385,9 +560,17 @@ Ao criar PR, verificar:
 ### Viabilidade Técnica
 - [ ] Viável com arquitetura atual?
 - [ ] Módulos afetados?
+- [ ] Breaking changes?
+- [ ] Dependências ou débitos técnicos bloqueantes?
 
 ## 6. Urgência
 - [ ] Crítica / [ ] Alta / [ ] Média / [ ] Baixa
+
+## 7. Análise (Resposta do Tech Lead)
+[Seção preenchida após análise de viabilidade]
+- Viável: [ ] Sim [ ] Não
+- Módulos afetados: [lista]
+- Impacto estimado: [descrição]
 ```
 
 ### Template: proposal.md
@@ -582,6 +765,6 @@ Em Andamento
 
 ---
 
-**Versão**: 1.0  
-**Última Atualização**: 2026-04-15  
+**Versão**: 2.0  
+**Última Atualização**: 2026-04-17  
 **Autor**: AI Agent

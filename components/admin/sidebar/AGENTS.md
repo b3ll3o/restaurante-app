@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-**Componente**: `components/admin/sidebar/Sidebar`
+**Componente**: `components/admin/sidebar.tsx`
 **Responsabilidade**: Menu lateral de navegação do painel administrativo
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Next.js 16.2.3 + React 19 + TypeScript + Tailwind CSS 4
@@ -12,16 +12,16 @@
 ## Estrutura de Diretórios
 
 ```
-components/admin/sidebar/
-├── Sidebar.tsx      # Componente Sidebar
-└── AGENTS.md        # Esta documentação
+components/admin/
+├── sidebar.tsx # Componente Sidebar
+└── sidebar/AGENTS.md # Esta documentação
 ```
 
 ---
 
 ## Responsabilidade
 
-Componente de navegação que exibe o menu lateral do painel administrativo. Permite ao usuário navegar entre as diferentes secciones do admin (Dashboard, Categorias, Produtos, Pedidos, Configurações).
+Componente de navegação que exibe o menu lateral do painel administrativo. Permite ao usuário navegar entre as diferentes seções do admin (Dashboard, Categorias, Produtos, Pedidos, Configurações).
 
 ### Props
 
@@ -49,7 +49,21 @@ Não possui props externas. Utiliza `usePathname()` do Next.js para determinar r
 ## Arquitetura
 
 ```typescript
-// components/admin/sidebar/Sidebar.tsx
+// components/admin/sidebar.tsx
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Utensils,
+  Package,
+  ShoppingCart,
+  Settings,
+  Link as LinkIcon,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/categories", label: "Categorias", icon: Utensils },
@@ -72,7 +86,9 @@ export function Sidebar() {
       {/* Navegação */}
       <nav className="flex-1 p-4 space-y-1">
         {navItems.map((item) => {
+          const Icon = item.icon;
           const isActive = pathname === item.href;
+
           return (
             <Link
               key={item.href}
@@ -84,7 +100,7 @@ export function Sidebar() {
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <Icon className="h-4 w-4" />
               {item.label}
             </Link>
           );
@@ -105,6 +121,16 @@ export function Sidebar() {
     </aside>
   );
 }
+```
+
+---
+
+## Uso
+
+```tsx
+import { Sidebar } from "@/components/admin/sidebar";
+
+<Sidebar />
 ```
 
 ---
@@ -134,10 +160,19 @@ export function Sidebar() {
 | Arquivo | Relação |
 |---------|---------|
 | `app/admin/layout.tsx` | Usa este componente |
-| `components/admin/header/Header.tsx` | Componente irmão de cabeçalho |
+| `components/admin/header.tsx` | Componente irmão de cabeçalho |
+
+---
+
+## Regras de Implementação
+
+1. **Client Component**: Usa `"use client"` porque utiliza hooks do Next.js (`usePathname`)
+2. **Navegação ativa**: O item é destacado quando `pathname === item.href`
+3. **Estilização**: Usa classes Tailwind com `cn()` para concatenar classes condicionais
+4. **Ícones**: Importa ícones individualmente de `lucide-react` para tree-shaking
 
 ---
 
 **Versão**: 1.0
-**Última Atualização**: 2026-04-16
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

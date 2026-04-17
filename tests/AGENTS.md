@@ -2,15 +2,165 @@
 
 ## Visão Geral
 
-O módulo **Tests** contém toda a infraestrutura de testes automatizados do projeto MenuLink, incluindo testes unitários, de integração e E2E. O projeto segue rigorosos padrões de qualidade com cobertura mínima de 80% para testes unitários.
+O módulo **Tests** contém toda a infraestrutura de testes automatizados do projeto MenuLink, seguindo os paradigmas **TDD**, **BDD** e **ATDD**. O projeto aplica cobertura mínima de 80% para testes unitários e 100% de cobertura E2E nos fluxos críticos.
 
-**Idioma**: Português Brasileiro (pt-BR)  
+**Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Vitest + Testing Library + Playwright
+
+---
+
+## Estratégia de Testes (TDD/BDD/ATDD)
+
+### TDD (Test-Driven Development) — Testes Unitários
+
+**Quando aplicar**: Toda lógica de negócio, utilitários, hooks e funções puras.
+
+**Fluxo**: RED (escrever teste que falha) → GREEN (código mínimo para passar) → REFACTOR (melhorar mantendo testes).
+
+**Cobertura mínima obrigatória**: 80% linhas, 80% functions, 80% branches, 80% statements.
+
+**Ferramentas**:
+- Vitest (test runner)
+- Testing Library (React)
+- @vitest/coverage-v8 (cobertura)
+
+**Estratégia de Mock/Stub**:
+```typescript
+// Mock de módulo completo
+vi.mock('@/lib/supabase/client', () => ({
+  createClient: vi.fn(() => ({
+    auth: { getSession: vi.fn() },
+    from: vi.fn(() => ({
+      select: vi.fn(() => ({ eq: vi.fn(() => ({ single: vi.fn() })) })),
+      insert: vi.fn(() => ({ select: vi.fn() })),
+    })),
+  })),
+}));
+
+// Mock de função específica
+vi.spyOn(localStorage, 'getItem').mockReturnValue('{"cart":[]}');
+
+// Stub de fetch
+global.fetch = vi.fn(() => Promise.resolve({ json: () => Promise.resolve({}) }));
+```
+
+**Critérios de conclusão**:
+- [x] Código escrito após teste que falha
+- [x] Testes passam
+- [x] Cobertura ≥80%
+- [x] Sem dependências externas reais
+
+---
+
+### BDD (Behavior-Driven Development) — Testes de Integração
+
+**Quando aplicar**: Interação entre módulos, API routes, contexto de carrinho.
+
+**Formato**: Gherkin (Given-When-Then) para documentar comportamento.
+
+**Ferramenta**: Playwright com arquivos `.feature`.
+
+**Localização dos arquivos BDD (REGRA DE PROXIMIDADE)**:
+
+| Módulo | Arquivo BDD |
+|--------|-------------|
+| `app/admin/login/` | `login.feature` |
+| `app/admin/signup/` | `signup.feature` |
+| `app/admin/dashboard/` | `dashboard.feature` |
+| `app/admin/categories/` | `categories.feature` |
+| `app/admin/products/` | `products.feature` |
+| `app/admin/orders/` | `orders.feature` |
+| `app/menu/[slug]/` | `menu.feature` |
+| `app/api/orders/` | `orders.feature` |
+
+**Estrutura de Cenário BDD com @integration-test**:
+```gherkin
+@integration-test="tests/integration/orders.test.ts"
+Funcionalidade: Criação de Pedido
+
+Cenário: Cliente cria pedido com dados válidos
+  Dado que o cliente está na página do cardápio "bar-do-joao"
+  Quando preenche "Maria Silva" no campo nome
+  E preenche "5511888888888" no campo WhatsApp
+  E seleciona "pix" como forma de pagamento
+  E clica em "Confirmar Pedido"
+  Então o pedido deve ser criado com status "pending"
+  E deve aparecer mensagem de sucesso
+```
+
+**Tags de integração**:
+- `@integration-test="caminho/para/teste.test.ts"` — Link obrigatório para teste de integração que valida o cenário
+- `@unit` — Teste unitário
+- `@e2e` — Teste end-to-end
+- `@critical` — Fluxo crítico (obrigatório para PR)
+
+**Critérios de conclusão**:
+- [x] Cenário BDD criado com tag @integration-test
+- [x] Arquivo .feature no nível do módulo que documenta
+- [x] Teste de integração existente apontado pela tag
+- [x] Todos os Given/When/Then mapeados para código
+
+---
+
+### ATDD (Acceptance Test-Driven Development) — Testes E2E
+
+**Quando aplicar**: Fluxos críticos do usuário (criar pedido, gerenciar cardápio).
+
+**Foco**: 100% dos fluxos críticos automatizados com Playwright.
+
+**Critérios de aceitação por tarefa**:
+| Tarefa | Critério de Aceitação |
+|--------|----------------------|
+| Criar pedido | Dado cliente com itens no carrinho, quando confirma pedido, então pedido tem status "pending" |
+| Login admin | Dado usuário com credenciais válidas, quando faz login, então redirecionado para dashboard |
+| Gerenciar categorias | Dado admin logado, quando cria categoria, então aparece na listagem |
+
+**Checklist QA (testes exploratórios)**:
+- [ ] Campos obrigatórios validados com mensagens claras
+- [ ] Estados de loading implementados
+- [ ] Erros de rede tratados com retry ou mensagem ao usuário
+- [ ] Responsividade em mobile (375px, 768px, 1024px)
+- [ ] Acessibilidade: contraste, focus visível, labels em inputs
+- [ ] Performance: tempo de resposta < 2s para operações críticas
+
+**Fluxos críticos E2E (100% cobertura obrigatória)**:
+1. Criação de pedido (checkout completo)
+2. Login/logout do admin
+3. CRUD de categorias
+4. CRUD de produtos
+5. Visualização de pedidos
+
+**Critérios de conclusão**:
+- [x] Playwright test executando com sucesso
+- [x] Teste isolado por ambiente (dev/staging/prod)
+- [x] Page Objects utilizados para reduzir duplicação
+- [x] Screenshots de falha salvos automaticamente
 
 ---
 
 ## Estrutura de Diretórios
 
+```
+tests/
+├── setup.ts # Configuração global dos testes
+├── unit/ # Testes unitários (≥80% cobertura)
+│ ├── utils.test.ts # Testes de funções utilitárias
+│ ├── cart-context.test.tsx # Testes do contexto do carrinho
+│ └── lib/
+│ └── whatsapp.test.ts # Testes do serviço WhatsApp
+├── integration/ # Testes de integração
+│ ├── orders.test.ts # Testes da API de pedidos
+│ ├── categories.test.ts # Testes de categorias
+│ └── auth.test.ts # Testes de autenticação
+├── e2e/ # Testes end-to-end (Playwright)
+│ ├── admin.spec.ts # Fluxos do painel admin
+│ ├── public-menu.spec.ts # Fluxos do cardápio público
+│ ├── checkout.spec.ts # Fluxo de checkout
+│ └── support/
+│ └── page-objects/ # Page Objects para E2E
+└── bdd/ # Arquivos BDD (referência centralizada)
+# Os arquivos .feature DEVEM estar no nível do módulo que documentam
+# Ver tabela de proximidade na seção BDD acima
 ```
 tests/
 ├── setup.ts # Configuração global dos testes
@@ -635,10 +785,13 @@ test.describe('Painel Administrativo', () => {
     "test": "vitest",
     "test:unit": "vitest --run tests/unit",
     "test:integration": "vitest --run tests/integration",
-    "test:e2e": "playwright test",
+    "test:e2e": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui",
+    "test:e2e:debug": "npx playwright test --debug",
     "test:coverage": "vitest --run --coverage",
     "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e"
   }
 }
 ```
@@ -646,38 +799,66 @@ test.describe('Painel Administrativo', () => {
 ### Comandos
 
 ```bash
-# Rodar todos os testes
+# Rodar todos os testes unitários e integração
 npm test
 
-# Rodar apenas unitários
+# Rodar apenas unitários (cobertura ≥80%)
 npm run test:unit
 
 # Rodar apenas integração
 npm run test:integration
 
-# Rodar E2E
+# Rodar E2E (Playwright)
 npm run test:e2e
 
-# Ver cobertura
+# Rodar E2E com UI interativa
+npm run test:e2e:ui
+
+# Rodar E2E em modo debug
+npm run test:e2e:debug
+
+# Ver cobertura (obrigatório ≥80%)
 npm run test:coverage
 
-# Modo watch
+# Modo watch (desenvolvimento)
 npm run test:watch
 
-# UI interativa
+# UI interativa do Vitest
 npm run test:ui
+
+# Rodar todos os testes (CI/CD)
+npm run test:all
 ```
 
 ---
 
 ## Métricas de Qualidade
 
+### TDD (Testes Unitários)
+
 | Métrica | Target | Prioridade |
 |---------|--------|------------|
-| Cobertura unitários | ≥80% | Crítica |
-| Cobertura integração | ≥70% | Alta |
-| Testes E2E críticos | 100% | Crítica |
-| Tempo de execução | <5min | Média |
+| Cobertura linhas | ≥80% | Crítica |
+| Cobertura functions | ≥80% | Crítica |
+| Cobertura branches | ≥80% | Crítica |
+| Cobertura statements | ≥80% | Crítica |
+| Tempo de execução | <2min | Média |
+
+### BDD (Testes de Integração)
+
+| Métrica | Target | Prioridade |
+|---------|--------|------------|
+| Cenários com @integration-test | 100% | Crítica |
+| Arquivos .feature por módulo | 100% | Alta |
+| Cobertura cenários | 100% | Alta |
+
+### ATDD (Testes E2E)
+
+| Métrica | Target | Prioridade |
+|---------|--------|------------|
+| Fluxos críticos E2E | 100% | Crítica |
+| Tempo de execução E2E | <5min | Média |
+| Pass rate E2E | ≥95% | Alta |
 
 ---
 
@@ -836,6 +1017,6 @@ vi.mock('@/lib/supabase/client');
 
 ---
 
-**Versão**: 1.1
-**Última Atualização**: 2026-04-16
+**Versão**: 1.2
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

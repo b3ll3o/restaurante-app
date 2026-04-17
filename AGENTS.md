@@ -487,7 +487,7 @@ Ao criar/modificar código, verificar:
 **TODO mudança significativa DEVE seguir este fluxo na ordem EXATA:**
 
 ```
-PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
+PRD.md → Análise → proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
 ```
 
 **verification = código + documentação** (verificação completa, não apenas código)
@@ -496,7 +496,7 @@ PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → i
 
 ## Descrição Detalhada das Etapas do Fluxo SDD
 
-### Etapa 1: PRB.md (Product Requirement Brief)
+### Etapa 1: PRD.md (Product Requirements Document)
 
 **Objetivo**: Capturar a essência da ideia, o problema ou oportunidade identificada.
 
@@ -511,7 +511,7 @@ PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → i
 4. Estabelecer critérios de sucesso preliminares
 5. Classificar urgência (Crítica/Alta/Média/Baixa)
 
-**Saída**: Documento `PRB.md` com:
+**Saída**: Documento `PRD.md` com:
 - Título da iniciativa
 - Descrição do problema/oportunidade
 - Público-alvo impactado
@@ -521,7 +521,7 @@ PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → i
 
 **Exemplo**:
 ```markdown
-# PRB: Adicionar Notificação Push
+# PRD: Adicionar Notificação Push
 
 ## Problema
 Clientes não são notificados quando o status do pedido muda.
@@ -541,11 +541,11 @@ Aumentar satisfação do cliente com transparência sobre status do pedido.
 
 ### Etapa 2: Análise (PRD.md + Codebase)
 
-**Objetivo**: Confrontar a ideia do PRB.md com a realidade atual da aplicação.
+**Objetivo**: Confrontar a ideia do PRD.md com a realidade atual da aplicação.
 
 **Responsável**: Tech Lead / Arquiteto
 
-**Entrada**: PRB.md aprovado, PRD.md existente, codebase
+**Entrada**: PRD.md aprovado, PRD.md existente, codebase
 
 **Atividades**:
 1. Ler PRD.md (Product Requirement Document) existente
@@ -569,11 +569,11 @@ Aumentar satisfação do cliente com transparência sobre status do pedido.
 
 **Responsável**: Tech Lead / Equipe
 
-**Entrada**: PRB.md, Análise, PRD.md
+**Entrada**: PRD.md, Análise, PRD.md
 
 **Atividades**:
 1. Criar `proposal.md` seguindo template
-2. Referenciar PRB.md e análise realizada
+2. Referenciar PRD.md e análise realizada
 3. Definir scope (in/out)
 4. Identificar riscos e mitigações
 5. Definir critérios de sucesso
@@ -803,7 +803,7 @@ Uma tarefa só é `[x]` quando:
 └─────────────────────────────────────────────────────────────────────────────┘
 
   ┌─────────┐    ┌─────────┐    ┌──────────┐    ┌────────┐    ┌──────────┐
-  │ PRB.md  │───▶│ Análise │───▶│ proposal │───▶│ spec   │───▶│ design   │
+  │ PRD.md  │───▶│ Análise │───▶│ proposal │───▶│ spec   │───▶│ design   │
   └─────────┘    └─────────┘    └──────────┘    └────────┘    └──────────┘
        │              │              │               │              │
        │         PRD.md +        RFC 2119      TDD/BDD/       TDD/BDD/
@@ -840,7 +840,7 @@ Uma tarefa só é `[x]` quando:
 
 | Etapa | Gate | Responsável |
 |-------|------|-------------|
-| PRB.md | Análise inicial | Orchestrator |
+| PRD.md | Análise inicial | Orchestrator |
 | Análise | Viabilidade confirmada | Tech Lead |
 | proposal | Scope definido, riscos identificados | Tech Lead |
 | spec | Revisão técnica (RFC 2119) | Oracle |
@@ -855,12 +855,12 @@ Uma tarefa só é `[x]` quando:
 ## Proibições (REGRA)
 
 - **NÃO** pular etapas do fluxo
-- **NÃO** implementar sem PRB.md e análise
+- **NÃO** implementar sem PRD.md e análise
 - **NÃO** implementar sem spec aprovada
 - **NÃO** pular verification (código + documentação)
 - **NÃO** archivar sem verification com PASS
 - **NÃO** modificar specs sem passar pelo fluxo de mudança
-PRB.md → Análise → proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
+PRD.md → Análise → proposal.md → spec.md → design.md → tasks.md → implementation → verification → archive
    │        │           │           │         │          │            │              │           │
    │        │           │           │         │          │            │              │           │
    │        ▼           ▼           ▼         ▼          ▼            ▼              ▼           ▼
@@ -875,7 +875,7 @@ Inicial
 
 #### Etapas Detalhadas:
 
-1. **PRB.md** - Product Requirement Brief: Concepção inicial da ideia (o quê e por quê)
+1. **PRD.md** - Product Requirements Document: Concepção inicial da ideia (o quê e por quê)
 2. **Análise** - Viabilidade técnica confrontada com PRD.md e codebase
 3. **proposal.md** - Proposta formal com scope, riscos, rollback
 4. **spec.md** - Requisitos RFC 2119 com cenários Given/When/Then

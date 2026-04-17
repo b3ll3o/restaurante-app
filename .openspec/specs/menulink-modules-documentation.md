@@ -303,7 +303,38 @@ App Router → Components → Context → Hooks → Lib → Types
 
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
+| 1.1 | 2026-04-17 | AI Agent | Atualização pós reorganização de módulos (module-organization) |
 | 1.0 | 2026-04-15 | AI Agent | Documentação inicial de módulos |
+
+---
+
+## 17. Reorganização de Módulos (module-organization)
+
+### Resultado da Análise
+A change "module-organization" analisou a estrutura de documentação do projeto e identificou que **97% da estrutura já estava conforme** o princípio da proximidade definido em AGENTS.md.
+
+### Correções Aplicadas
+- Adicionado AGENTS.md em `app/menu/[slug]/checkout/` (único módulo missing)
+
+### Estrutura de Documentação
+Todos os módulos devem seguir o **princípio da proximidade**:
+- `AGENTS.md` deve estar no nível mais próximo do código documentado
+- Arquivos `.feature` (BDD) devem estar no nível do módulo que documentam
+- Cada cenário BDD deve ter tag `@integration-test` apontando para o teste de integração
+
+### Módulos com AGENTS.md
+| Módulo | AGENTS.md | .feature |
+|--------|-----------|----------|
+| `app/admin/*` | ✅ | ✅ |
+| `app/menu/[slug]/*` | ✅ | ✅ |
+| `app/api/*` | ✅ | ✅ |
+| `components/ui/*` | ✅ | N/A |
+| `components/admin/*` | ✅ | N/A |
+| `lib/supabase/*` | ✅ | N/A |
+| `lib/whatsapp.ts` | ✅ | N/A |
+| `context/*` | ✅ | N/A |
+| `hooks/*` | ✅ | N/A |
+| `types/*` | ✅ | N/A |
 
 ---
 

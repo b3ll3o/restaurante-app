@@ -3,7 +3,7 @@
 ## Fluxo SDD
 
 ```
-proposal → spec → design → tasks → implementation → verification → archive
+PRD.md → Análise → proposal → spec → design → tasks → implementation → verification → archive
 ```
 
 ## Como Criar Nova Mudança

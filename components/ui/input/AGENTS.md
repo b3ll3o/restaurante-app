@@ -26,10 +26,10 @@ Componente de campo de entrada de texto reutilizável que segue o design system 
 ### Props
 
 ```typescript
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 ```
 
-Herda todas as props do `HTMLInputElement`, incluindo:
+Herda todas as props nativas do `HTMLInputElement`:
 
 | Prop | Tipo | Descrição |
 |------|------|-----------|
@@ -86,6 +86,37 @@ export { Input };
 
 ---
 
+## Uso
+
+```tsx
+import { Input } from '@/components/ui/input';
+
+// Texto simples
+<Input type="text" placeholder="Nome do restaurante" />
+
+// Email com label
+<Label htmlFor="email">Email</Label>
+<Input id="email" type="email" placeholder="seu@email.com" />
+
+// Número (preço)
+<Input type="number" placeholder="0,00" step="0.01" />
+
+// Telefone
+<Input type="tel" placeholder="(11) 99999-9999" />
+
+// Senha
+<Input type="password" placeholder="••••••••" />
+
+// Desabilitado
+<Input disabled value="Campo bloqueado" />
+
+// Controlled
+const [value, setValue] = useState('');
+<Input value={value} onChange={(e) => setValue(e.target.value)} />
+```
+
+---
+
 ## Dependências
 
 | Dependência | Versão | Uso |
@@ -119,11 +150,10 @@ export { Input };
 | Arquivo | Relação |
 |---------|---------|
 | `components/ui/label/Label.tsx` | Label associado |
-| `components/ui/form/Form.tsx` | Formulários com validação |
-| `lib/utils.ts` | Função cn() |
+| `lib/utils.ts` | Função `cn()` |
 
 ---
 
-**Versão**: 1.0
-**Última Atualização**: 2026-04-16
+**Versão**: 1.1
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

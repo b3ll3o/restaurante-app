@@ -13,6 +13,10 @@
 
 ```
 lib/supabase/client/
+├── index.ts # createBrowserClient
+└── AGENTS.md # Esta documentação
+```
+lib/supabase/client/
 ├── client.ts          # createBrowserClient
 └── AGENTS.md          # Esta documentação
 ```
@@ -112,7 +116,7 @@ export function CartProvider({ children }) {
 
 | Arquivo | Relação |
 |---------|---------|
-| `lib/supabase/server.ts` | Cliente server-side |
+| `lib/supabase/server/index.ts` | Cliente server-side |
 | `lib/supabase/server/AGENTS.md` | Documentação server |
 
 ---
