@@ -66,7 +66,12 @@ const mockProducts = [
 ];
 
 // Configuração de estado dos mocks
-let mockConfig = {
+let mockConfig: {
+  restaurantData: typeof mockRestaurant | null;
+  restaurantError: { message: string } | null;
+  categoriesData: typeof mockCategories;
+  categoriesError: null;
+} = {
   restaurantData: mockRestaurant,
   restaurantError: null,
   categoriesData: mockCategories,

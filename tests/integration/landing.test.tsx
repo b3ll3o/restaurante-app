@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LandingPage } from '@/app/components/landing/LandingPage';
@@ -290,7 +290,7 @@ describe('LandingPage - Testes de Integração', () => {
       });
 
       // Botão deve responder sem erro
-      expect(screen.baseElement).toBeTruthy();
+      expect(document.body.textContent).toBeTruthy();
     });
   });
 

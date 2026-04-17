@@ -4,58 +4,14 @@
 
 Este arquivo configura o ambiente OpenCode para o projeto MenuLink.
 
-**Idioma**: Português Brasileiro (pt-BR)
+**Idioma**: Português Brasileiro (pt-BR)  
 **Stack**: Next.js 16.2.3 + React 19 + TypeScript + Tailwind CSS 4 + Supabase
 
 ---
 
-## Configuração de Plugins
+## Configuração Principal
 
-### Plugins Configurados
-
-| Plugin | Status | Descrição |
-|--------|--------|-----------|
-| `create-opencode-workflow` | Documentado | Plugin para criação automatizada de workflows SDD |
-| `opencode-plus` | Documentado | Funcionalidades avançadas para OpenCode |
-
-### Instalação (Futuro)
-
-```bash
-# create-opencode-workflow
-npx @comfanion/workflow init
-
-# opencode-plus
-npm install @jo.cs98/opencode-plus
-```
-
-### Configuração opencode.json
-
-```json
-{
-  "plugins": [
-    "@comfanion/workflow",
-    "@jo.cs98/opencode-plus"
-  ],
-  "workflow": {
-    "sdd": {
-      "enabled": true,
-      "autoReview": true
-    }
-  }
-}
-```
-
----
-
-## Contexto do Projeto
-
-### Regras de Projeto (do AGENTS.md principal)
-
-1. **Idioma**: pt-BR para documentação e UI, inglês para código
-2. **Paradigmas**: TDD, BDD, ATDD, DDD, SDD
-3. **Cobertura mínima**: 80% testes unitários
-4. **Stack**: Next.js 16.2.3 + React 19 + TypeScript strict + Tailwind 4 + Supabase
-5. **Multi-tenant**: Cada restaurante é um tenant isolado
+A configuração detalhada do projeto está em [AGENTS.md](./AGENTS.md) (raiz do projeto).
 
 ### Variáveis de Ambiente Obrigatórias
 
@@ -72,26 +28,41 @@ WHATSAPP_PHONE_NUMBER_ID=
 
 ---
 
-## Workflows SDD
+## Documentação de Referência
 
-### Fluxo Padrão
+Toda a documentação do projeto está organizada com a **REGRA DE PROXIMIDADE** (documentação junto ao código).
+
+### Documentação Central (Source of Truth)
+
+| Documento | Descrição |
+|-----------|-----------|
+| [AGENTS.md](./AGENTS.md) | **PRINCIPAL** - Visão geral, regras, workflows SDD |
+| [README.md](./README.md) | Visão geral do produto |
+| [.openspec/AGENTS.md](./.openspec/AGENTS.md) | SDD workflow e especificações |
+| [.openspec/specs/menulink-rules.md](./.openspec/specs/menulink-rules.md) | **FONTE CENTRALIZADA** de todas as regras |
+| [.openspec/specs/menulink-specification.md](./.openspec/specs/menulink-specification.md) | Requisitos RFC 2119 |
+| [.openspec/specs/menulink-technical-plan.md](./.openspec/specs/menulink-technical-plan.md) | Arquitetura técnica |
+
+### Módulos (documentação junto ao código)
 
 ```
-PRD → proposal → spec → design → tasks → implementation → verification → archive
+app/AGENTS.md                          # App Router
+components/AGENTS.md                   # Componentes UI e Admin
+lib/AGENTS.md                          # Utils, Supabase, WhatsApp
+context/AGENTS.md                      # Carrinho (CartContext)
+hooks/AGENTS.md                        # Custom hooks
+types/AGENTS.md                        # Definições TypeScript
+tests/AGENTS.md                        # Infraestrutura de testes
+supabase/AGENTS.md                     # Schema e migrations
 ```
 
-### Comandos Úteis
+### Backlog e Changes
 
-```bash
-# Criar nova change
-mkdir -p .openspec/changes/minha-mudanca
-
-# Executar SDD
-npm run dev      # Desenvolvimento
-npm run build    # Build produção
-npm run lint     # ESLint
-npm run test     # Testes
-```
+| Documento | Descrição |
+|-----------|-----------|
+| [.openspec/backlog/backlog.md](./.openspec/backlog/backlog.md) | Índice de PRDs e changes |
+| [.openspec/backlog/AGENTS.md](./.openspec/backlog/AGENTS.md) | Regras do backlog |
+| [.openspec/changes/AGENTS.md](./.openspec/changes/AGENTS.md) | Regras das changes |
 
 ---
 
@@ -101,17 +72,7 @@ npm run test     # Testes
 
 - **Documentação**: Português Brasileiro (pt-BR)
 - **Código**: Inglês para identificadores
-- **Comentarios**: Português brasileiro para lógica complexa
-
-### Nomenclatura
-
-| Tipo | Padrão | Exemplo |
-|------|--------|---------|
-| Componentes React | PascalCase | `CartButton.tsx` |
-| Funções/Variáveis | camelCase | `useCart()` |
-| Constantes | UPPER_SNAKE_CASE | `MAX_ITEMS` |
-| Arquivos | kebab-case | `cart-context.tsx` |
-| Types/Interfaces | PascalCase | `CartItem` |
+- **Comentários**: Português brasileiro para lógica complexa
 
 ### Convenções
 
@@ -122,12 +83,10 @@ npm run test     # Testes
 
 ---
 
-## Validação Manual
+## Referências
 
-Conforme tasks.md da change `ai-development-workflow`:
-- **Fase 5**: Testes e validação são manuais
-- Validação de código contra padrões: executada pelo agente
-- Verificação de fluxo completo: manual com supervisão
+- [AGENTS.md](./AGENTS.md) - Visão geral do projeto (Source of Truth)
+- [.openspec/specs/menulink-rules.md](./.openspec/specs/menulink-rules.md) - Regras centralizadas
 
 ---
 

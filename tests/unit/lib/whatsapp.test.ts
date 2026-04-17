@@ -1,4 +1,4 @@
-import { describe, it, expect, afterEach, vi } from 'vitest';
+import { describe, it, expect, afterEach, vi, type Mock } from 'vitest';
 import { formatOrderMessage, generateWhatsAppUrl, sendWhatsAppMessage } from '@/lib/whatsapp';
 
 // Mock global fetch
@@ -117,7 +117,7 @@ describe('sendWhatsAppMessage', () => {
   });
 
   it('should return success when API call succeeds', async () => {
-    (global.fetch as vi.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ messages: [{ id: 'msg-123' }] }),
     });
@@ -139,7 +139,7 @@ describe('sendWhatsAppMessage', () => {
   });
 
   it('should return error when API call fails', async () => {
-    (global.fetch as vi.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: false,
       text: () => Promise.resolve('Error message'),
     });
@@ -151,7 +151,7 @@ describe('sendWhatsAppMessage', () => {
   });
 
   it('should return error when fetch throws', async () => {
-    (global.fetch as vi.Mock).mockRejectedValueOnce(new Error('Network error'));
+    (global.fetch as Mock).mockRejectedValueOnce(new Error('Network error'));
 
     const result = await sendWhatsAppMessage('phoneId', 'token', '5511999999999', 'Mensagem');
 
@@ -160,7 +160,7 @@ describe('sendWhatsAppMessage', () => {
   });
 
   it('should clean phone number before sending', async () => {
-    (global.fetch as vi.Mock).mockResolvedValueOnce({
+    (global.fetch as Mock).mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ messages: [{ id: 'msg-123' }] }),
     });

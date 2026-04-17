@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { page_view, SegmentType, PageViewEvent } from '@/lib/analytics';
 
 describe('Analytics', () => {
