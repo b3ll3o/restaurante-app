@@ -1,5 +1,5 @@
 {
-  "generated": "2026-04-17T21:54:54.358Z",
+  "generated": "2026-04-17T23:42:50.026Z",
   "routes": [
     {
       "path": "/admin/categories",
@@ -153,6 +153,42 @@
       "scenarios": 0
     },
     {
+      "path": "/landing/bar",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/landing/bar/page.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/landing/hamburgueria",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/landing/hamburgueria/page.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/landing/pizzaria",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/landing/pizzaria/page.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/landing/restaurante",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/landing/restaurante/page.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
       "path": "/layout.tsx",
       "type": "page",
       "filePath": "/home/leo/projetos/restaurante/app/layout.tsx",
@@ -201,9 +237,9 @@
     }
   ],
   "summary": {
-    "total": 20,
+    "total": 24,
     "green": 1,
     "yellow": 7,
-    "red": 12
+    "red": 16
   }
 }
