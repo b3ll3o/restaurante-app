@@ -37,6 +37,9 @@ export interface Order {
   created_at: string;
 }
 
+// Order status type derived from constants
+export type OrderStatus = "pending" | "confirmed" | "cancelled";
+
 export interface OrderItem {
   id: string;
   order_id: string;

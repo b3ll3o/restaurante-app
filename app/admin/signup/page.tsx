@@ -79,6 +79,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="min-h-[44px] text-base"
               />
             </div>
             <div className="space-y-2">
@@ -90,6 +91,7 @@ export default function SignupPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
+                className="min-h-[44px] text-base"
               />
             </div>
             <div className="space-y-2">
@@ -101,6 +103,7 @@ export default function SignupPage() {
                 value={restaurantName}
                 onChange={(e) => setRestaurantName(e.target.value)}
                 required
+                className="min-h-[44px] text-base"
               />
             </div>
             <div className="space-y-2">
@@ -112,11 +115,12 @@ export default function SignupPage() {
                 value={whatsappNumber}
                 onChange={(e) => setWhatsappNumber(e.target.value)}
                 required
+                className="min-h-[44px] text-base"
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full min-h-[44px]" disabled={loading}>
               {loading ? "Creating account..." : "Create Account"}
             </Button>
             <p className="text-sm text-muted-foreground">

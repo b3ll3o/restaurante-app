@@ -5,7 +5,7 @@
 Este documento é a **fonte centralizada de todas as regras** do projeto MenuLink. Todas as implementações, decisões técnicas e processos derivam deste documento.
 
 **Última Atualização**: 2026-04-17
-**Versão**: 1.1
+**Versão**: 1.2
 
 ---
 
@@ -19,7 +19,8 @@ Este documento é a **fonte centralizada de todas as regras** do projeto MenuLin
 6. [Regras de Offline-First](#6-regras-de-offline-first)
 7. [Regras de Testes](#7-regras-de-testes)
 8. [Regras de Commits](#8-regras-de-commits)
-9. [Fluxos Procedimentais](#9-fluxos-procedimentais)
+ 9. [Fluxos Procedimentais](#9-fluxos-procedimentais)
+ 10. [Regras de Reutilização de Código](#10-regras-de-reutilização-de-código)
 
 ---
 
@@ -471,7 +472,7 @@ Ao criar/modificar código, verificar:
 
 ## 5. Regras de Mobile-First
 
-### 5.1 Princípios
+### 5.1 Princípios Fundamentais
 
 | Princípio | Descrição |
 |-----------|-----------|
@@ -479,49 +480,250 @@ Ao criar/modificar código, verificar:
 | Touch-Friendly | Elementos com mínimo 44x44px de área de toque |
 | Responsivo | Layout responsivo obrigatório em todas as páginas |
 | Performance | Otimizado para conexões mobile (3G+) |
+| Progressive Enhancement | Funcionalidade base em mobile, enhancements em desktop |
 
-### 5.2 Implementação CSS
+### 5.2 Arquitetura CSS Mobile-First
+
+**Regras de Ouro:**
+
+1. **Estilos base são mobile** - Mobile é o default, não usa media query
+2. **Usar `min-width`** - Desktop é a exceção, não o contrário
+3. **Combine Media Queries + Container Queries** - Macro layout vs componentes reutilizáveis
 
 ```css
-/* ✅ CORRETO - Mobile first */
-.container {
-  padding: 1rem; /* Mobile (base) */
+/* ✅ CORRETO - Mobile first (base = mobile) */
+.card {
+  display: flex;
+  flex-direction: column; /* Mobile (default) */
+  padding: 1rem;
 }
 
-@media (min-width: 640px) {
-  .container {
-    padding: 1.5rem; /* Tablet */
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 2rem; /* Desktop */
+@media (min-width: 768px) {
+  .card {
+    flex-direction: row; /* Desktop enhancement */
+    padding: 1.5rem;
   }
 }
 
 /* ❌ INCORRETO - Desktop first */
-.container {
-  padding: 2rem; /* Desktop (base) */
+.card {
+  flex-direction: row; /* Desktop (default) */
+  padding: 2rem;
 }
 
 @media (max-width: 767px) {
-  .container {
-    padding: 1rem; /* Mobile - legacy approach */
+  .card {
+    flex-direction: column; /* Mobile - legacy! */
   }
 }
 ```
 
-### 5.3 Breakpoints
+### 5.3 Media Queries vs Container Queries
+
+| Tipo | Uso | Quando Aplicar |
+|------|-----|----------------|
+| **Media Queries** | Layout de página, navegação, tipografia global | Page-level breakpoints |
+| **Container Queries** | Componentes reutilizáveis (cards, widgets) | Componentes que aparecem em diferentes contextos |
+
+```css
+/* Media Query = responde ao viewport */
+@media (min-width: 768px) {
+  .card { flex-direction: row; }
+}
+
+/* Container Query = responde ao container pai */
+.card-wrapper {
+  container-type: inline-size;
+  container-name: card;
+}
+@container card (min-width: 400px) {
+  .card { flex-direction: row; }
+}
+```
+
+### 5.4 Breakpoints (Tailwind CSS 4)
 
 | Dispositivo | Largura | Tailwind | Descrição |
 |-------------|---------|----------|-----------|
-| Mobile | < 640px | base | Primeiro passo (base) |
-| Tablet | 640px - 1023px | `sm`/`md` | `min-width: 640px` |
-| Desktop | 1024px - 1279px | `lg` | `min-width: 1024px` |
-| Large Desktop | ≥ 1280px | `xl` | `min-width: 1280px` |
+| Mobile | < 640px | **base (default)** | Primeiro passo (NÃO usa prefixo) |
+| Tablet | 640px - 767px | `sm:` | `min-width: 640px` |
+| Tablet Grande | 768px - 1023px | `md:` | `min-width: 768px` |
+| Desktop | 1024px - 1279px | `lg:` | `min-width: 1024px` |
+| Large Desktop | ≥ 1280px | `xl:` | `min-width: 1280px` |
 
-### 5.4 Requisitos de Performance
+**⚠️ ATENÇÃO**: `sm:` NÃO significa "em mobile" - significa "a partir de 640px e acima".
+
+### 5.5 Touch Targets (WCAG AAA)
+
+| Princípio | Valor Mínimo | Recomendação |
+|-----------|-------------|--------------|
+| Área de toque | 24x24px (WCAG AA) | - |
+| Área de toque | **44x44px** (WCAG AAA) | **Padrão do projeto** |
+| Área de toque | 48x48px | Recomendado para ícones |
+| Espaçamento entre elementos | 8px mínimo | Evita toques acidentais |
+
+```tsx
+/* ✅ CORRETO - Touch target adequado */
+<button className="min-h-[44px] min-w-[44px] px-4 py-3">
+  Ação
+</button>
+
+/* ✅ CORRETO - Ícone com touch target */
+<button className="w-11 h-11"> {/* 44px = 11 * 4 (Tailwind unit) */}
+  <Icon />
+</button>
+
+/* ❌ INCORRETO - Muito pequeno */
+<button className="px-2 py-1 text-sm">Editar</button>
+```
+
+### 5.6 Tipografia Responsiva com `clamp()`
+
+**Fluid Typography** - escala suave sem saltos em breakpoints:
+
+```css
+/* ✅ CORRETO - Tipografia fluid */
+h1 {
+  font-size: clamp(1.875rem, 1.5rem + 2vw, 3rem);
+  /* min: 30px, preferred: 1.5rem + 2vw, max: 48px */
+  line-height: 1.1;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 1.25rem + 1.5vw, 2.25rem);
+  line-height: 1.2;
+}
+
+p, body {
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  line-height: 1.6;
+  max-width: 65ch; /* Comprimento ideal de linha */
+}
+```
+
+**Regras de tipografia:**
+
+| Regra | Valor | Razão |
+|-------|-------|-------|
+| Linha base (body) | 16px mínimo | Evita zoom iOS |
+| Line-height body | 1.4 - 1.7 | Legibilidade |
+| Line-height headings | 1.1 - 1.3 | Títulos mais compactos |
+| Comprimento de linha | 45-75 chars | Previne fadiga visual |
+| Unidades | `rem` | Respeita configurações de acesso |
+
+### 5.7 Grid e Flexbox Responsivos
+
+**Grid Patterns:**
+
+```css
+/* ✅ Grid automático responsivo (sem media queries!) */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* auto-fit vs auto-fill:
+   - auto-fit: colapsa tracks vazios (itens esticam)
+   - auto-fill: mantém tracks vazios (estrutura)
+*/
+
+/* ✅ Layout de página com áreas nomeadas */
+.page {
+  display: grid;
+  grid-template-areas:
+    "header"
+    "main"
+    "footer";
+  grid-template-rows: auto 1fr auto;
+}
+@media (min-width: 768px) {
+  .page {
+    grid-template-areas:
+      "header header"
+      "sidebar main"
+      "footer footer";
+    grid-template-columns: 250px 1fr;
+  }
+}
+```
+
+**Flexbox Patterns:**
+
+```css
+/* ✅ Nav responsivo */
+.nav {
+  display: flex;
+  flex-direction: column; /* Mobile */
+  gap: 0.5rem;
+}
+@media (min-width: 768px) {
+  .nav {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+/* ✅ Flex children responsivos */
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.flex-item {
+  flex: 1 1 280px; /* grow, shrink, basis */
+}
+```
+
+### 5.8 Core Web Vitals (Performance)
+
+| Métrica | Bom | Ruim | Prioridade |
+|---------|-----|------|-----------|
+| LCP (Largest Contentful Paint) | ≤2.5s | >4.0s | **Alta** |
+| CLS (Cumulative Layout Shift) | <0.1 | >0.25 | **Alta** |
+| INP (Interaction to Next Paint) | ≤200ms | >500ms | Média |
+| FCP (First Contentful Paint) | <1.8s | >3.0s | Média |
+
+**Otimização de CLS:**
+
+```css
+/* ✅ Sempre definir dimensões em imagens */
+img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9; /* Reserva espaço */
+}
+
+/* ✅ Reservar espaço para conteúdo dinâmico */
+.ad-container {
+  min-height: 250px;
+}
+
+/* ✅ Font-display swap */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
+}
+```
+
+**Otimização de LCP:**
+
+```tsx
+/* ✅ Imagem LCP com priority */
+<Image
+  src="/hero.webp"
+  width={1200}
+  height={600}
+  alt="Hero"
+  priority /* ou fetchPriority="high" */
+  sizes="100vw"
+/>
+
+/* ✅ Preload de recursos críticos */
+<link rel="preload" href="/hero.webp" as="image">
+```
+
+### 5.9 Requisitos de Performance
 
 | Métrica | Target | Condição |
 |---------|--------|----------|
@@ -530,12 +732,18 @@ Ao criar/modificar código, verificar:
 | Time to Interactive (TTI) | < 3.5s | 3G |
 | Cumulative Layout Shift (CLS) | < 0.1 | Sempre |
 
-### 5.5 Touch Targets
+### 5.10 Checklist Mobile-First
 
-| Requisito | Valor Mínimo |
-|-----------|-------------|
-| Área de toque | 44x44px |
-| Espaçamento entre elementos | 8px mínimo |
+**Antes de cada commit CSS:**
+
+- [ ] Estilos base são mobile (sem media query)?
+- [ ] Touch targets ≥ 44x44px em botões?
+- [ ] Inputs com font-size ≥ 16px (evita zoom iOS)?
+- [ ] Grid usa `auto-fit` ou `auto-fill` quando possível?
+- [ ] `clamp()` para tipografia fluid?
+- [ ] Dimensões explícitas em imagens?
+- [ ] CLS < 0.1 verificado?
+- [ ] Testado em viewport 375px (iPhone SE)?
 
 ---
 
@@ -1112,6 +1320,7 @@ Gates de Aprovação:
 8. [Regras de Commits](#8-regras-de-commits)
 9. [Fluxos Procedimentais](#9-fluxos-procedimentais)
 10. [Regras de Reutilização de Código](#10-regras-de-reutilização-de-código)
+11. [Regras de Segurança de Dados](#11-regras-de-segurança-de-dados)
 
 ---
 
@@ -1312,6 +1521,136 @@ function MenuPage() {
 
 ---
 
+## 11. Regras de Segurança de Dados
+
+A proteção de dados sensíveis é **OBRIGATÓRIA** conforme LGPD. Todo desenvolvedor deve seguir estas regras.
+
+### 11.1 Classificação de Dados
+
+| Dado | Classificação | Proteção Obrigatória |
+|------|--------------|---------------------|
+| `customer_whatsapp` | **Sensível** | Mascarar em logs/URLs, owner vê completo |
+| `customer_name` | **Pessoal** | Mascarar em logs públicos |
+| `password` | **Crítico** | Nunca logar, hash seguro |
+| `payment_key` (PIX) | **Crítico** | Nunca logar, mascarar |
+| `email` | **Pessoal** | Mascarar parcialmente |
+
+### 11.2 Regras de Sanitização
+
+#### 11.2.1 Logs
+
+**REGRA**: TODO `console.log` que contenha dados de users/customers **DEVE** usar sanitização.
+
+```typescript
+// ❌ PROIBIDO - dados sensíveis em log
+console.log('Order:', order);
+
+// ✅ OBRIGATÓRIO - usar sanitizeForLog
+import { sanitizeForLog } from '@/lib/sanitize';
+console.log('Order:', sanitizeForLog(order));
+```
+
+#### 11.2.2 Funções de Sanitização
+
+```typescript
+// lib/sanitize.ts - Mínimo requerido
+export function maskWhatsApp(whatsapp: string): string {
+  if (!whatsapp || whatsapp.length < 4) return '****';
+  return '****' + whatsapp.slice(-4);
+}
+
+export function maskName(name: string): string {
+  if (!name || name.length < 2) return '****';
+  return name[0] + '****';
+}
+
+export function sanitizeForLog<T extends Record<string, unknown>>(
+  obj: T,
+  fieldsToRemove: string[] = ['whatsapp', 'customer_whatsapp', 'password']
+): Partial<T> {
+  const sanitized = { ...obj };
+  fieldsToRemove.forEach(field => delete sanitized[field]);
+  return sanitized;
+}
+```
+
+#### 11.2.3 URLs
+
+**REGRA**: URLs públicas **NÃO DEVEM** conter query params com dados sensíveis.
+
+```typescript
+// ❌ PROIBIDO - WhatsApp em query param
+const url = `/checkout?whatsapp=5511999999999`;
+
+// ✅ CORRETO - WhatsApp não aparece na URL
+const url = `/checkout/${orderId}`;
+```
+
+### 11.3 Supabase RLS (Row Level Security)
+
+#### 11.3.1 Policies Obrigatórias
+
+```sql
+-- Orders: customers veem apenas seus próprios pedidos
+CREATE POLICY "customers_see_own_orders"
+ON orders FOR SELECT
+USING (customer_whatsapp = current_user_whatsapp());
+
+-- Orders: apenas owner do restaurante gerencia pedidos
+CREATE POLICY "owner_manages_restaurant_orders"
+ON orders FOR ALL
+USING (restaurant_id = current_user_restaurant_id());
+```
+
+#### 11.3.2 Validações
+
+| Tabela | Policy | Validação |
+|--------|--------|-----------|
+| `orders` | SELECT | customer_whatsapp ou owner |
+| `orders` | INSERT |anyone (público) |
+| `orders` | UPDATE | owner only |
+| `order_items` | SELECT | via order |
+| `restaurants` | ALL | owner only |
+
+### 11.4 Regras de Erro
+
+**REGRA**: Stack traces e erros **NÃO DEVEM** conter dados sensíveis.
+
+```typescript
+// ❌ PROIBIDO - erro expõe dados
+catch (error) {
+  console.error('User data:', userData);
+  throw error;
+}
+
+// ✅ CORRETO - erro genérico
+catch (error) {
+  console.error('Order creation failed:', error.message);
+  throw new Error('Falha ao processar pedido');
+}
+```
+
+### 11.5 Checklist de Segurança
+
+**Antes de cada commit:**
+
+- [ ] Dados sensíveis não aparecem em `console.log`
+- [ ] URLs não contêm query params com dados pessoais
+- [ ] Errors não expõem stack traces com dados
+- [ ] Sanitização usada em todos os logs
+- [ ] RLS policies verificadas
+
+### 11.6 LGPD Compliance Checklist
+
+| Requisito LGPD | Implementação |
+|----------------|---------------|
+| Art. 6 - Finalidade | Dados usados apenas para pedido |
+| Art. 7 - Base legal | Execução de contrato |
+| Art. 10 - Segurança | RLS + sanitização |
+| Art. 48 - Notificação | Erros não expõem dados |
+
+---
+
 ## D. Checklist de Verificação de Regras
 
 ### Antes de Commit
@@ -1337,3 +1676,231 @@ function MenuPage() {
 - [ ] E2E fluxos críticos passando
 - [ ] Documentação atualizada
 - [ ] Proximidade de documentação respeitada
+
+---
+
+## 11. Fluxo de Tratamento de Erros
+
+### 11.1 Visão Geral
+
+Este seção define o **workflow obrigatório** para tratamento de erros no projeto MenuLink. Todo erro reportado **DEVE** passar por este processo.
+
+**Objetivo**: Garantir que erros sejam:
+1. Documentados com RCA completo
+2. Classificados por severidade
+3. Corrigidos com testes que validam a correção
+4. Analisados para prevenção futura
+
+---
+
+### 11.2 Entidades do Domínio
+
+#### ErrorReport (Entidade)
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| id | UUID | Identificador único |
+| description | string | Descrição do erro |
+| severity | Critical \| High \| Medium \| Low | Impacto do erro |
+| reportedAt | DateTime | Data/hora do reporte |
+| status | open \| in_analysis \| fixed \| closed | Estado do RCA |
+
+#### RootCauseAnalysis (Entidade)
+
+| Atributo | Tipo | Descrição |
+|----------|------|-----------|
+| id | RCA-YYYY-MM-DD-NNN | Identificador do RCA |
+| errorReportId | UUID | Referência ao ErrorReport |
+| immediateCause | string | Causa imediata do erro |
+| rootCause | string | Causa raiz (5 Porquês) |
+| category | Code \| Config \| Infra \| Process \| Design \| Test \| Docs | Categoria da causa |
+| testsCreated | TestEvidence[] | Evidência de testes criados |
+| lessonsLearned | string[] | Lições aprendidas |
+| preventiveActions | string[] | Ações preventivas |
+
+#### SeverityTable (Value Object)
+
+| Severidade | Unitários | Integração | BDD |
+|------------|-----------|------------|-----|
+| **Critical** | 3 | 2 | 1 |
+| **High** | 2 | 1 | 1 |
+| **Medium** | 1 | 1 | 0 |
+| **Low** | 1 | 0 | 0 |
+
+---
+
+### 11.3 Workflow Obrigatório
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│              FLUXO DE TRATAMENTO DE ERROS (OBRIGATÓRIO)            │
+└─────────────────────────────────────────────────────────────────────┘
+
+Erro Reportado
+       │
+       ▼
+┌──────────────────────┐
+│ Criar RCA no template│ ──► .openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
+│ (10 seções)          │
+└──────────────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Classificar severidade│ ──► Critical / High / Medium / Low
+│ (tabela de testes)   │
+└──────────────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Criar testes OBRIGATÓRIOS│ ──► unit/ / integration/ / e2e/
+│ ANTES do fix        │
+└──────────────────────┘
+       │
+       ├──► Testes falham (reproduzem erro)
+       │
+       ▼
+┌──────────────────────┐
+│ Aplicar fix          │
+└──────────────────────┘
+       │
+       ├──► Testes passam
+       ├──► Regression tests OK
+       │
+       ▼
+┌──────────────────────┐
+│ Verification          │ ──► Compliance report
+│ (código + docs)      │
+└──────────────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Archive               │ ──► .openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
+└──────────────────────┘
+```
+
+---
+
+### 11.4 Requisitos (REQ-ERR)
+
+#### REQ-ERR-001: RCA Obrigatório
+
+**Todo erro reportado DEVE ter RCA completo criado** antes de qualquer tentativa de correção.
+
+**Critério**: Erro sem RCA não pode ser considerado "resolvido".
+
+#### REQ-ERR-002: Template RCA com 10 Seções
+
+**O RCA DEVE conter todas as 10 seções obrigatórias**:
+1. Descrição do Erro
+2. Impacto (usuários, funcionalidade, receita)
+3. Linha do Tempo
+4. Causa Imediata
+5. Causa Raiz (5 Porquês)
+6. Categoria da Causa Raiz
+7. Testes Criados (unitários, integração, BDD)
+8. Correção Aplicada
+9. Lições Aprendidas
+10. Ação Preventiva
+
+#### REQ-ERR-003: Testes Obrigatórios por Severidade
+
+**Antes de aplicar qualquer fix, DEVEM ser criados testes** conforme a tabela de severidade:
+
+| Severidade | Unitários | Integração | BDD |
+|------------|-----------|------------|-----|
+| Critical | 3 | 2 | 1 |
+| High | 2 | 1 | 1 |
+| Medium | 1 | 1 | 0 |
+| Low | 1 | 0 | 0 |
+
+**Regra**: Testes devem falhar ANTES do fix e passar DEPOIS do fix.
+
+#### REQ-ERR-004: Validação de Correção
+
+**Todos os testes DEVEM passar** após a correção ser aplicada.
+
+**Critério**: Se qualquer teste falhar, a correção não está completa.
+
+#### REQ-ERR-005: Armazenamento e Recuperação de RCA
+
+**RCA deve ser armazenado** em `.openspec/root-causes/RCA-YYYY-MM-DD-NNN.md`
+
+**Formato do ID**: `RCA-YYYY-MM-DD-NNN` onde:
+- YYYY-MM-DD = Data do reporte
+- NNN = Número sequencial (3 dígitos, resetado por dia)
+
+#### REQ-ERR-006: Integração com Fluxo SDD
+
+**Se o erro requer mudança significativa**, o fluxo SDD completo DEVE ser seguido:
+1. Criar entrada em `.openspec/backlog/prds/` (PRD implícito no RCA)
+2. Se mudança de código: proposal → spec → design → tasks → verification → archive
+
+---
+
+### 11.5 Categorias de Causa Raiz
+
+| Código | Categoria | Quando Usar |
+|--------|-----------|-------------|
+| CODE | Código | Bug em código fonte, lógica incorreta |
+| CONFIG | Configuração | Erro em variáveis de ambiente, settings |
+| INFRA | Infraestrutura | Problemas de servidor, rede, cloud |
+| PROC | Processo | Falta de processo definido, processo inadequado |
+| DSGN | Design | Decisão arquitetural incorreta |
+| TEST | Testes | Cobertura insuficiente, testes ausentes |
+| DOCS | Documentação | Documentação ausente ou incorreta |
+
+---
+
+### 11.6 Critérios de Aceitação (CA-ERR)
+
+| ID | Critério | Evidência |
+|----|----------|-----------|
+| CA-ERR-001 | Template RCA existe com 10 seções | `.openspec/templates/rca-template.md` |
+| CA-ERR-002 | Diretório root-causes existe com README.md | `.openspec/root-causes/README.md` |
+| CA-ERR-003 | menulink-rules.md contém REQ-ERR-001 a REQ-ERR-006 | Seção 11 atualizada |
+| CA-ERR-004 | AGENTS.md root documenta fluxo de erros | Seção de Fluxo de Tratamento de Erros |
+| CA-ERR-005 | Métrica 100% RCA compliance documentada | Este documento |
+
+---
+
+### 11.7 Métricas de Compliance
+
+| Métrica | Target | Descrição |
+|---------|--------|-----------|
+| **RCA Coverage** | 100% | Todos os erros reportados devem ter RCA |
+| **Testes por Severidade** | Conforme tabela | Testes criados ANTES do fix |
+| **5 Porquês** | Mínimo 3 | Análise de causa raiz deve ser profunda |
+
+---
+
+### 11.8 Linguagem Ubíqua (pt-BR)
+
+| Termo | Definição |
+|-------|-----------|
+| Erro | Falha não planejada no sistema |
+| RCA | Root Cause Analysis - Análise de Causa Raiz |
+| 5 Whys | Técnica de análise: perguntar "por quê?" 5 vezes |
+| Severidade | Impacto do erro (Critical/High/Medium/Low) |
+| Testes de Reprodução | Testes que falham antes do fix e passam depois |
+| Compliance | Conformidade com o workflow obrigatório |
+
+---
+
+### 11.9 Referências
+
+| Artefato | Caminho |
+|----------|---------|
+| Template RCA | `.openspec/templates/rca-template.md` |
+| Diretório RCAs | `.openspec/root-causes/` |
+| README RCAs | `.openspec/root-causes/README.md` |
+| Fluxo SDD | Seção 9.6 deste documento |
+
+---
+
+### 11.10 Versionamento
+
+| Versão | Data | Autor | Mudanças |
+|--------|------|-------|----------|
+| 1.0 | 2026-04-17 | AI Agent | Versão inicial (Seção 10 adicionada) |
+
+---

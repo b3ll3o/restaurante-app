@@ -1064,6 +1064,107 @@ AGENTS.md (este arquivo)
 └── .openspec/AGENTS.md (SDD specs)
 ```
 
+---
+
+## Fluxo de Tratamento de Erros
+
+### Visão Geral
+
+O MenuLink possui um **workflow obrigatório** para tratamento de erros. Todo erro reportado **DEVE** passar por este processo documentado na Seção 11 do `menulink-rules.md`.
+
+```
+Erro Reportado → RCA (10 seções) → Classificar Severidade →
+Criar Testes (mínimos por severidade) → Fix → Validação → Archive
+```
+
+### Template RCA
+
+O template oficial está em: `.openspec/templates/rca-template.md`
+
+**10 seções obrigatórias**:
+1. Descrição do Erro
+2. Impacto (usuários, funcionalidade, receita)
+3. Linha do Tempo
+4. Causa Imediata
+5. Causa Raiz (5 Porquês)
+6. Categoria da Causa Raiz
+7. Testes Criados (unitários, integração, BDD)
+8. Correção Aplicada
+9. Lições Aprendidas
+10. Ação Preventiva
+
+### Diretório de RCAs
+
+```
+.openspec/root-causes/
+├── README.md              # Guia do processo RCA
+├── .gitkeep               # Mantém diretório no git
+└── RCA-YYYY-MM-DD-NNN.md  # Arquivos RCA individuais
+```
+
+### Classificação de Severidade
+
+| Severidade | Unitários | Integração | BDD | Impacto |
+|------------|-----------|------------|-----|---------|
+| **Critical** | 3 | 2 | 1 | Sistema indisponível ou perda de dados |
+| **High** | 2 | 1 | 1 | Funcionalidade principal comprometida |
+| **Medium** | 1 | 1 | 0 | Funcionalidade secundária afetada |
+| **Low** | 1 | 0 | 0 | Impacto mínimo, workarounds disponíveis |
+
+### Categorias de Causa Raiz
+
+| Código | Categoria | Quando Usar |
+|--------|-----------|-------------|
+| CODE | Código | Bug em código fonte, lógica incorreta |
+| CONFIG | Configuração | Erro em variáveis de ambiente, settings |
+| INFRA | Infraestrutura | Problemas de servidor, rede, cloud |
+| PROC | Processo | Falta de processo definido |
+| DSGN | Design | Decisão arquitetural incorreta |
+| TEST | Testes | Cobertura insuficiente, testes ausentes |
+| DOCS | Documentação | Documentação ausente ou incorreta |
+
+### Regras Obrigatórias
+
+1. **RCA obrigatório**: Todo erro reportado deve ter RCA completo antes da correção
+2. **Testes antes do fix**: Criar testes que falham ANTES e passam DEPOIS
+3. **5 Porquês**: Mínimo de 3 "porquês" para análise profunda
+4. **Compliance 100%**: Todos os erros devem ter RCA documentado
+
+### Critérios de Aceitação
+
+| ID | Critério | Evidência |
+|----|----------|-----------|
+| CA-ERR-001 | Template RCA com 10 seções | `.openspec/templates/rca-template.md` |
+| CA-ERR-002 | Diretório root-causes existe | `.openspec/root-causes/README.md` |
+| CA-ERR-003 | menulink-rules.md contém REQ-ERR-001 a REQ-ERR-006 | Seção 11 atualizada |
+| CA-ERR-004 | AGENTS.md root documenta fluxo de erros | Esta seção |
+| CA-ERR-005 | Métrica 100% RCA compliance | Seção 11.7 do menulink-rules.md |
+
+### Integração com SDD
+
+```
+Erro Reportado
+       │
+       ▼
+1. RCA criado (.openspec/root-causes/RCA-YYYY-MM-DD-NNN.md)
+       │
+       ▼
+2. Se mudança significativa → seguir fluxo SDD completo
+   - Criar change em .openspec/changes/
+   - Seguir: proposal → spec → design → tasks → verification → archive
+       │
+       ▼
+3. Archive: .openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
+```
+
+### Referências
+
+- Template RCA: `.openspec/templates/rca-template.md`
+- Diretório RCAs: `.openspec/root-causes/`
+- Regras completas: `.openspec/specs/menulink-rules.md` (Seção 11)
+
+---
+
 ### Hierarquia de Documentação
 
 1. **Este arquivo (AGENTS.md)**: Visão geral e regras do projeto

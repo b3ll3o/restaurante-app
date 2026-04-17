@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Plus, Pencil, Trash2, Package, Image as ImageIcon } from "lucide-react";
+import { LOCALE } from "@/lib/constants";
 
 interface Category {
   id: string;
@@ -225,7 +226,7 @@ export default function ProductsPage() {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
+    return new Intl.NumberFormat(LOCALE.ptBR, {
       style: "currency",
       currency: "BRL",
     }).format(price);
@@ -302,7 +303,7 @@ export default function ProductsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="price">Preço</Label>
                   <Input
@@ -317,6 +318,7 @@ export default function ProductsPage() {
                         price: parseFloat(e.target.value) || 0,
                       })
                     }
+                    className="min-h-[44px] text-base"
                   />
                 </div>
 
@@ -333,6 +335,7 @@ export default function ProductsPage() {
                         display_order: parseInt(e.target.value) || 0,
                       })
                     }
+                    className="min-h-[44px] text-base"
                   />
                 </div>
               </div>
@@ -426,70 +429,74 @@ export default function ProductsPage() {
                 Criar primeiro produto
               </Button>
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[80px]">Imagem</TableHead>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Categoria</TableHead>
-                  <TableHead className="text-right">Preço</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                  <TableHead className="w-[100px]">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {products.map((product) => {
-                  const category = categories.find((c) => c.id === product.category_id);
-                  return (
-                    <TableRow key={product.id}>
-<TableCell>
-            {product.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={product.image_url}
-                  alt={product.name}
-                  className="h-10 w-10 object-cover rounded-md"
-                />
-              ) : (
-                          <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center">
-                            <ImageIcon className="h-4 w-4 text-muted-foreground" />
+) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[80px]">Imagem</TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Categoria</TableHead>
+                    <TableHead className="text-right">Preço</TableHead>
+                    <TableHead className="text-center">Status</TableHead>
+                    <TableHead className="w-[100px]">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {products.map((product) => {
+                    const category = categories.find((c) => c.id === product.category_id);
+                    return (
+                      <TableRow key={product.id}>
+                        <TableCell>
+                          {product.image_url ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={product.image_url}
+                              alt={product.name}
+                              className="h-10 w-10 object-cover rounded-md"
+                            />
+                          ) : (
+                            <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center">
+                              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell className="font-medium">{product.name}</TableCell>
+                        <TableCell>{category?.name || "-"}</TableCell>
+                        <TableCell className="text-right">
+                          {formatPrice(product.price)}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <Badge variant={product.is_available ? "default" : "secondary"}>
+                            {product.is_available ? "Disponível" : "Indisponível"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleOpenDialog(product)}
+                              className="min-h-[44px] min-w-[44px]"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDelete(product.id)}
+                              className="min-h-[44px] min-w-[44px]"
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
                           </div>
-                        )}
-                      </TableCell>
-                      <TableCell className="font-medium">{product.name}</TableCell>
-                      <TableCell>{category?.name || "-"}</TableCell>
-                      <TableCell className="text-right">
-                        {formatPrice(product.price)}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Badge variant={product.is_available ? "default" : "secondary"}>
-                          {product.is_available ? "Disponível" : "Indisponível"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleOpenDialog(product)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(product.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-destructive" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </CardContent>
       </Card>

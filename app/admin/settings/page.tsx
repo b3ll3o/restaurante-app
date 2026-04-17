@@ -146,6 +146,7 @@ export default function SettingsPage() {
                 setFormData({ ...formData, name: e.target.value })
               }
               placeholder="Nome do restaurante"
+              className="min-h-[44px] text-base"
             />
           </div>
 
@@ -159,13 +160,14 @@ export default function SettingsPage() {
                 setFormData({ ...formData, owner_whatsapp: e.target.value })
               }
               placeholder="+5511999999999"
+              className="min-h-[44px] text-base"
             />
             <p className="text-sm text-muted-foreground">
               Número do WhatsApp que receberá as notificações de pedido
             </p>
           </div>
 
-          <Button onClick={handleSave} disabled={saving}>
+          <Button onClick={handleSave} disabled={saving} className="min-h-[44px]">
             {saving ? "Salvando..." : "Salvar Configurações"}
           </Button>
         </CardContent>

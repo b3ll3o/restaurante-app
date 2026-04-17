@@ -140,6 +140,52 @@ E deve exibir "Cancele quando quiser"
 
 ---
 
+Cenário: Usuário acessa landing de pizzaria
+Dado que o usuário acessa "/landing/pizzaria"
+Quando a página carrega
+Então o HeroSection deve exibir headline "Cardápio digital para pizzarias"
+E o SocialProofSection deve exibir "+500 Pizzarias artesanais"
+E o CTASection deve conter link com utm_content=cta-pizzaria
+
+---
+
+Cenário: Usuário acessa landing de hamburgueria
+Dado que o usuário acessa "/landing/hamburgueria"
+Quando a página carrega
+Então o HeroSection deve exibir headline "Cardápio visual com QR code"
+E o SocialProofSection deve exibir "+300 Hamburguerias boutique"
+E o CTASection deve conter link com utm_content=cta-hamburgueria
+
+---
+
+Cenário: Usuário acessa landing de bar
+Dado que o usuário acessa "/landing/bar"
+Quando a página carrega
+Então o HeroSection deve exibir headline "Controle de comanda por pessoa"
+E o SocialProofSection deve exibir "+200 Bares badalados"
+E o CTASection deve conter link com utm_content=cta-bar
+
+---
+
+Cenário: Usuário acessa landing de restaurante
+Dado que o usuário acessa "/landing/restaurante"
+Quando a página carrega
+Então o HeroSection deve exibir headline "Reservas e carta digital"
+E o SocialProofSection deve exibir "+150 Restaurantes fine dining"
+E o CTASection deve conter link com utm_content=cta-restaurante
+
+---
+
+Cenário: CTA com UTM params corretos
+Dado que o usuário está em qualquer landing page segmentada
+Quando clica no botão CTA
+Então o link deve conter utm_source=landing
+E o link deve conter utm_medium=cta
+E o link deve conter utm_campaign={segment}
+E o link deve conter utm_content=cta-{segment}
+
+---
+
 Cenário: Botões CTA são clicáveis e navegam para destino correto
 Dado que o usuário está na landing page
 Quando clica em qualquer botão CTA da página

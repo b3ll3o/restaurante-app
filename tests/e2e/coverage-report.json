@@ -1,0 +1,209 @@
+{
+  "generated": "2026-04-17T21:54:54.358Z",
+  "routes": [
+    {
+      "path": "/admin/categories",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/categories/page.tsx",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/categories/categories.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 5
+    },
+    {
+      "path": "/admin/dashboard",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/dashboard/page.tsx",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/dashboard/dashboard.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 3
+    },
+    {
+      "path": "/admin/layout.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/layout.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/admin/login",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/login/page.tsx",
+      "tests": [
+        "/home/leo/projetos/restaurante/tests/e2e/admin/login.spec.ts"
+      ],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/login/login.feature"
+      ],
+      "status": "green",
+      "scenarios": 4
+    },
+    {
+      "path": "/admin/orders",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/orders/page.tsx",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/orders/orders.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 6
+    },
+    {
+      "path": "/admin/products",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/products/page.tsx",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/products/products.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 5
+    },
+    {
+      "path": "/admin/settings",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/settings/page.tsx",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/settings/settings.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 7
+    },
+    {
+      "path": "/admin/signup",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/signup/page.tsx",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/admin/signup/signup.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 3
+    },
+    {
+      "path": "/components/landing/CTASection.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/CTASection.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/components/landing/DemoSection.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/DemoSection.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/components/landing/HeroSection.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/HeroSection.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/components/landing/LandingPage.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/LandingPage.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/components/landing/PillarsSection.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/PillarsSection.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/components/landing/PricingSection.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/PricingSection.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/components/landing/SocialProofSection.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/components/landing/SocialProofSection.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/layout.tsx",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/layout.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/menu/[slug]",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/menu/[slug]/page.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/",
+      "type": "page",
+      "filePath": "/home/leo/projetos/restaurante/app/page.tsx",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/admin/auth/callback/route",
+      "type": "api",
+      "filePath": "/home/leo/projetos/restaurante/app/admin/auth/callback/route.ts",
+      "tests": [],
+      "bdds": [],
+      "status": "red",
+      "scenarios": 0
+    },
+    {
+      "path": "/api/orders/route",
+      "type": "api",
+      "filePath": "/home/leo/projetos/restaurante/app/api/orders/route.ts",
+      "tests": [],
+      "bdds": [
+        "/home/leo/projetos/restaurante/app/api/orders/orders.feature"
+      ],
+      "status": "yellow",
+      "scenarios": 5
+    }
+  ],
+  "summary": {
+    "total": 20,
+    "green": 1,
+    "yellow": 7,
+    "red": 12
+  }
+}

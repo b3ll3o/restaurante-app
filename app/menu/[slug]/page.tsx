@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { maskWhatsApp } from "@/lib/sanitize";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { useCart, CartItem } from "@/context/cart-context";
+import { LOCALE } from "@/lib/constants";
 import {
   Menu,
   ShoppingCart,
@@ -107,7 +109,7 @@ export default function MenuPage() {
   }, [slug, supabase]);
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("pt-BR", {
+    return new Intl.NumberFormat(LOCALE.ptBR, {
       style: "currency",
       currency: "BRL",
     }).format(price);
@@ -175,7 +177,7 @@ export default function MenuPage() {
       clearCart();
 
       setTimeout(() => {
-        const restaurantWhatsApp = menuData.restaurant.owner_whatsapp;
+        const restaurantWhatsApp = maskWhatsApp(menuData.restaurant.owner_whatsapp).replace(/\D/g, "");
         const itemsList = items
           .map(
             (item) =>
@@ -371,19 +373,19 @@ export default function MenuPage() {
                       <div className="space-y-2">
                         <Label>Forma de Pagamento</Label>
                         <div className="grid grid-cols-2 gap-2">
-                          <Button
-                            variant={paymentMethod === "pix" ? "default" : "outline"}
-                            onClick={() => setPaymentMethod("pix")}
-                            className="h-20 flex flex-col gap-1"
-                          >
-                            <span className="text-lg font-bold">PIX</span>
-                            <span className="text-xs opacity-70">Transferência</span>
-                          </Button>
-                          <Button
-                            variant={paymentMethod === "cash" ? "default" : "outline"}
-                            onClick={() => setPaymentMethod("cash")}
-                            className="h-20 flex flex-col gap-1"
-                          >
+<Button
+                          variant={paymentMethod === "pix" ? "default" : "outline"}
+                          onClick={() => setPaymentMethod("pix")}
+                          className="h-20 flex flex-col gap-1 min-h-[80px]"
+                        >
+                          <span className="text-lg font-bold">PIX</span>
+                          <span className="text-xs opacity-70">Transferência</span>
+                        </Button>
+                        <Button
+                          variant={paymentMethod === "cash" ? "default" : "outline"}
+                          onClick={() => setPaymentMethod("cash")}
+                          className="h-20 flex flex-col gap-1 min-h-[80px]"
+                        >
                             <span className="text-lg font-bold">Dinheiro</span>
                             <span className="text-xs opacity-70">Na entrega</span>
                           </Button>

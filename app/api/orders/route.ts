@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { sendWhatsAppMessage, formatOrderMessage } from "@/lib/whatsapp";
+import { ORDER_STATUS } from "@/lib/constants";
+import { sanitizeForLog, maskWhatsApp } from "@/lib/sanitize";
 
 interface OrderItem {
   product: { id: string; name: string; price: number };
@@ -36,7 +38,7 @@ export async function POST(request: Request) {
         customer_whatsapp: customerWhatsapp,
         total,
         payment_method: paymentMethod,
-        status: "pending",
+        status: ORDER_STATUS.pending,
       })
       .select()
       .single();
@@ -84,9 +86,15 @@ export async function POST(request: Request) {
       message
     );
 
-    return NextResponse.json({ success: true, order }, { status: 201 });
+    return NextResponse.json({
+      success: true,
+      order: {
+        ...order,
+        customer_whatsapp: maskWhatsApp(order.customer_whatsapp)
+      }
+    }, { status: 201 });
   } catch (error) {
-    console.error("Error creating order:", error);
+    console.error("Error creating order:", sanitizeForLog({ error }));
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,3 +1,4 @@
+export type { SegmentType } from "@/lib/analytics";
 export { HeroSection } from "./HeroSection";
 export { PillarsSection } from "./PillarsSection";
 export { SocialProofSection } from "./SocialProofSection";

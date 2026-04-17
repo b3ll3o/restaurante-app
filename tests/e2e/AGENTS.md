@@ -24,6 +24,8 @@ tests/e2e/
 ├── support/
 │   └── page-objects/
 │       └── index.ts        # Page Objects reutilizáveis
+├── coverage-report.html     # Relatório visual de cobertura (gerado)
+├── coverage-report.json     # Relatório estruturado de cobertura (gerado)
 └── AGENTS.md               # Este arquivo
 ```
 
@@ -34,6 +36,8 @@ tests/e2e/
 | `admin/login.spec.ts` | Testar login, logout e erros de autenticação admin |
 | `public/checkout.spec.ts` | Testar visualização do cardápio, adição ao carrinho e checkout |
 | `support/page-objects/index.ts` | Page Objects para abstrair seletores e ações |
+| `coverage-report.html` | Relatório visual de cobertura E2E/BDD (gerado por `npm run test:coverage:e2e`) |
+| `coverage-report.json` | Relatório estruturado JSON (gerado por `npm run test:coverage:e2e`) |
 
 ---
 

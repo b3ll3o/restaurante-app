@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { TOAST_MESSAGES } from "@/lib/constants";
 
 /**
  * Hook para monitorar status de conexão online/offline
@@ -20,7 +21,7 @@ export function useOnlineStatus(): boolean {
     const handleOnline = () => {
       setIsOnline(true);
       // Toast suave quando reconecta - não bloqueia UI
-      toast.success("Conexão restaurada", {
+      toast.success(TOAST_MESSAGES.online, {
         duration: 3000,
         position: "bottom-center",
       });
@@ -29,7 +30,7 @@ export function useOnlineStatus(): boolean {
     const handleOffline = () => {
       setIsOnline(false);
       // Toast informativo - não bloqueia UI
-      toast.warning("Você está offline", {
+      toast.warning(TOAST_MESSAGES.offline, {
         duration: 5000,
         position: "bottom-center",
       });
