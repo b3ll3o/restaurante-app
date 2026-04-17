@@ -1,7 +1,7 @@
 # RCA Template - Root Cause Analysis
 
 **Idioma**: Português Brasileiro (pt-BR)  
-**Versão**: 1.0  
+**Versão**: 1.1  
 **Última Atualização**: 2026-04-17
 
 ---
@@ -222,12 +222,14 @@ A técnica dos 5 Porquês envolve perguntar "por quê?" sucesivamente para chega
 | Campo | Valor |
 |-------|-------|
 | **RCA ID** | RCA-YYYY-MM-DD-NNN |
+| **PRD ID** | PRD-YYY (se aplicável, para bugs que requerem PRD) |
 | **Erro Reportado em** | YYYY-MM-DD HH:MM |
 | **RCA Criado em** | YYYY-MM-DD HH:MM |
 | **Autor** | [nome] |
 | **Revisor** | [nome] |
 | **Severidade** | [Critical/High/Medium/Low] |
 | **Status** | [open/in_analysis/fixed/closed] |
+| **Pipeline** | [SDD/BugFix/None] |
 
 ---
 
@@ -238,6 +240,28 @@ A técnica dos 5 Porquês envolve perguntar "por quê?" sucesivamente para chega
 | Autor | | |
 | Revisor | | |
 | Tech Lead | | |
+
+---
+
+## Checklist de Compliance
+
+**Este RCA está completo e válido para arquivamento:**
+
+- [ ] Todas as 10 seções estão preenchidas
+- [ ] Seção 5 (5 Porquês) tem no mínimo 3 níveis de profundidade
+- [ ] Seção 6 (Categoria) está preenchida com justificativa
+- [ ] Seção 7 (Testes) tem pelo menos 1 teste criado
+- [ ] Seção 8 (Correção) tem código antes/depois
+- [ ] Seção 10 (Ações) tem pelo menos 1 ação preventiva
+- [ ] Metadados estão preenchidos (ID, Data, Status)
+- [ ] **Se PRD de correção**: PRD ID está referenciado
+
+### Para PRDs de Correção (Bug Fix)
+
+- [ ] RCA ID referenciado no PRD
+- [ ] PRD criado em `.openspec/backlog/prds/`
+- [ ] Após correção: RCA.status = "Completed"
+- [ ] Após correção: PRD movido para `.openspec/backlog/archive/`
 
 ---
 
