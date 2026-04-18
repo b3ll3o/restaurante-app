@@ -28,12 +28,14 @@ Componente de apresentação que exibe o cabeçalho do painel administrativo. Mo
 ```typescript
 interface HeaderProps {
   userEmail?: string;
+  onMenuClick?: () => void;
 }
 ```
 
 | Prop | Tipo | Obrigatório | Descrição |
 |------|------|-------------|-----------|
 | `userEmail` | `string` | Não | Email do usuário autenticado. Exibe "Administrador" se não fornecido |
+| `onMenuClick` | `() => void` | Não | Callback para abrir drawer do sidebar em mobile |
 
 ### Estados
 
@@ -43,10 +45,20 @@ interface HeaderProps {
 
 ### Comportamento
 
-1. Exibe avatar com ícone de usuário
-2. Exibe email do usuário ou "Administrador" como fallback
-3. Botão "Sair" com ícone LogOut
-4. Durante logout: desabilita botão e mostra estado de loading
+1. **Mobile (<1024px)**: Exibe botão hamburger (Menu) que abre o sidebar drawer
+2. **Desktop (≥1024px)**: Botão hamburger oculto
+3. Exibe avatar com ícone de usuário
+4. Exibe email do usuário ou "Administrador" como fallback (oculto em mobile)
+5. Botão "Sair" com ícone LogOut e texto oculto em mobile (apenas ícone)
+6. Durante logout: desabilita botão e mostra estado de loading
+
+### Responsividade
+
+| Elemento | Mobile | Desktop |
+|----------|--------|---------|
+| Hamburger menu | Visível (lg:hidden) | Oculto (hidden lg:block) |
+| Email usuário | Oculto (hidden md:block) | Visível |
+| Texto "Sair" | Oculto (hidden sm:inline) | Visível |
 
 ---
 

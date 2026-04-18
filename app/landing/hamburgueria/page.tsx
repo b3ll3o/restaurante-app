@@ -12,10 +12,10 @@ export default function HamburgueriaLandingPage() {
 
   return (
     <main>
-      <HeroSection segment="hamburgueria" />
-      <SocialProofSection segment="hamburgueria" />
-      <PillarsSection segment="hamburgueria" />
-      <CTASection segment="hamburgueria" />
+      <HeroSection />
+      <SocialProofSection />
+      <PillarsSection />
+      <CTASection />
     </main>
   );
 }

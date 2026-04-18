@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { resendConfirmationEmail } from "@/lib/supabase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,10 +25,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailNotConfirmed, setEmailNotConfirmed] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setEmailNotConfirmed(false);
+    setResendSuccess(false);
     setLoading(true);
 
     const { error } = await supabase.auth.signInWithPassword({
@@ -35,13 +42,31 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError(error.message);
+      if (error.code === "email_not_confirmed") {
+        setEmailNotConfirmed(true);
+        setError("");
+      } else {
+        setError("Email ou senha incorretos");
+      }
       setLoading(false);
       return;
     }
 
     router.push("/admin/dashboard");
     router.refresh();
+  };
+
+  const handleResend = async () => {
+    setResending(true);
+    const result = await resendConfirmationEmail(email);
+    setResending(false);
+
+    if (result.success) {
+      setResendSuccess(true);
+      toast.success("Email de confirmação reenviado!");
+    } else {
+      toast.error(result.error || "Falha ao reenviar email");
+    }
   };
 
   return (
@@ -55,7 +80,29 @@ export default function LoginPage() {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
-            {error && (
+            {emailNotConfirmed && !resendSuccess && (
+              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive space-y-3">
+                <p>Você ainda não confirmou seu email. Clique no link enviado para {email} ou solicite um novo email de confirmação.</p>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleResend}
+                  disabled={resending}
+                  className="w-full"
+                >
+                  {resending ? "Reenviando..." : "Reenviar email de confirmação"}
+                </Button>
+              </div>
+            )}
+
+            {resendSuccess && (
+              <div className="rounded-md bg-green-500/10 p-3 text-sm text-green-600 dark:text-green-400">
+                Email de confirmação reenviado! Verifique sua caixa de entrada.
+              </div>
+            )}
+
+            {error && !emailNotConfirmed && (
               <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
                 {error}
               </div>

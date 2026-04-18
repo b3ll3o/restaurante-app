@@ -261,12 +261,12 @@ export default function ProductsPage() {
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()}>
+            <Button onClick={() => handleOpenDialog()} className="touch-target">
               <Plus className="h-4 w-4 mr-2" />
               Novo Produto
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="w-full h-full max-w-none md:max-w-2xl md:h-auto md:max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingProduct ? "Editar Produto" : "Novo Produto"}
@@ -424,79 +424,133 @@ export default function ProductsPage() {
               <p className="text-muted-foreground mb-4">
                 Nenhum produto cadastrado
               </p>
-              <Button onClick={() => handleOpenDialog()}>
+              <Button onClick={() => handleOpenDialog()} className="touch-target">
                 <Plus className="h-4 w-4 mr-2" />
                 Criar primeiro produto
               </Button>
             </div>
-) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[80px]">Imagem</TableHead>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>Categoria</TableHead>
-                    <TableHead className="text-right">Preço</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="w-[100px]">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {products.map((product) => {
-                    const category = categories.find((c) => c.id === product.category_id);
-                    return (
-                      <TableRow key={product.id}>
-                        <TableCell>
-                          {product.image_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={product.image_url}
-                              alt={product.name}
-                              className="h-10 w-10 object-cover rounded-md"
-                            />
-                          ) : (
-                            <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center">
-                              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+          ) : (
+            <>
+              {/* Desktop Table - visible on lg+ (≥1024px) */}
+              <div className="hidden lg:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[80px]">Imagem</TableHead>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Categoria</TableHead>
+                      <TableHead className="text-right">Preço</TableHead>
+                      <TableHead className="text-center">Status</TableHead>
+                      <TableHead className="w-[100px]">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {products.map((product) => {
+                      const category = categories.find((c) => c.id === product.category_id);
+                      return (
+                        <TableRow key={product.id}>
+                          <TableCell>
+                            {product.image_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={product.image_url}
+                                alt={product.name}
+                                className="h-10 w-10 object-cover rounded-md aspect-square"
+                              />
+                            ) : (
+                              <div className="h-10 w-10 bg-muted rounded-md flex items-center justify-center">
+                                <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                            )}
+                          </TableCell>
+                          <TableCell className="font-medium">{product.name}</TableCell>
+                          <TableCell>{category?.name || "-"}</TableCell>
+                          <TableCell className="text-right">
+                            {formatPrice(product.price)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant={product.is_available ? "default" : "secondary"}>
+                              {product.is_available ? "Disponível" : "Indisponível"}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleOpenDialog(product)}
+                                className="touch-target"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleDelete(product.id)}
+                                className="touch-target"
+                              >
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
                             </div>
-                          )}
-                        </TableCell>
-                        <TableCell className="font-medium">{product.name}</TableCell>
-                        <TableCell>{category?.name || "-"}</TableCell>
-                        <TableCell className="text-right">
-                          {formatPrice(product.price)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Badge variant={product.is_available ? "default" : "secondary"}>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile/Tablet Cards - visible on < 1024px */}
+              <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {products.map((product) => {
+                  const category = categories.find((c) => c.id === product.category_id);
+                  return (
+                    <Card key={product.id} className="overflow-hidden">
+                      {product.image_url && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={product.image_url}
+                          alt={product.name}
+                          className="w-full h-32 object-cover"
+                        />
+                      )}
+                      <CardHeader className="p-4">
+                        <div className="flex justify-between items-start gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium truncate">{product.name}</h3>
+                            <p className="text-sm text-muted-foreground">{category?.name || "-"}</p>
+                          </div>
+                          <Badge variant={product.is_available ? "default" : "secondary"} className="flex-shrink-0">
                             {product.is_available ? "Disponível" : "Indisponível"}
                           </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleOpenDialog(product)}
-                              className="min-h-[44px] min-w-[44px]"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleDelete(product.id)}
-                              className="min-h-[44px] min-w-[44px]"
-                            >
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-4 pt-0 flex justify-between items-center">
+                        <span className="font-bold">{formatPrice(product.price)}</span>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleOpenDialog(product)}
+                            className="touch-target"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDelete(product.id)}
+                            className="touch-target"
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

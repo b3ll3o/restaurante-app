@@ -12,10 +12,10 @@ export default function RestauranteLandingPage() {
 
   return (
     <main>
-      <HeroSection segment="restaurante" />
-      <SocialProofSection segment="restaurante" />
-      <PillarsSection segment="restaurante" />
-      <CTASection segment="restaurante" />
+      <HeroSection />
+      <SocialProofSection />
+      <PillarsSection />
+      <CTASection />
     </main>
   );
 }

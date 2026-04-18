@@ -69,11 +69,47 @@ Interface para criar, editar, visualizar e excluir categorias do cardápio do re
 
 ### Componentes Utilizados
 
-- `Table` (shadcn/ui) - Lista de categorias
-- `Button` (shadcn/ui) - Ações
+- `Table` (shadcn/ui) - Lista de categorias (desktop ≥1024px)
+- `Cards` (shadcn/ui) - Lista de categorias (mobile <1024px)
+- `Button` (shadcn/ui) - Ações com touch-target 44x44px
 - `Dialog` (shadcn/ui) - Modais de criação/ediçao
 - `Input` (shadcn/ui) - Campos de formulário
 - `Badge` (shadcn/ui) - Status/indicadores
+
+### Layout Adaptativo (Table ↔ Cards)
+
+| Breakpoint | Visualização | Componente |
+|------------|--------------|------------|
+| Mobile (<768px) | Cards empilhados | `Card` com ações |
+| Tablet (768-1023px) | Cards ou Table | Adapta conforme espaço |
+| Desktop (≥1024px) | Tabela completa | `Table` com colunas |
+
+**Implementação**:
+```tsx
+{/* Desktop: Table */}
+<Table className="hidden lg:block">
+  {/* ... */}
+</Table>
+
+{/* Mobile: Cards */}
+<div className="grid gap-4 lg:hidden">
+  {/* ... */}
+</div>
+```
+
+### Dialog Fullscreen Mobile
+
+Em mobile (<768px), o Dialog de criar/editar abre em tela cheia para melhor usabilidade:
+- `className="max-w-none h-screen rounded-none"`
+- Scroll vertical para acessar todos os campos
+- Botão fechar visível no header
+
+### Touch Targets
+
+Todos os botões de ação (editar, excluir, adicionar) têm:
+- `min-height: 44px`
+- `min-width: 44px`
+- Espaço de 8px ao redor
 
 ---
 
@@ -121,7 +157,33 @@ Dado que o admin está na página de categorias
 Quando deixa o campo nome vazio
 E clica em "Salvar"
 Então deve aparecer mensagem de erro "Nome é obrigatório"
+
+Cenário: Categorias exibidas em cards em mobile
+Dado que o admin está logado
+E a janela do navegador está abaixo de 768px
+Quando acessa a página de categorias
+Então as categorias devem ser exibidas em cards
+E cada card deve ter ações (editar/excluir) acessíveis
+
+Cenário: Categorias exibidas em tabela em desktop
+Dado que o admin está logado
+E a janela do navegador está em 1024px ou mais
+Quando acessa a página de categorias
+Então as categorias devem ser exibidas em tabela
 ```
+
+---
+
+## Responsividade
+
+### Requisitos de Responsividade
+
+| Requisito | Descrição | Ref |
+|-----------|-----------|-----|
+| REQ-RESP-04 | Categories com Table→Cards adaptativo | spec.md |
+| REQ-RESP-08 | Touch targets mínimo 44x44px | spec.md |
+| REQ-RESP-09 | Nenhum overflow horizontal | spec.md |
+| REQ-RESP-10 | Texto legível sem zoom (16px mínimo) | spec.md |
 
 ---
 
@@ -131,9 +193,10 @@ Então deve aparecer mensagem de erro "Nome é obrigatório"
 |---------|--------|------------|
 | Cobertura unitária | ≥80% | Alta |
 | Testes de integração | Cenários BDD cobertos | Alta |
+| Responsividade | Todos breakpoints | Alta |
 
 ---
 
-**Versão**: 1.0
-**Última Atualização**: 2026-04-16
+**Versão**: 1.1
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

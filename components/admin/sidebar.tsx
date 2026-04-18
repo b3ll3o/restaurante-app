@@ -20,11 +20,15 @@ const navItems = [
   { href: "/admin/settings", label: "Configurações", icon: Settings },
 ];
 
-export function Sidebar() {
+interface SidebarContentProps {
+  onClick?: () => void;
+}
+
+export function SidebarContent({ onClick }: SidebarContentProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="flex flex-col w-64 border-r bg-card">
+    <>
       <div className="flex items-center gap-2 p-6 border-b">
         <LinkIcon className="h-6 w-6 text-primary" />
         <span className="font-semibold text-lg">MenuLink</span>
@@ -39,8 +43,9 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClick}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors touch-target",
                 isActive
                   ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
@@ -63,6 +68,18 @@ export function Sidebar() {
           </p>
         </div>
       </div>
+    </>
+  );
+}
+
+interface SidebarProps {
+  className?: string;
+}
+
+export function Sidebar({ className }: SidebarProps) {
+  return (
+    <aside className={cn("flex flex-col w-64 border-r bg-card", className)}>
+      <SidebarContent />
     </aside>
   );
 }

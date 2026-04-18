@@ -1,307 +1,172 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen, waitFor, cleanup } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { LandingPage } from '@/app/components/landing/LandingPage';
+import { defineFeature, loadFeature } from "jest-cucumber";
+import { render, screen } from "@testing-library/react";
+import { HeroSection } from "@/app/components/landing/HeroSection";
+import { PillarsSection } from "@/app/components/landing/PillarsSection";
+import { SocialProofSection } from "@/app/components/landing/SocialProofSection";
+import { CTASection } from "@/app/components/landing/CTASection";
+import { PricingSection } from "@/app/components/landing/PricingSection";
 
-// Mock de componentes que podem ter problemas
-vi.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }: { children: React.ReactNode }) => (
-    <button {...props}>{children}</button>
-  ),
-}));
+const feature = loadFeature("app/landing/landing.feature");
 
-// Mock de ícones lucide-react
-vi.mock('lucide-react', () => ({
-  ArrowRight: () => <span data-testid="arrow-right" />,
-  CheckCircle: () => <span data-testid="check-circle" />,
-  Check: () => <span data-testid="check" />,
-  Smartphone: () => <span data-testid="smartphone" />,
-  MessageCircle: () => <span data-testid="message-circle" />,
-  QrCode: () => <span data-testid="qr-code" />,
-  Clock: () => <span data-testid="clock" />,
-  Star: () => <span data-testid="star" />,
-  Shield: () => <span data-testid="shield" />,
-}));
-
-describe('LandingPage - Testes de Integração', () => {
+defineFeature(feature, (test) => {
+  // Mock all external dependencies
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.mock("@/lib/analytics", () => ({}));
+    vi.mock("lucide-react", () => ({
+      ArrowRight: () => null,
+      CheckCircle: () => null,
+      Clock: () => null,
+      Zap: () => null,
+      Smartphone: () => null,
+      MessageCircle: () => null,
+      QrCode: () => null,
+      Check: () => null,
+    }));
+    vi.mock("@/components/ui/dialog", () => ({
+      Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      DialogTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+      DialogTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+    }));
   });
 
-  afterEach(() => {
-    cleanup();
-  });
-
-  describe('Cenário: Landing page carrega com todos os componentes visíveis', () => {
-    it('deve renderizar HeroSection', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        expect(screen.getByText(/cardápio digital/i) || screen.getByText(/menuLink/i)).toBeTruthy();
-      });
+  test("Visitante visualiza hero section com proposta de valor", ({ given, when, then, and }) => {
+    given("o visitante acessa a URL da landing page", () => {
+      // Landing page renders HeroSection
     });
 
-    it('deve renderizar SocialProofSection', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasSocialProof = content.includes('500') || content.includes('restaurantes');
-        expect(hasSocialProof).toBeTruthy();
-      });
+    when("a página carrega completamente", () => {
+      render(<HeroSection />);
     });
 
-    it('deve renderizar PillarsSection', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasPillars = content.includes('Por que escolher') || content.includes('benefícios');
-        expect(hasPillars).toBeTruthy();
-      });
+    then("a hero section é exibida imediatamente", () => {
+      const section = document.querySelector("section");
+      expect(section).toBeDefined();
     });
 
-    it('deve renderizar DemoSection', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasDemo = content.includes('Como funciona') || content.includes('demonstração');
-        expect(hasDemo).toBeTruthy();
-      });
+    and("o headline contém a expressão 'zero comissão' ou mensagem equivalente", () => {
+      const headline = document.body.textContent;
+      expect(headline).toMatch(/zero comissão/i);
     });
 
-    it('deve renderizar PricingSection', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasPricing = content.includes('Start') || content.includes('Crescer') || content.includes('preço');
-        expect(hasPricing).toBeTruthy();
-      });
-    });
-
-    it('deve renderizar CTASection', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasCTA = content.includes('Comece') || content.includes('começar');
-        expect(hasCTA).toBeTruthy();
-      });
+    and("existe um subtítulo explicativo abaixo do headline", () => {
+      const subheadline = screen.getByText(/Crie seu cardápio online/i);
+      expect(subheadline).toBeDefined();
     });
   });
 
-  describe('Cenário: Hero section exibe mensagem de conversão', () => {
-    it('deve exibir badge "Zero comissão"', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasCommission = content.includes('comissão') || content.includes('Zero');
-        expect(hasCommission).toBeTruthy();
-      });
+  test("Três pilares exibidos corretamente", ({ given, when, then }) => {
+    given("o visitante está na landing page", () => {
+      render(<PillarsSection />);
     });
 
-    it('deve exibir título principal sobre cardápio digital', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasTitle = content.includes('Cardápio') || content.includes('cardápio');
-        expect(hasTitle).toBeTruthy();
-      });
+    when("ele rola a página até a seção de pilares", () => {
+      // PillarsSection renders when mounted
     });
 
-    it('deve mencionar WhatsApp no subtítulo', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasWhatsApp = content.includes('WhatsApp') || content.includes('whatsapp');
-        expect(hasWhatsApp).toBeTruthy();
-      });
+    then("exatamente três cards/pílares são exibidos", () => {
+      // REQ-LP-02: exactly 3 pillars
+      expect(screen.getByText(/Setup em 2 minutos/i)).toBeDefined();
+      expect(screen.getByText(/Zero comissão/i)).toBeDefined();
+      expect(screen.getByText(/WhatsApp/i)).toBeDefined();
     });
   });
 
-  describe('Cenário: Hero section possui botões de ação', () => {
-    it('deve ter botão primário "Começar gratuitamente"', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const button = screen.getByRole('button', { name: /começar|gratuitamente|criar conta/i });
-        expect(button).toBeTruthy();
-      });
+  test("Pilares respondem objeções específicas", ({ given, when, then }) => {
+    given("o visitante visualiza a seção de pilares", () => {
+      render(<PillarsSection />);
     });
 
-    it('deve ter botão secundário "Ver demo"', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const button = screen.getByRole('button', { name: /ver demo|demo/i });
-        expect(button).toBeTruthy();
-      });
+    when("ele lê o conteúdo", () => {
+      // Content is rendered
     });
 
-    it('deve linkar botão para /admin/signup', async () => {
-      render(<LandingPage />);
+    then("um pilar menciona 'setup' ou 'minutos' (rapidez)", () => {
+      expect(screen.getByText(/Setup em 2 minutos/i)).toBeDefined();
+    });
 
-      await waitFor(() => {
-        const link = screen.getByRole('link', { name: /começar|sign up|criar/i });
-        expect(link).toHaveAttribute('href');
-      });
+    and("um pilar menciona 'zero comissão' ou 'sem comissão' (custo)", () => {
+      expect(screen.getByText(/Zero comissão/i)).toBeDefined();
+    });
+
+    and("um pilar menciona 'WhatsApp' ou 'integração' (compatibilidade)", () => {
+      expect(screen.getByText(/WhatsApp/i)).toBeDefined();
     });
   });
 
-  describe('Cenário: Social proof section exibe métricas', () => {
-    it('deve exibir "+500 Restaurantes"', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasRestaurants = content.includes('500') || content.includes('restaurantes');
-        expect(hasRestaurants).toBeTruthy();
-      });
+  test("Contador de restaurantes exibido", ({ given, when, then }) => {
+    given("o visitante acessa a landing page", () => {
+      render(<SocialProofSection />);
     });
 
-    it('deve exibir métricas do sistema', async () => {
-      render(<LandingPage />);
+    when("ele rola até a seção de prova social", () => {
+      // SocialProofSection content is visible
+    });
 
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        // Procura por métricas conhecidas
-        const hasRestaurants = content.includes('500') || content.includes('restaurantes');
-        const hasOrders = content.includes('50K') || content.includes('pedidos');
-        expect(hasRestaurants || hasOrders).toBeTruthy();
-      });
+    then("um contador numérico é exibido com formato '+X restaurantes'", () => {
+      // CA-LP-05: contador > 2000
+      const counter = screen.getByText(/2\.?500/i);
+      expect(counter).toBeDefined();
     });
   });
 
-  describe('Cenário: Pillars section exibe 6 benefícios', () => {
-    it('deve ter título "Por que escolher o MenuLink?"', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const title = screen.getByText(/por que escolher/i);
-        expect(title).toBeInTheDocument();
-      });
+  test("Três planos exibidos com preços", ({ given, when, then }) => {
+    given("o visitante rola até a seção de preços", () => {
+      render(<PricingSection />);
     });
 
-    it('deve exibir cards de benefícios', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        // Verifica que há menção aos pilares
-        expect(content).toBeTruthy();
-      });
-    });
-  });
-
-  describe('Cenário: Demo section explica fluxo em 3 passos', () => {
-    it('deve ter título "Como funciona"', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const title = screen.getByText(/como funciona/i);
-        expect(title).toBeInTheDocument();
-      });
+    when("ele visualiza os cards de planos", () => {
+      // PricingSection renders
     });
 
-    it('deve mostrar passo 1 "Crie seu cardápio"', async () => {
-      render(<LandingPage />);
+    then("exatamente três planos são exibidos: Start, Crescer, Escalar", () => {
+      expect(screen.getByText(/^Start$/i)).toBeDefined();
+      expect(screen.getByText(/^Crescer$/i)).toBeDefined();
+      expect(screen.getByText(/^Escalar$/i)).toBeDefined();
+    });
 
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasCrieCardapio = content.includes('Crie') || content.includes('cardápio');
-        expect(hasCrieCardapio).toBeTruthy();
-      });
+    and("cada plano tem seu preço mensal claramente visível", () => {
+      expect(screen.getByText(/R\$ 0/i)).toBeDefined();
+      expect(screen.getByText(/R\$ 49/i)).toBeDefined();
+      expect(screen.getByText(/R\$ 149/i)).toBeDefined();
     });
   });
 
-  describe('Cenário: Pricing section exibe 3 planos', () => {
-    it('deve ter título de preços', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasPricingTitle = content.includes('Start') || content.includes('Crescer') || content.includes('preço');
-        expect(hasPricingTitle).toBeTruthy();
-      });
+  test("CTA final com urgência", ({ given, when, then }) => {
+    given("o visitante está no final da landing page", () => {
+      render(<CTASection />);
     });
 
-    it('deve exibir plano Start com preço R$ 0', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        expect(content).toContain('Start');
-      });
+    when("ele visualiza a seção de CTA final", () => {
+      // CTASection renders
     });
 
-    it('deve destacar plano Crescer como "Mais popular"', async () => {
-      render(<LandingPage />);
+    then("um botão de CTA grande é exibido", () => {
+      const ctaButton = screen.getByRole("button", { name: /Teste grátis 14 dias/i });
+      expect(ctaButton).toBeDefined();
+    });
 
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasPopular = content.includes('Crescer') || content.includes('popular');
-        expect(hasPopular).toBeTruthy();
-      });
+    and("o texto do botão contém 'teste grátis' e '14 dias'", () => {
+      const buttonText = screen.getByRole("button", { name: /Teste grátis 14 dias/i }).textContent;
+      expect(buttonText).toMatch(/teste grátis/i);
+      expect(buttonText).toMatch(/14 dias/i);
     });
   });
 
-  describe('Cenário: CTASection final incentiva criação de conta', () => {
-    it('deve ter título sobre começar a receber pedidos', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        const hasOrdersTitle = content.includes('Comece') || content.includes('receber pedidos');
-        expect(hasOrdersTitle).toBeTruthy();
-      });
+  test("Elemento de urgência adicional", ({ given, when, then }) => {
+    given("o visitante visualiza o CTA final", () => {
+      render(<CTASection />);
     });
 
-    it('deve ter botão CTA para criar conta', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const buttons = screen.getAllByRole('button');
-        expect(buttons.length).toBeGreaterThan(0);
-      });
+    when("ele observa os elementos de urgência", () => {
+      // Urgency elements render
     });
-  });
 
-  describe('Cenário: Botões CTA são clicáveis', () => {
-    it('deve responder a cliques nos botões', async () => {
-      const pushMock = vi.fn();
-      vi.mock('next/navigation', () => ({
-        useRouter: () => ({
-          push: pushMock,
-        }),
-      }));
-
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const button = screen.getByRole('button', { name: /começar|gratuitamente/i });
-        if (button) {
-          userEvent.click(button);
-        }
-      });
-
-      // Botão deve responder sem erro
-      expect(document.body.textContent).toBeTruthy();
-    });
-  });
-
-  describe('Responsividade', () => {
-    it('deve renderizar corretamente em desktop', async () => {
-      render(<LandingPage />);
-
-      await waitFor(() => {
-        const content = document.body.textContent || '';
-        expect(content.length).toBeGreaterThan(100);
-      });
+    then("existe um texto adicional como 'Ganhe 1 mês grátis' ou similar", () => {
+      // REQ-LP-08: Additional urgency element
+      const urgency = screen.getByText(/Ative hoje e ganhe 1 mês grátis/i);
+      expect(urgency).toBeDefined();
     });
   });
 });

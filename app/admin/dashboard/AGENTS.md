@@ -119,15 +119,56 @@ interface DashboardMetrics {
 
 ---
 
+## Responsividade
+
+### Breakpoints
+
+| Breakpoint | Largura | Comportamento |
+|------------|---------|---------------|
+| Mobile | < 768px | Cards empilham verticalmente |
+| Tablet | 768-1023px | Sidebar colapsável (drawer) |
+| Desktop | ≥ 1024px | Grid 4 colunas, sidebar fixa |
+
+### Grid de Métricas
+
+O dashboard utiliza grid responsivo:
+- **Mobile**: `grid-cols-1` (1 coluna, cards empilham)
+- **Tablet**: `grid-cols-2` (2 colunas)
+- **Desktop**: `grid-cols-4` (4 colunas, sidebar visível)
+
+```tsx
+// app/admin/dashboard/page.tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+```
+
+### Sidebar Colapsável
+
+- **Desktop (≥1024px)**: Sidebar fixa visível na lateral
+- **Tablet/Mobile (<1024px)**: Sidebar oculta, drawer lateral via Sheet
+
+O hamburger button no Header abre o drawer em todos os breakpoints < 1024px.
+
+### Requisitos de Responsividade
+
+| Requisito | Descrição | Ref |
+|-----------|-----------|-----|
+| REQ-RESP-03 | Dashboard com sidebar colapsável em mobile/tablet | spec.md |
+| REQ-RESP-08 | Touch targets mínimo 44x44px | spec.md |
+| REQ-RESP-09 | Nenhum overflow horizontal | spec.md |
+| REQ-RESP-10 | Texto legível sem zoom (16px mínimo) | spec.md |
+
+---
+
 ## Métricas de Qualidade
 
 | Métrica | Target | Prioridade |
 |---------|--------|------------|
 | Cobertura unitária | ≥80% | Alta |
 | Testes E2E | Fluxo de acesso coberto | Alta |
+| Responsividade | Todos breakpoints | Alta |
 
 ---
 
-**Versão**: 1.0
-**Última Atualização**: 2026-04-16
+**Versão**: 1.1
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

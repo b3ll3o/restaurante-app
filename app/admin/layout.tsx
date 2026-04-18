@@ -3,9 +3,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Sidebar } from "@/components/admin/sidebar";
+import { Sidebar, SidebarContent } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { Loader2 } from "lucide-react";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export default function AdminLayout({
   children,
@@ -14,6 +15,7 @@ export default function AdminLayout({
 }) {
   const [isLoading, setIsLoading] = useState(true);
   const [userEmail, setUserEmail] = useState<string>();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
 
   // ✅ useMemo para referência estável
@@ -72,10 +74,24 @@ export default function AdminLayout({
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar />
+      {/* Desktop sidebar - visible on lg+ (≥1024px) */}
+      <div className="hidden lg:block">
+        <Sidebar />
+      </div>
+
+      {/* Mobile/tablet drawer - visible on < 1024px */}
+      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+        <SheetContent side="left" className="p-0 w-64">
+          <SidebarContent onClick={() => setSidebarOpen(false)} />
+        </SheetContent>
+      </Sheet>
+
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header userEmail={userEmail} />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <Header
+          userEmail={userEmail}
+          onMenuClick={() => setSidebarOpen(true)}
+        />
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
       </div>
     </div>
   );

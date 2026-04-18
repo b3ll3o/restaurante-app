@@ -77,6 +77,109 @@ Cada sub-módulo possui seu próprio AGENTS.md com documentação detalhada:
 3. **Autenticação**: Verificar via Supabase em todas as rotas admin
 4. **Multi-tenant**: Sempre filtrar queries por `restaurant_id`
 5. **Validação**: Validar inputs em API routes antes de processar
+6. **Responsividade**: Seguir mobile-first com breakpoints Tailwind
+
+---
+
+## Design Responsivo
+
+### Breakpoints
+
+O projeto utiliza os breakpoints padrão do Tailwind CSS:
+
+| Breakpoint | Largura | Tailwind Prefix | Uso |
+|------------|---------|-----------------|-----|
+| Mobile | < 768px | Default (mobile-first) | Layouts compactos |
+| Tablet | 768px - 1023px | `md:` | Tablets e telas médias |
+| Desktop | ≥ 1024px | `lg:` | Desktop e telas grandes |
+
+### Mobile-First
+
+O projeto segue a metodologia **mobile-first**:
+1. Estilos base são definidos para mobile
+2. breakpoints maiores (`md:`, `lg:`) adicionam estilos para telas maiores
+
+```tsx
+// ✅ Mobile-first
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+
+// ❌ Desktop-first (evitar)
+<div className="grid grid-cols-4 md:grid-cols-2 grid-cols-1">
+```
+
+### Touch Targets
+
+Todos os elementos interativos **DEVEM** ter touch target mínimo de 44x44px:
+
+```css
+/* app/globals.css */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+```
+
+| Requisito | Descrição | Ref |
+|-----------|-----------|-----|
+| REQ-RESP-08 | Touch targets mínimo 44x44px | spec.md |
+| REQ-RESP-11 | Touch targets em todos breakpoints | spec.md |
+
+### Overflow Horizontal
+
+O projeto **NÃO DEVE** ter overflow horizontal em nenhum breakpoint:
+
+```css
+/* app/globals.css */
+body {
+  overflow-x: hidden;
+}
+```
+
+| Requisito | Descrição | Ref |
+|-----------|-----------|-----|
+| REQ-RESP-09 | Nenhum overflow horizontal | spec.md |
+| REQ-RESP-12 | Overflow-x: hidden em todos breakpoints | spec.md |
+
+### Tipografia Responsiva
+
+| Elemento | Tamanho Mínimo | Ref |
+|----------|----------------|-----|
+| Corpo de texto | 16px | REQ-RESP-10, REQ-RESP-13 |
+| Linha altura | 1.5 | REQ-RESP-10 |
+| Contraste | 4.5:1 (normal), 3:1 (grande) | REQ-RESP-14 |
+
+### Sidebar Responsiva
+
+| Breakpoint | Comportamento | Implementação |
+|------------|---------------|---------------|
+| Mobile (<1024px) | Drawer (Sheet) | `<Sheet>` com `side="left"` |
+| Desktop (≥1024px) | Sidebar fixa | `<aside className="w-64">` |
+
+### Layouts Adaptativos Comuns
+
+**Table → Cards (Admin)**:
+```tsx
+<Table className="hidden lg:block" />
+<div className="grid gap-4 lg:hidden">
+  {/* Cards */}
+</div>
+```
+
+**Grid 1→2 colunas (Products)**:
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+```
+
+**FAB Cart (Mobile)**:
+```tsx
+<Button className="fixed bottom-6 right-6 pb-24">
+  <ShoppingCart />
+</Button>
+```
+
+---
+
+## Dependências
 
 ---
 

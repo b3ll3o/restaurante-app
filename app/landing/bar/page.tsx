@@ -12,10 +12,10 @@ export default function BarLandingPage() {
 
   return (
     <main>
-      <HeroSection segment="bar" />
-      <SocialProofSection segment="bar" />
-      <PillarsSection segment="bar" />
-      <CTASection segment="bar" />
+      <HeroSection />
+      <SocialProofSection />
+      <PillarsSection />
+      <CTASection />
     </main>
   );
 }

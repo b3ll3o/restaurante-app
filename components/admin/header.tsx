@@ -7,9 +7,10 @@ import { useState, useMemo } from "react";
 
 interface HeaderProps {
   userEmail?: string;
+  onMenuClick?: () => void;
 }
 
-export function Header({ userEmail }: HeaderProps) {
+export function Header({ userEmail, onMenuClick }: HeaderProps) {
   const [isLoading, setIsLoading] = useState(false);
   const supabase = useMemo(() => createClient(), []);
 
@@ -20,9 +21,15 @@ export function Header({ userEmail }: HeaderProps) {
   };
 
   return (
-    <header className="flex items-center justify-between h-16 px-6 border-b bg-card">
+    <header className="flex items-center justify-between h-16 px-4 md:px-6 border-b bg-card">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="lg:hidden touch-target"
+          onClick={onMenuClick}
+          aria-label="Abrir menu"
+        >
           <Menu className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-2">
@@ -40,10 +47,10 @@ export function Header({ userEmail }: HeaderProps) {
         size="sm"
         onClick={handleSignOut}
         disabled={isLoading}
-        className="gap-2"
+        className="gap-2 touch-target"
       >
         <LogOut className="h-4 w-4" />
-        Sair
+        <span className="hidden sm:inline">Sair</span>
       </Button>
     </header>
   );

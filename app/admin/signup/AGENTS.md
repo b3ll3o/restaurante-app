@@ -66,6 +66,21 @@ Página para criação de novas contas de administrador. Usada quando um restaur
 | Senha | Mínimo 6 caracteres |
 | Confirmação | Deve ser igual à senha |
 
+## Responsividade
+
+| Elemento | Mobile (<768px) | Tablet+ (≥768px) |
+|----------|------------------|-------------------|
+| Card | Full-width | Centralizado max-w-md |
+| Padding | px-4 | px-4 |
+| Inputs | Full-width | Full-width |
+| Botão submit | touch-target 44x44px | touch-target 44x44px |
+
+### Breakpoints
+
+- **Mobile**: <768px - Card full-width, same responsive pattern as login
+- **Tablet**: 768-1023px - Card centralizado
+- **Desktop**: ≥1024px - Card centralizado max-w-md
+
 ---
 
 ## Autenticação

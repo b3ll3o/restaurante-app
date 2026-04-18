@@ -64,10 +64,25 @@ Nenhuma prop obrigatória.
 
 ### Componentes Utilizados
 
-- `Button` (shadcn/ui)
-- `Input` (shadcn/ui)
-- `Card` (shadcn/ui)
+- `Button` (shadcn/ui) - com `touch-target` (min 44x44px)
+- `Input` (shadcn/ui) - com `min-h-[44px]` e `text-base` (16px)
+- `Card` (shadcn/ui) - responsivo com `w-full max-w-md`
 - `Label` (shadcn/ui)
+
+## Responsividade
+
+| Elemento | Mobile (<768px) | Tablet+ (≥768px) |
+|----------|------------------|-------------------|
+| Card | Full-width | Centralizado max-w-md |
+| Padding | px-4 | px-4 (mesmo) |
+| Inputs | Full-width | Full-width |
+| Botão submit | touch-target 44x44px | touch-target 44x44px |
+
+### Breakpoints
+
+- **Mobile**: <768px - Card full-width, inputs 100% width
+- **Tablet**: 768-1023px - Card centralizado, mesmo layout
+- **Desktop**: ≥1024px - Card centralizado max-w-md
 
 ---
 

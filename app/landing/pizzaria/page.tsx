@@ -12,10 +12,10 @@ export default function PizzariaLandingPage() {
 
   return (
     <main>
-      <HeroSection segment="pizzaria" />
-      <SocialProofSection segment="pizzaria" />
-      <PillarsSection segment="pizzaria" />
-      <CTASection segment="pizzaria" />
+      <HeroSection />
+      <SocialProofSection />
+      <PillarsSection />
+      <CTASection />
     </main>
   );
 }

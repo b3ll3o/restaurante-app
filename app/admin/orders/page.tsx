@@ -201,85 +201,152 @@ export default function OrdersPage() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>WhatsApp</TableHead>
-                    <TableHead>Total</TableHead>
-                    <TableHead>Pagamento</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Data/Hora</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orders.map((order) => (
-                    <TableRow key={order.id}>
-                      <TableCell className="font-medium">{order.customer_name}</TableCell>
-                      <TableCell>
+            <>
+              {/* Desktop Table - visible on lg+ (≥1024px) */}
+              <div className="hidden lg:block overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Cliente</TableHead>
+                      <TableHead>WhatsApp</TableHead>
+                      <TableHead>Total</TableHead>
+                      <TableHead>Pagamento</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Data/Hora</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {orders.map((order) => (
+                      <TableRow key={order.id}>
+                        <TableCell className="font-medium">{order.customer_name}</TableCell>
+                        <TableCell>
+                          <a
+                            href={`https://wa.me/${order.customer_whatsapp.replace(/\D/g, "")}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-primary hover:underline touch-target"
+                          >
+                            <Phone className="h-3 w-3" />
+                            {order.customer_whatsapp}
+                          </a>
+                        </TableCell>
+                        <TableCell>{formatPrice(order.total)}</TableCell>
+                        <TableCell>{getPaymentBadge(order.payment_method)}</TableCell>
+                        <TableCell>{getStatusBadge(order.status)}</TableCell>
+                        <TableCell className="text-sm text-muted-foreground">
+                          {formatDateTime(order.created_at)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleViewDetails(order)}
+                              className="touch-target"
+                            >
+                              Ver detalhes
+                            </Button>
+                            {order.status === "pending" && (
+                              <>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleUpdateStatus(order.id, "confirmed")}
+                                  title="Confirmar pedido"
+                                  className="touch-target"
+                                >
+                                  <Check className="h-4 w-4 text-green-600" />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleUpdateStatus(order.id, "cancelled")}
+                                  title="Cancelar pedido"
+                                  className="touch-target"
+                                >
+                                  <X className="h-4 w-4 text-red-600" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Mobile/Tablet Cards - visible on < 1024px */}
+              <div className="lg:hidden space-y-4">
+                {orders.map((order) => (
+                  <Card key={order.id} className="p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="font-medium">{order.customer_name}</p>
                         <a
                           href={`https://wa.me/${order.customer_whatsapp.replace(/\D/g, "")}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-primary hover:underline"
+                          className="flex items-center gap-1 text-sm text-primary hover:underline touch-target py-2"
                         >
                           <Phone className="h-3 w-3" />
                           {order.customer_whatsapp}
                         </a>
-                      </TableCell>
-                      <TableCell>{formatPrice(order.total)}</TableCell>
-                      <TableCell>{getPaymentBadge(order.payment_method)}</TableCell>
-                      <TableCell>{getStatusBadge(order.status)}</TableCell>
-                      <TableCell className="text-sm text-muted-foreground">
-                        {formatDateTime(order.created_at)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                      </div>
+                      {getStatusBadge(order.status)}
+                    </div>
+                    <div className="flex justify-between items-center mb-3">
+                      <div>
+                        <p className="text-sm text-muted-foreground">
+                          {formatDateTime(order.created_at)}
+                        </p>
+                        <p className="text-sm">{getPaymentBadge(order.payment_method)}</p>
+                      </div>
+                      <span className="text-lg font-bold">{formatPrice(order.total)}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleViewDetails(order)}
+                        className="flex-1 touch-target"
+                      >
+                        Ver detalhes
+                      </Button>
+                      {order.status === "pending" && (
+                        <>
                           <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleViewDetails(order)}
-                            className="min-h-[44px] min-w-[44px]"
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleUpdateStatus(order.id, "confirmed")}
+                            title="Confirmar pedido"
+                            className="touch-target"
                           >
-                            Ver detalhes
+                            <Check className="h-4 w-4 text-green-600" />
                           </Button>
-                          {order.status === "pending" && (
-                            <>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleUpdateStatus(order.id, "confirmed")}
-                                title="Confirmar pedido"
-                                className="min-h-[44px] min-w-[44px]"
-                              >
-                                <Check className="h-4 w-4 text-green-600" />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleUpdateStatus(order.id, "cancelled")}
-                                title="Cancelar pedido"
-                                className="min-h-[44px] min-w-[44px]"
-                              >
-                                <X className="h-4 w-4 text-red-600" />
-                              </Button>
-                            </>
-                          )}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleUpdateStatus(order.id, "cancelled")}
+                            title="Cancelar pedido"
+                            className="touch-target"
+                          >
+                            <X className="h-4 w-4 text-red-600" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
 
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent>
+        <DialogContent className="w-full h-full max-w-none md:max-w-[500px] md:h-auto md:max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Detalhes do Pedido</DialogTitle>
             <DialogDescription>

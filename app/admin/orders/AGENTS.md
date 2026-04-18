@@ -86,11 +86,49 @@ pending → confirmed → cancelled
 
 ### Componentes Utilizados
 
-- `Table` (shadcn/ui) - Lista de pedidos
+- `Table` (shadcn/ui) - Lista de pedidos (desktop ≥1024px)
+- `Cards` (shadcn/ui) - Lista de pedidos (mobile <1024px)
 - `Badge` (shadcn/ui) - Status do pedido
-- `Button` (shadcn/ui) - Ações
-- `Dialog` (shadcn/ui) - Detalhes do pedido
+- `Button` (shadcn/ui) - Ações com touch-target 44x44px
+- `Dialog` (shadcn/ui) - Detalhes do pedido (fullscreen em mobile)
 - `Select` (shadcn/ui) - Filtro por status
+
+### Layout Adaptativo (Cards em Mobile)
+
+| Breakpoint | Visualização | Componente |
+|------------|--------------|------------|
+| Mobile (<768px) | Cards empilhados | `Card` com detalhes do pedido |
+| Desktop (≥1024px) | Tabela completa | `Table` com colunas |
+
+**Implementação**:
+```tsx
+{/* Desktop: Table */}
+<Table className="hidden lg:block">
+  {/* ... */}
+</Table>
+
+{/* Mobile: Cards */}
+<div className="space-y-4 lg:hidden">
+  {/* ... */}
+</div>
+```
+
+### Botões com Touch Targets 44x44px
+
+Os botões de ação (Confirmar, Cancelar) têm dimensões mínimas de 44x44px para atender guidelines de acessibilidade WCAG 2.1:
+
+| Botão | Localização | Tamanho |
+|-------|-------------|---------|
+| Confirmar | Card/Table de pedido | `min-h-[44px] min-w-[44px]` |
+| Cancelar | Card/Table de pedido | `min-h-[44px] min-w-[44px]` |
+| WhatsApp | Card de pedido | `min-h-[44px] min-w-[44px]` |
+
+### Dialog Fullscreen Mobile
+
+Em mobile (<768px), o Dialog de detalhes do pedido abre em tela cheia:
+- `className="max-w-none h-screen rounded-none"`
+- Scroll vertical para lista de itens
+- Ações (Confirmar/Cancelar) sempre visíveis no footer
 
 ---
 
@@ -158,7 +196,26 @@ Cenário: Admin filtra pedidos por status
 Dado que o admin está na página de pedidos
 Quando seleciona filtro "Pendentes"
 Então devem aparecer apenas pedidos com status "pending"
+
+Cenário: Pedidos em cards em mobile
+Dado que o admin está logado
+E a janela do navegador está abaixo de 768px
+Quando acessa a página de pedidos
+Então os botões de ação (confirmar/cancelar) devem ter 44x44px mínimo
 ```
+
+---
+
+## Responsividade
+
+### Requisitos de Responsividade
+
+| Requisito | Descrição | Ref |
+|-----------|-----------|-----|
+| REQ-RESP-06 | Orders com botões 44x44px | spec.md |
+| REQ-RESP-08 | Touch targets mínimo 44x44px | spec.md |
+| REQ-RESP-09 | Nenhum overflow horizontal | spec.md |
+| REQ-RESP-10 | Texto legível sem zoom (16px mínimo) | spec.md |
 
 ---
 
@@ -169,9 +226,10 @@ Então devem aparecer apenas pedidos com status "pending"
 | Cobertura unitária | ≥80% | Alta |
 | Testes de integração | Cenários BDD cobertos | Alta |
 | Testes E2E | Fluxo completo coberto | Alta |
+| Responsividade | Todos breakpoints | Alta |
 
 ---
 
-**Versão**: 1.0
-**Última Atualização**: 2026-04-16
+**Versão**: 1.1
+**Última Atualização**: 2026-04-17
 **Autor**: AI Agent

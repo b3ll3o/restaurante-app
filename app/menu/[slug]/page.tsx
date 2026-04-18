@@ -357,6 +357,7 @@ export default function MenuPage() {
               <Input
                 id="whatsapp"
                 type="tel"
+                inputMode="numeric"
                 value={customerWhatsapp}
                 onChange={(e) => {
                   setCustomerWhatsapp(e.target.value);
@@ -555,7 +556,7 @@ function ProductCard({
 
         <div className="flex items-center justify-end mt-2">
           {quantity === 0 ? (
-            <Button size="sm" onClick={onAdd} className="h-8">
+            <Button size="sm" onClick={onAdd} className="touch-target">
               <Plus className="h-3 w-3 mr-1" />
               Adicionar
             </Button>
@@ -564,7 +565,7 @@ function ProductCard({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8"
+                className="touch-target"
                 onClick={onRemove}
               >
                 {quantity === 1 ? (
@@ -577,7 +578,7 @@ function ProductCard({
               <Button
                 variant="outline"
                 size="icon"
-                className="h-8 w-8"
+                className="touch-target"
                 onClick={onAdd}
               >
                 <Plus className="h-3 w-3" />
@@ -617,7 +618,7 @@ function CartItemCard({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="touch-target"
           onClick={() => removeItem(item.product.id)}
         >
           {item.quantity === 1 ? (
@@ -630,7 +631,7 @@ function CartItemCard({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8"
+          className="touch-target"
           onClick={() => addItem(item.product, restaurantId)}
         >
           <Plus className="h-3 w-3" />

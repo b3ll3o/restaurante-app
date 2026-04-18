@@ -23,9 +23,25 @@ components/admin/
 
 Componente de navegação que exibe o menu lateral do painel administrativo. Permite ao usuário navegar entre as diferentes seções do admin (Dashboard, Categorias, Produtos, Pedidos, Configurações).
 
+### Arquitetura Responsiva
+
+O sidebar possui dois comportamentos:
+- **Desktop (≥1024px)**: Sidebar fixo visível na lateral esquerda
+- **Mobile/Tablet (<1024px)**: Drawer lateral (Sheet) que abre ao clicar no hamburger do Header
+
 ### Props
 
-Não possui props externas. Utiliza `usePathname()` do Next.js para determinar rota ativa.
+| Prop | Tipo | Descrição |
+|------|------|-----------|
+| `className` | `string` | Classes CSS opcionais para o container |
+| `onClick` | `() => void` | Callback opcional executado ao clicar em um item de navegação |
+
+### Exports
+
+| Export | Tipo | Descrição |
+|--------|------|-----------|
+| `Sidebar` | Componente | Sidebar completo para desktop |
+| `SidebarContent` | Componente | Conteúdo do sidebar (nav items + ajuda) |
 
 ### Itens de Navegação
 
@@ -127,11 +143,42 @@ export function Sidebar() {
 
 ## Uso
 
+### Sidebar para Desktop
+
 ```tsx
 import { Sidebar } from "@/components/admin/sidebar";
 
-<Sidebar />
+// Sidebar fixo visível em desktop (≥1024px)
+<div className="hidden lg:block">
+  <Sidebar />
+</div>
 ```
+
+### SidebarContent para Drawer Mobile
+
+```tsx
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { SidebarContent } from "@/components/admin/sidebar";
+
+// Drawer lateral em mobile (<1024px)
+<Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+  <SheetContent side="left" className="p-0 w-64">
+    <SidebarContent onClick={() => setSidebarOpen(false)} />
+  </SheetContent>
+</Sheet>
+```
+
+### Comportamento Responsivo
+
+| Breakpoint | Comportamento | Implementação |
+|------------|---------------|--------------|
+| Mobile (<768px) | Drawer lateral | Sheet com side="left" |
+| Tablet (768-1023px) | Drawer lateral | Sheet com side="left" |
+| Desktop (≥1024px) | Sidebar fixo | aside w-64 visível |
+
+### Touch Targets
+
+Todos os itens de navegação têm `touch-target` (min 44x44px) para acessibilidade mobile.
 
 ---
 
