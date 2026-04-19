@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Landing Page",
+    "url": "/",
+    "description": "Página inicial do PediAi",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet.png"
+  },
+  {
+    "name": "Login Admin",
+    "url": "/admin/login",
+    "description": "Página de login do painel admin",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-login.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-login.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-login.png"
+  },
+  {
+    "name": "Cadastro Admin",
+    "url": "/admin/signup",
+    "description": "Página de cadastro",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-signup.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-signup.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-signup.png"
+  },
+  {
+    "name": "Landing Pizzaria",
+    "url": "/landing/pizzaria",
+    "description": "Landing para pizzarias",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktoplanding-pizzaria.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobilelanding-pizzaria.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletlanding-pizzaria.png"
+  },
+  {
+    "name": "Landing Hamburgueria",
+    "url": "/landing/hamburgueria",
+    "description": "Landing para hamburguerias",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktoplanding-hamburgueria.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobilelanding-hamburgueria.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletlanding-hamburgueria.png"
+  },
+  {
+    "name": "Landing Bar",
+    "url": "/landing/bar",
+    "description": "Landing para bares",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktoplanding-bar.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobilelanding-bar.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletlanding-bar.png"
+  },
+  {
+    "name": "Landing Restaurante",
+    "url": "/landing/restaurante",
+    "description": "Landing para restaurantes",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktoplanding-restaurante.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobilelanding-restaurante.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletlanding-restaurante.png"
+  },
+  {
+    "name": "Dashboard Admin",
+    "url": "/admin/dashboard",
+    "description": "Dashboard principal",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-dashboard.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-dashboard.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-dashboard.png"
+  },
+  {
+    "name": "Categorias Admin",
+    "url": "/admin/categories",
+    "description": "Gestão de categorias",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-categories.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-categories.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-categories.png"
+  },
+  {
+    "name": "Produtos Admin",
+    "url": "/admin/products",
+    "description": "Gestão de produtos",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-products.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-products.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-products.png"
+  },
+  {
+    "name": "Pedidos Admin",
+    "url": "/admin/orders",
+    "description": "Gestão de pedidos",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-orders.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-orders.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-orders.png"
+  },
+  {
+    "name": "Configurações Admin",
+    "url": "/admin/settings",
+    "description": "Configurações",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktopadmin-settings.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobileadmin-settings.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tabletadmin-settings.png"
+  }
+]

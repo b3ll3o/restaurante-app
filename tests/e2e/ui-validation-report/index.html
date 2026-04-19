@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Validação Visual - PediAi</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+    header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .note-box { background: rgba(255,255,255,0.2); padding: 0.75rem 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.875rem; }
+    .summary { display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+    .summary-item { background: rgba(255,255,255,0.2); padding: 0.75rem 1.5rem; border-radius: 8px; }
+    .summary-item .number { font-size: 1.5rem; font-weight: bold; }
+    .summary-item .label { font-size: 0.875rem; opacity: 0.9; }
+    .section-title { font-size: 1.5rem; margin: 2rem 0 1rem; color: #1a1a1a; }
+    .pages-container { display: grid; gap: 1.5rem; }
+    .page-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .page-card.auth-page { border-left: 4px solid #667eea; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .page-header h2 { font-size: 1.25rem; color: #1a1a1a; }
+    .status-badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .status-success { background: #dcfce7; color: #166534; }
+    .status-error { background: #fee2e2; color: #991b1b; }
+    .auth-badge { display: inline-block; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem; background: #e0e7ff; color: #4338ca; }
+    .page-description { color: #666; margin-bottom: 0.5rem; }
+    .page-url { margin-bottom: 1rem; }
+    .page-url code { background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem; color: #7c3aed; }
+    .error-message { background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 8px; margin: 1rem 0; }
+    .screenshots h3 { font-size: 1rem; color: #333; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #eee; }
+    .screenshot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .screenshot-item { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .screenshot-item h4 { background: #f9fafb; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #666; border-bottom: 1px solid #e5e7eb; }
+    .screenshot-item img { width: 100%; height: auto; display: block; cursor: pointer; }
+    .screenshot-item img:hover { opacity: 0.9; }
+    footer { text-align: center; padding: 2rem; color: #666; font-size: 0.875rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📸 Relatório de Validação Visual</h1>
+      <p>Relatório automático de screenshots das páginas do PediAi</p>
+      <div class="note-box">🔐 Páginas admin usam autenticação REAL (não mockada) para mostrar a experiência real do usuário.</div>
+      <div class="summary">
+        <div class="summary-item"><div class="number">12</div><div class="label">Total</div></div>
+        <div class="summary-item"><div class="number">12</div><div class="label">✅ Sucesso</div></div>
+        <div class="summary-item"><div class="number">0</div><div class="label">❌ Erros</div></div>
+        <div class="summary-item"><div class="number">2026-04-19</div><div class="label">Data</div></div>
+      </div>
+    </header>
+    
+    <h2 class="section-title">🌐 Páginas Públicas</h2>
+    <div class="pages-container">
+      
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Landing Page</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Página inicial do PediAi</p>
+        <p class="page-url"><code>/</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktop.png" target="_blank"><img src="desktop.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobile.png" target="_blank"><img src="mobile.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tablet.png" target="_blank"><img src="tablet.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Login Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Página de login do painel admin</p>
+        <p class="page-url"><code>/admin/login</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-login.png" target="_blank"><img src="desktopadmin-login.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-login.png" target="_blank"><img src="mobileadmin-login.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-login.png" target="_blank"><img src="tabletadmin-login.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Cadastro Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Página de cadastro</p>
+        <p class="page-url"><code>/admin/signup</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-signup.png" target="_blank"><img src="desktopadmin-signup.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-signup.png" target="_blank"><img src="mobileadmin-signup.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-signup.png" target="_blank"><img src="tabletadmin-signup.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Landing Pizzaria</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Landing para pizzarias</p>
+        <p class="page-url"><code>/landing/pizzaria</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktoplanding-pizzaria.png" target="_blank"><img src="desktoplanding-pizzaria.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobilelanding-pizzaria.png" target="_blank"><img src="mobilelanding-pizzaria.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletlanding-pizzaria.png" target="_blank"><img src="tabletlanding-pizzaria.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Landing Hamburgueria</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Landing para hamburguerias</p>
+        <p class="page-url"><code>/landing/hamburgueria</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktoplanding-hamburgueria.png" target="_blank"><img src="desktoplanding-hamburgueria.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobilelanding-hamburgueria.png" target="_blank"><img src="mobilelanding-hamburgueria.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletlanding-hamburgueria.png" target="_blank"><img src="tabletlanding-hamburgueria.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Landing Bar</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Landing para bares</p>
+        <p class="page-url"><code>/landing/bar</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktoplanding-bar.png" target="_blank"><img src="desktoplanding-bar.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobilelanding-bar.png" target="_blank"><img src="mobilelanding-bar.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletlanding-bar.png" target="_blank"><img src="tabletlanding-bar.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card">
+        <div class="page-header">
+          <h2>✅ Landing Restaurante</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Landing para restaurantes</p>
+        <p class="page-url"><code>/landing/restaurante</code></p>
+        
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktoplanding-restaurante.png" target="_blank"><img src="desktoplanding-restaurante.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobilelanding-restaurante.png" target="_blank"><img src="mobilelanding-restaurante.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletlanding-restaurante.png" target="_blank"><img src="tabletlanding-restaurante.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <h2 class="section-title">🔐 Páginas do Painel Administrativo (Autenticação Real)</h2>
+    <div class="pages-container">
+      
+      <div class="page-card auth-page">
+        <div class="page-header">
+          <h2>✅ Dashboard Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Dashboard principal</p>
+        <p class="page-url"><code>/admin/dashboard</code></p>
+        <span class="auth-badge">🔐 Autenticação Real</span>
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-dashboard.png" target="_blank"><img src="desktopadmin-dashboard.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-dashboard.png" target="_blank"><img src="mobileadmin-dashboard.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-dashboard.png" target="_blank"><img src="tabletadmin-dashboard.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card auth-page">
+        <div class="page-header">
+          <h2>✅ Categorias Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Gestão de categorias</p>
+        <p class="page-url"><code>/admin/categories</code></p>
+        <span class="auth-badge">🔐 Autenticação Real</span>
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-categories.png" target="_blank"><img src="desktopadmin-categories.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-categories.png" target="_blank"><img src="mobileadmin-categories.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-categories.png" target="_blank"><img src="tabletadmin-categories.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card auth-page">
+        <div class="page-header">
+          <h2>✅ Produtos Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Gestão de produtos</p>
+        <p class="page-url"><code>/admin/products</code></p>
+        <span class="auth-badge">🔐 Autenticação Real</span>
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-products.png" target="_blank"><img src="desktopadmin-products.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-products.png" target="_blank"><img src="mobileadmin-products.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-products.png" target="_blank"><img src="tabletadmin-products.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card auth-page">
+        <div class="page-header">
+          <h2>✅ Pedidos Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Gestão de pedidos</p>
+        <p class="page-url"><code>/admin/orders</code></p>
+        <span class="auth-badge">🔐 Autenticação Real</span>
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-orders.png" target="_blank"><img src="desktopadmin-orders.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-orders.png" target="_blank"><img src="mobileadmin-orders.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-orders.png" target="_blank"><img src="tabletadmin-orders.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-card auth-page">
+        <div class="page-header">
+          <h2>✅ Configurações Admin</h2>
+          <span class="status-badge status-success">Sucesso</span>
+        </div>
+        <p class="page-description">Configurações</p>
+        <p class="page-url"><code>/admin/settings</code></p>
+        <span class="auth-badge">🔐 Autenticação Real</span>
+        
+        
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            <div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="desktopadmin-settings.png" target="_blank"><img src="desktopadmin-settings.png" alt="Desktop"></a></div>
+            <div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="mobileadmin-settings.png" target="_blank"><img src="mobileadmin-settings.png" alt="Mobile"></a></div>
+            <div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="tabletadmin-settings.png" target="_blank"><img src="tabletadmin-settings.png" alt="Tablet"></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer>
+      <p>Gerado automaticamente | Base URL: http://localhost:3000</p>
+      <p style="margin-top: 0.5rem;">🔐 Autenticação REAL via Supabase - Este relatório mostra a experiência real do usuário.</p>
+    </footer>
+  </div>
+</body>
+</html>
