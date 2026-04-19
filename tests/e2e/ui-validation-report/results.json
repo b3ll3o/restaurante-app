@@ -1,0 +1,65 @@
+[
+  {
+    "name": "Landing Page",
+    "url": "/",
+    "description": "Página inicial do PediAi com CTA para cadastro",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-.png"
+  },
+  {
+    "name": "Login Admin",
+    "url": "/admin/login",
+    "description": "Página de login do painel administrativo",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-login.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-login.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-login.png"
+  },
+  {
+    "name": "Cadastro Admin",
+    "url": "/admin/signup",
+    "description": "Página de cadastro de novo restaurante",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-signup.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-signup.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-signup.png"
+  },
+  {
+    "name": "Landing Pizzaria",
+    "url": "/landing/pizzaria",
+    "description": "Landing page segmentada para pizzarias",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-landing-pizzaria.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-landing-pizzaria.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-landing-pizzaria.png"
+  },
+  {
+    "name": "Landing Hamburgueria",
+    "url": "/landing/hamburgueria",
+    "description": "Landing page segmentada para hamburguerias",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-landing-hamburgueria.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-landing-hamburgueria.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-landing-hamburgueria.png"
+  },
+  {
+    "name": "Landing Bar",
+    "url": "/landing/bar",
+    "description": "Landing page segmentada para bares",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-landing-bar.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-landing-bar.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-landing-bar.png"
+  },
+  {
+    "name": "Landing Restaurante",
+    "url": "/landing/restaurante",
+    "description": "Landing page segmentada para restaurantes",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-landing-restaurante.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-landing-restaurante.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-landing-restaurante.png"
+  }
+]
