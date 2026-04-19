@@ -16,6 +16,7 @@
     "test:e2e:docker:debug": "docker compose run --rm e2e npx playwright test --debug",
     "test:coverage": "vitest --run --coverage",
     "test:coverage:e2e": "tsx scripts/generate-test-coverage.ts",
+    "ui-report": "tsx scripts/generate-ui-report.ts",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
     "validate:pre-push": "node scripts/validate-pre-push.js"

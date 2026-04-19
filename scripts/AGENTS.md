@@ -18,6 +18,69 @@ scripts/
 
 ---
 
+## Script: generate-ui-report.ts
+
+### Responsabilidade
+
+Gerar relatório de visual validation de UI com screenshots das páginas da aplicação em múltiplos breakpoints (desktop, mobile, tablet).
+
+### ⚠️ REGRA CRÍTICA: Sem Dados Mockados
+
+**O relatório de interface serve para validar o que o USUÁRIO REAL está vendo.**
+
+- **Páginas públicas**: Capturam screenshots da experiência real do usuário
+- **Páginas autenticadas (admin)**: Devem usar autenticação REAL via Supabase
+- **NÃO usar dados mockados** para páginas admin - isso invalidaria o propósito do relatório
+- O script DEVE fazer login real com credenciais do Supabase
+
+### Variáveis de Ambiente
+
+| Variável | Obrigatório | Descrição |
+|----------|-------------|-----------|
+| `BASE_URL` | Não | URL base (default: `http://localhost:3000`) |
+| `TEST_ADMIN_EMAIL` | **Sim** | Email do admin para login real |
+| `TEST_ADMIN_PASSWORD` | **Sim** | Senha do admin para login real |
+
+### Fluxo de Execução
+
+1. Verificar se servidor está rodando
+2. Para páginas autenticadas: fazer login real UNA vez
+3. Capturar screenshots em 3 breakpoints (desktop 1280x720, mobile 375x667, tablet 768x1024)
+4. Gerar relatório HTML com todos os screenshots
+5. Fechar browser
+
+### Output
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `tests/e2e/ui-validation-report/index.html` | Relatório visual HTML |
+| `tests/e2e/ui-validation-report/results.json` | Dados estruturados |
+| `tests/e2e/ui-validation-report/*.png` | Screenshots por breakpoint |
+
+### Uso
+
+```bash
+# Configurar credenciais (no .env.local)
+TEST_ADMIN_EMAIL=seu@email.com
+TEST_ADMIN_PASSWORD=sua_senha
+
+# Executar script
+npm run ui-report
+
+# Ou diretamente
+npx tsx scripts/generate-ui-report.ts
+```
+
+### Exemplo de Output
+
+O HTML inclui:
+- Cards de resumo (total, sucesso, erros)
+- Screenshots em 3 breakpoints por página
+- Badges indicando "Autenticação Real"
+- Links para visualização completa
+
+---
+
 ## Script: generate-test-coverage.ts
 
 ### Responsabilidade

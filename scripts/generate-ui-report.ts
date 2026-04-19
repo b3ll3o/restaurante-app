@@ -1,7 +1,10 @@
 #!/usr/bin/env npx tsx
 /**
  * Script para gerar relatório de validação visual de UI
- * Versão com interceptação de fetch para mocks do Supabase
+ * 
+ * ⚠️ REGRA: Este script NÃO deve usar dados mockados para páginas autenticadas.
+ * O relatório de interface serve para validar o que o USUÁRIO REAL está vendo.
+ * Para páginas admin, o script DEVE fazer login real com credenciais do Supabase.
  */
 
 import { chromium } from '@playwright/test';
@@ -10,6 +13,11 @@ import * as path from 'path';
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const OUTPUT_DIR = path.join(process.cwd(), 'tests/e2e', 'ui-validation-report');
+
+// Credenciais de teste - DEVEM ser configuradas via variáveis de ambiente
+// Não usar dados mockados - o relatório deve mostrar a experiência real do usuário
+const TEST_ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || 'admin@test.com';
+const TEST_ADMIN_PASSWORD = process.env.TEST_ADMIN_PASSWORD || 'Teste@01';
 
 interface PageCapture {
   name: string;
@@ -50,62 +58,67 @@ async function ensureDir(dir: string): Promise<void> {
   }
 }
 
-// Dados mockados para simular sessão autenticada
-const MOCK_SESSION = {
-  user: {
-    id: 'mock-user-123',
-    email: 'admin@test.com',
-    aud: 'authenticated',
-    role: 'authenticated',
-    app_metadata: { provider: 'email', providers: ['email'] },
-    user_metadata: { name: 'Admin Test' },
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  session: {
-    access_token: 'mock-access-token',
-    refresh_token: 'mock-refresh-token',
-    expires_in: 3600,
-    expires_at: Math.floor(Date.now() / 1000) + 3600,
-    token_type: 'bearer',
-    user: {
-      id: 'mock-user-123',
-      email: 'admin@test.com',
-    },
-  },
-};
-
-const MOCK_RESTAURANTS = [{
-  id: 'mock-restaurant-1',
-  name: 'Restaurante Demo',
-  slug: 'restaurante-demo',
-  owner_id: 'mock-user-123',
-  owner_whatsapp: '5511999999999',
-  created_at: new Date().toISOString(),
-  updated_at: new Date().toISOString(),
-}];
-
-const MOCK_CATEGORIES = [
-  { id: 'cat-1', name: 'Bebidas', restaurant_id: 'mock-restaurant-1', display_order: 1, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: 'cat-2', name: 'Pratos', restaurant_id: 'mock-restaurant-1', display_order: 2, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: 'cat-3', name: 'Sobremesas', restaurant_id: 'mock-restaurant-1', display_order: 3, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-];
-
-const MOCK_PRODUCTS = [
-  { id: 'prod-1', name: 'Pizza Margherita', description: 'Pizza tradicional italiana', price: 45.90, category_id: 'cat-2', restaurant_id: 'mock-restaurant-1', image_url: null, is_available: true, display_order: 1, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: 'prod-2', name: 'Suco de Laranja', description: 'Suco natural', price: 12.00, category_id: 'cat-1', restaurant_id: 'mock-restaurant-1', image_url: null, is_available: true, display_order: 1, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: 'prod-3', name: 'Pudim', description: 'Pudim de leite condensado', price: 15.00, category_id: 'cat-3', restaurant_id: 'mock-restaurant-1', image_url: null, is_available: true, display_order: 1, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-];
-
-const MOCK_ORDERS = [
-  { id: 'order-1', restaurant_id: 'mock-restaurant-1', customer_name: 'Maria Silva', customer_whatsapp: '5511888888888', total: 57.90, status: 'pending', payment_method: 'pix', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  { id: 'order-2', restaurant_id: 'mock-restaurant-1', customer_name: 'João Santos', customer_whatsapp: '5511777777777', total: 45.90, status: 'confirmed', payment_method: 'dinheiro', created_at: new Date(Date.now() - 3600000).toISOString(), updated_at: new Date().toISOString() },
-];
+/**
+ * Faz login real no Supabase e retorna o contexto autenticado
+ * ⚠️ NÃO usa dados mockados - usa credenciais reais do ambiente
+ */
+async function loginAndGetAuthenticatedContext(
+  browser: any,
+  email: string,
+  password: string
+): Promise<{ context: any; page: any } | null> {
+  console.log(`  🔐 Fazendo login real com ${email}...`);
+  
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 720 },
+    ignoreHTTPSErrors: true,
+  });
+  
+  const page = await context.newPage();
+  
+  try {
+    // Navegar para página de login
+    await page.goto(`${BASE_URL}/admin/login`, { 
+      timeout: 15000, 
+      waitUntil: 'domcontentloaded' 
+    });
+    
+    // Aguardar campos do formulário
+    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 });
+    
+    // Preencher credenciais
+    const emailInput = page.locator('input[type="email"], input[name="email"]').first();
+    const passwordInput = page.locator('input[type="password"]').first();
+    
+    await emailInput.fill(email);
+    await passwordInput.fill(password);
+    
+    // Clicar no botão de login
+    const loginButton = page.locator('button[type="submit"], button:has-text("Entrar"), button:has-text("Login")').first();
+    await loginButton.click();
+    
+    // Aguardar redirecionamento para dashboard ou verificação
+    await page.waitForURL(`${BASE_URL}/admin/**`, { timeout: 15000 }).catch(() => {});
+    
+    // Aguardar carregamento completo
+    await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    
+    console.log(`  ✅ Login realizado com sucesso`);
+    
+    return { context, page };
+    
+  } catch (error) {
+    console.log(`  ❌ Erro no login: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    await context.close();
+    return null;
+  }
+}
 
 async function capturePage(
   browser: any,
   baseUrl: string,
-  page: PageCapture
+  page: PageCapture,
+  authenticatedContext?: { context: any; page: any }
 ): Promise<PageResult> {
   const result: PageResult = {
     name: page.name,
@@ -116,7 +129,7 @@ async function capturePage(
   };
 
   const fullUrl = `${baseUrl}${page.url}`;
-  console.log(`  📸 ${fullUrl}${page.requiresAuth ? ' (interceptando API)' : ''}`);
+  console.log(`  📸 ${fullUrl}`);
 
   const breakpoints = [
     { name: 'desktop', width: 1280, height: 720 },
@@ -126,134 +139,61 @@ async function capturePage(
 
   try {
     for (const bp of breakpoints) {
-      const context = await browser.newContext({ 
-        viewport: { width: bp.width, height: bp.height },
-        ignoreHTTPSErrors: true,
-      });
-      
-      const browserPage = await context.newPage();
+      let context: any;
+      let browserPage: any;
+      let needsNewContext = true;
 
-      // Para páginas autenticadas, interceptar TODAS as requisições fetch/XHR
-      if (page.requiresAuth) {
-        // Interceptor para requisições ao Supabase Auth
-        await browserPage.route('**/auth/**', route => {
-          const url = route.request().url();
-          
-          if (url.includes('/auth/v1/token') || url.includes('/auth/v1/sign_in')) {
-            // Login - retornar sessão mockada
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify({
-                access_token: MOCK_SESSION.session.access_token,
-                refresh_token: MOCK_SESSION.session.refresh_token,
-                user: MOCK_SESSION.user,
-              }),
-            });
-          } else if (url.includes('/auth/v1/session') || url.includes('/auth/session')) {
-            // GET session - retornar sessão mockada
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify(MOCK_SESSION),
-            });
-          } else if (url.includes('/auth/v1/user')) {
-            // GET user - retornar usuário mockado
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify(MOCK_SESSION.user),
-            });
-          } else if (url.includes('/auth/v1/settings')) {
-            // Settings - retornar empty
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify({}),
-            });
-          } else {
-            // Outras requisições auth - retornar sucesso
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              body: JSON.stringify({}),
-            });
-          }
+      // Para páginas autenticadas, reutilizar contexto já logado
+      if (page.requiresAuth && authenticatedContext) {
+        // Criar novo contexto com mesmo viewport
+        context = await authenticatedContext.context.newContext({
+          viewport: { width: bp.width, height: bp.height },
         });
-
-        // Interceptor para requisições REST do Supabase
-        await browserPage.route('**/rest/v1/**', route => {
-          const url = route.request().url();
-          
-          if (url.includes('restaurants') && url.includes('select')) {
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify(MOCK_RESTAURANTS),
-            });
-          } else if (url.includes('categories') && url.includes('select')) {
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify(MOCK_CATEGORIES),
-            });
-          } else if (url.includes('products') && url.includes('select')) {
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify(MOCK_PRODUCTS),
-            });
-          } else if (url.includes('orders') && url.includes('select')) {
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify(MOCK_ORDERS),
-            });
-          } else {
-            // Qualquer outra requisição REST - retornar array vazio
-            route.fulfill({
-              status: 200,
-              contentType: 'application/json',
-              headers: { 'content-type': 'application/json' },
-              body: JSON.stringify([]),
-            });
-          }
+        browserPage = await context.newPage();
+        needsNewContext = false;
+      } else {
+        context = await browser.newContext({
+          viewport: { width: bp.width, height: bp.height },
+          ignoreHTTPSErrors: true,
         });
+        browserPage = await context.newPage();
       }
 
-      await browserPage.goto(fullUrl, { timeout: 30000, waitUntil: 'domcontentloaded' });
-      
-      // Aguardar para API mocked carregar
-      await browserPage.waitForTimeout(3000);
-      
-      // Aguardar elementos específicos aparecerem
       try {
-        if (page.url.includes('/admin/dashboard')) {
-          await browserPage.waitForSelector('main, h1', { timeout: 5000 }).catch(() => {});
-        } else if (page.url.includes('/admin/')) {
-          await browserPage.waitForSelector('main, [class*="admin"], h1', { timeout: 5000 }).catch(() => {});
-        } else {
-          await browserPage.waitForSelector('main, body', { timeout: 3000 }).catch(() => {});
+        await browserPage.goto(fullUrl, { 
+          timeout: 15000, 
+          waitUntil: 'domcontentloaded' 
+        });
+        
+        // Aguardar para página carregar conteúdo
+        await browserPage.waitForTimeout(1500);
+        
+        // Aguardar elementos específicos aparecerem
+        try {
+          if (page.url.includes('/admin/')) {
+            await browserPage.waitForSelector('[class*="sidebar"], header, main, nav', { timeout: 5000 }).catch(() => {});
+          } else {
+            await browserPage.waitForSelector('main, header, body', { timeout: 3000 }).catch(() => {});
+          }
+        } catch {
+          // Ignora timeout
         }
-      } catch {
-        // Ignora timeout
+
+        const filename = `${bp.name}${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
+        const screenshotPath = path.join(OUTPUT_DIR, filename);
+        
+        await browserPage.screenshot({ path: screenshotPath, fullPage: true });
+
+        if (bp.name === 'desktop') result.screenshotPath = screenshotPath;
+        else if (bp.name === 'mobile') result.mobileScreenshotPath = screenshotPath;
+        else if (bp.name === 'tablet') result.tabletScreenshotPath = screenshotPath;
+
+        console.log(`    ✅ ${bp.name}: ${filename}`);
+      } finally {
+        if (!needsNewContext) {
+          await context.close();
+        }
       }
-
-      const filename = `${bp.name}${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
-      const screenshotPath = path.join(OUTPUT_DIR, filename);
-      
-      await browserPage.screenshot({ path: screenshotPath, fullPage: true });
-
-      if (bp.name === 'desktop') result.screenshotPath = screenshotPath;
-      else if (bp.name === 'mobile') result.mobileScreenshotPath = screenshotPath;
-      else if (bp.name === 'tablet') result.tabletScreenshotPath = screenshotPath;
-
-      console.log(`    ✅ ${bp.name}: ${filename}`);
-      await context.close();
     }
 
     result.status = 'success';
@@ -272,7 +212,6 @@ function generateHTMLReport(results: PageResult[]): string {
 
   // Função para sanitizar texto (evitar XSS)
   const escapeHtml = (text: string): string => {
-    const div = { innerHTML: '' } as any;
     return String(text)
       .replace(/&/g, '&')
       .replace(/</g, '<')
@@ -308,7 +247,7 @@ function generateHTMLReport(results: PageResult[]): string {
         </div>
         <p class="page-description">${escapeHtml(page.description)}</p>
         <p class="page-url"><code>${escapeHtml(page.url)}</code></p>
-        ${isAuthPage ? '<span class="auth-badge">📊 Mock Data</span>' : ''}
+        ${isAuthPage ? '<span class="auth-badge">🔐 Autenticação Real</span>' : ''}
         ${page.error ? `<p class="error-message">❌ ${escapeHtml(page.error)}</p>` : ''}
         ${screenshotsHtml}
       </div>`;
@@ -363,7 +302,7 @@ function generateHTMLReport(results: PageResult[]): string {
     <header>
       <h1>📸 Relatório de Validação Visual</h1>
       <p>Relatório automático de screenshots das páginas do PediAi</p>
-      <div class="note-box">📸 Páginas admin usam dados mockados para demonstração visual.</div>
+      <div class="note-box">🔐 Páginas admin usam autenticação REAL (não mockada) para mostrar a experiência real do usuário.</div>
       <div class="summary">
         <div class="summary-item"><div class="number">${results.length}</div><div class="label">Total</div></div>
         <div class="summary-item"><div class="number">${successfulPages}</div><div class="label">✅ Sucesso</div></div>
@@ -377,14 +316,14 @@ function generateHTMLReport(results: PageResult[]): string {
       ${publicPages.map(page => createPageCard(page, false)).join('')}
     </div>
     
-    <h2 class="section-title">🔐 Páginas do Painel Administrativo (Mock Data)</h2>
+    <h2 class="section-title">🔐 Páginas do Painel Administrativo (Autenticação Real)</h2>
     <div class="pages-container">
       ${adminPages.map(page => createPageCard(page, true)).join('')}
     </div>
     
     <footer>
       <p>Gerado automaticamente | Base URL: ${BASE_URL}</p>
-      <p style="margin-top: 0.5rem;">📸 Screenshots das páginas admin usam dados mockados para demonstração visual.</p>
+      <p style="margin-top: 0.5rem;">🔐 Autenticação REAL via Supabase - Este relatório mostra a experiência real do usuário.</p>
     </footer>
   </div>
 </body>
@@ -393,7 +332,7 @@ function generateHTMLReport(results: PageResult[]): string {
 
 async function main() {
   console.log('🚀 Gerando relatório de validação visual...\n');
-  console.log('📝 Interceptando requisições API com dados mockados\n');
+  console.log('🔐 Usando autenticação REAL para páginas admin (não mockado)\n');
 
   // Verificar servidor
   try {
@@ -414,11 +353,34 @@ async function main() {
   
   const results: PageResult[] = [];
 
+  // Para páginas autenticadas, fazer login real uma vez
+  const authPages = PAGES_TO_CAPTURE.filter(p => p.requiresAuth);
+  let authenticatedContext: { context: any; page: any } | null = null;
+
+  if (authPages.length > 0) {
+    console.log('🔐 Fazendo login real para páginas autenticadas...\n');
+    authenticatedContext = await loginAndGetAuthenticatedContext(
+      browser,
+      TEST_ADMIN_EMAIL,
+      TEST_ADMIN_PASSWORD
+    );
+    
+    if (!authenticatedContext) {
+      console.log('❌ Não foi possível fazer login. Páginas autenticadas podem não funcionar corretamente.');
+      console.log('   Configure TEST_ADMIN_EMAIL e TEST_ADMIN_PASSWORD corretamente.\n');
+    }
+  }
+
   // Capturar páginas
   for (const page of PAGES_TO_CAPTURE) {
     console.log(`📄 ${page.name}${page.requiresAuth ? ' 🔐' : ''}`);
-    const result = await capturePage(browser, BASE_URL, page);
+    const result = await capturePage(browser, BASE_URL, page, authenticatedContext || undefined);
     results.push(result);
+  }
+
+  // Fechar contexto autenticado
+  if (authenticatedContext) {
+    await authenticatedContext.context.close();
   }
 
   // Finalizar
