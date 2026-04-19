@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
+import { useRestaurant } from "@/context/RestaurantContext";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,13 +13,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Settings, Link as LinkIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Link as LinkIcon,
+  Plus,
+  Pencil,
+  Trash2,
+  Check,
+  X,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
-interface Restaurant {
-  id: string;
+interface RestaurantFormData {
   name: string;
   owner_whatsapp: string;
-  slug: string;
 }
 
 interface AlertMessage {
@@ -27,75 +42,147 @@ interface AlertMessage {
 }
 
 export default function SettingsPage() {
-  const [restaurant, setRestaurant] = useState<Restaurant | null>(null);
-  const [formData, setFormData] = useState({
+  const router = useRouter();
+  const { restaurants, activeRestaurant, setActiveRestaurant, refresh } = useRestaurant();
+  const [loading] = useState(false);
+  const [alert, setAlert] = useState<AlertMessage | null>(null);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [creating, setCreating] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const [createForm, setCreateForm] = useState<RestaurantFormData>({
     name: "",
     owner_whatsapp: "",
   });
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [alert, setAlert] = useState<AlertMessage | null>(null);
+
+  const [editForm, setEditForm] = useState<RestaurantFormData>({
+    name: "",
+    owner_whatsapp: "",
+  });
+
   const supabase = useMemo(() => createClient(), []);
 
-  useEffect(() => {
-    const fetchRestaurant = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const showAlert = (alert: AlertMessage) => {
+    setAlert(alert);
+    setTimeout(() => setAlert(null), 4000);
+  };
 
-      if (user) {
-        const { data: restaurantData, error } = await supabase
-          .from("restaurants")
-          .select("*")
-          .eq("owner_id", user.id)
-          .single();
-
-        if (!error && restaurantData) {
-          setRestaurant(restaurantData);
-          setFormData({
-            name: restaurantData.name,
-            owner_whatsapp: restaurantData.owner_whatsapp,
-          });
-        }
-      }
-      setLoading(false);
-    };
-
-    fetchRestaurant();
-  }, [supabase]);
-
-  useEffect(() => {
-    if (alert) {
-      const timer = setTimeout(() => setAlert(null), 3000);
-      return () => clearTimeout(timer);
+  const handleCreate = async () => {
+    if (!createForm.name.trim()) {
+      showAlert({ type: "error", message: "Nome do restaurante é obrigatório" });
+      return;
     }
-  }, [alert]);
 
-  const handleSave = async () => {
-    if (!restaurant) return;
+    setCreating(true);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      showAlert({ type: "error", message: "Usuário não autenticado" });
+      setCreating(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("restaurants")
+      .insert({
+        name: createForm.name.trim(),
+        owner_whatsapp: createForm.owner_whatsapp.trim(),
+        owner_id: user.id,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      showAlert({ type: "error", message: error.message });
+    } else {
+      showAlert({ type: "success", message: "Restaurante criado com sucesso!" });
+      setShowCreateDialog(false);
+      setCreateForm({ name: "", owner_whatsapp: "" });
+      await refresh();
+      if (data) {
+        setActiveRestaurant(data);
+        router.refresh();
+      }
+    }
+
+    setCreating(false);
+  };
+
+  const startEditing = (restaurant: { id: string; name: string; owner_whatsapp: string }) => {
+    setEditingId(restaurant.id);
+    setEditForm({ name: restaurant.name, owner_whatsapp: restaurant.owner_whatsapp });
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setEditForm({ name: "", owner_whatsapp: "" });
+  };
+
+  const handleUpdate = async (id: string) => {
+    if (!editForm.name.trim()) {
+      showAlert({ type: "error", message: "Nome do restaurante é obrigatório" });
+      return;
+    }
 
     setSaving(true);
 
     const { error } = await supabase
       .from("restaurants")
       .update({
-        name: formData.name,
-        owner_whatsapp: formData.owner_whatsapp,
+        name: editForm.name.trim(),
+        owner_whatsapp: editForm.owner_whatsapp.trim(),
       })
-      .eq("id", restaurant.id);
+      .eq("id", id);
 
     if (error) {
-      setAlert({ type: "error", message: error.message });
+      showAlert({ type: "error", message: error.message });
     } else {
-      setAlert({ type: "success", message: "Configurações salvas" });
+      showAlert({ type: "success", message: "Restaurante atualizado!" });
+      setEditingId(null);
+      await refresh();
     }
 
     setSaving(false);
   };
 
-  const menuUrl = restaurant
-    ? `${window.location.origin}/menu/${restaurant.slug}`
-    : "";
+  const handleDelete = async (id: string) => {
+    setDeleting(true);
+
+    const { error } = await supabase
+      .from("restaurants")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      showAlert({ type: "error", message: error.message });
+    } else {
+      showAlert({ type: "success", message: "Restaurante excluído" });
+      setDeleteConfirmId(null);
+      if (activeRestaurant?.id === id) {
+        const remaining = restaurants.filter((r) => r.id !== id);
+        if (remaining.length > 0) {
+          setActiveRestaurant(remaining[0]);
+        }
+      }
+      await refresh();
+      router.refresh();
+    }
+
+    setDeleting(false);
+  };
+
+  const handleSelectRestaurant = (restaurant: typeof activeRestaurant) => {
+    if (restaurant) {
+      setActiveRestaurant(restaurant);
+      router.refresh();
+    }
+  };
 
   if (loading) {
     return (
@@ -119,92 +206,214 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
-        <p className="text-muted-foreground">
-          Gerencie as informações do seu restaurante
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
+          <p className="text-muted-foreground">
+            Gerencie seus restaurantes
+          </p>
+        </div>
+        <Button onClick={() => setShowCreateDialog(true)} className="min-h-[44px]">
+          <Plus className="h-4 w-4 mr-2" />
+          Novo Restaurante
+        </Button>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5" />
-            Informações do Restaurante
-          </CardTitle>
-          <CardDescription>
-            Atualize os dados do seu restaurante
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome do Restaurante</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              placeholder="Nome do restaurante"
-              className="min-h-[44px] text-base"
-            />
+      {/* Restaurant List */}
+      <div className="grid gap-4">
+        {restaurants.length === 0 ? (
+          <Card>
+            <CardContent className="py-8 text-center text-muted-foreground">
+              Nenhum restaurante encontrado. Crie seu primeiro restaurante.
+            </CardContent>
+          </Card>
+        ) : (
+          restaurants.map((restaurant) => (
+            <Card key={restaurant.id}>
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  {editingId === restaurant.id ? (
+                    <div className="flex-1 space-y-3">
+                      <Input
+                        value={editForm.name}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, name: e.target.value })
+                        }
+                        placeholder="Nome do restaurante"
+                        className="min-h-[44px] text-base"
+                      />
+                      <Input
+                        value={editForm.owner_whatsapp}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, owner_whatsapp: e.target.value })
+                        }
+                        placeholder="+5511999999999"
+                        className="min-h-[44px] text-base"
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => handleUpdate(restaurant.id)}
+                          disabled={saving}
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          Salvar
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={cancelEditing}
+                          disabled={saving}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex-1">
+                        <CardTitle className="text-lg flex items-center gap-2">
+                          {restaurant.name}
+                          {activeRestaurant?.id === restaurant.id && (
+                            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                              Ativo
+                            </span>
+                          )}
+                        </CardTitle>
+                        <CardDescription>
+                          {restaurant.owner_whatsapp || "Sem WhatsApp"}
+                        </CardDescription>
+                      </div>
+                      <div className="flex gap-2">
+                        {activeRestaurant?.id !== restaurant.id && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleSelectRestaurant(restaurant)}
+                          >
+                            Selecionar
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => startEditing(restaurant)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => setDeleteConfirmId(restaurant.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardHeader>
+              {editingId !== restaurant.id && (
+                <CardContent>
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <LinkIcon className="h-4 w-4" />
+                    <code className="text-xs">
+                      {typeof window !== "undefined"
+                        ? `${window.location.origin}/menu/${restaurant.slug}`
+                        : `/menu/${restaurant.slug}`}
+                    </code>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Create Restaurant Dialog */}
+      <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Criar Novo Restaurante</DialogTitle>
+            <DialogDescription>
+              Preencha os dados do seu novo restaurante.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="create-name">Nome do Restaurante</Label>
+              <Input
+                id="create-name"
+                value={createForm.name}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, name: e.target.value })
+                }
+                placeholder="Nome do restaurante"
+                className="min-h-[44px] text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="create-whatsapp">WhatsApp para Pedidos</Label>
+              <Input
+                id="create-whatsapp"
+                type="tel"
+                value={createForm.owner_whatsapp}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, owner_whatsapp: e.target.value })
+                }
+                placeholder="+5511999999999"
+                className="min-h-[44px] text-base"
+              />
+            </div>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="whatsapp">WhatsApp para Pedidos</Label>
-            <Input
-              id="whatsapp"
-              type="tel"
-              value={formData.owner_whatsapp}
-              onChange={(e) =>
-                setFormData({ ...formData, owner_whatsapp: e.target.value })
-              }
-              placeholder="+5511999999999"
-              className="min-h-[44px] text-base"
-            />
-            <p className="text-sm text-muted-foreground">
-              Número do WhatsApp que receberá as notificações de pedido
-            </p>
-          </div>
-
-          <Button onClick={handleSave} disabled={saving} className="min-h-[44px]">
-            {saving ? "Salvando..." : "Salvar Configurações"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <LinkIcon className="h-5 w-5" />
-            Link do Cardápio
-          </CardTitle>
-          <CardDescription>
-            Compartilhe este link com seus clientes
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              value={menuUrl}
-              readOnly
-              className="font-mono text-sm"
-            />
+          <DialogFooter>
             <Button
-              variant="secondary"
+              variant="outline"
               onClick={() => {
-                navigator.clipboard.writeText(menuUrl);
-                setAlert({ type: "success", message: "Link copiado!" });
+                setShowCreateDialog(false);
+                setCreateForm({ name: "", owner_whatsapp: "" });
               }}
+              disabled={creating}
             >
-              Copiar
+              Cancelar
             </Button>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Acesse para visualizar como seus clientes veem o cardápio
-          </p>
-        </CardContent>
-      </Card>
+            <Button onClick={handleCreate} disabled={creating}>
+              {creating ? "Criando..." : "Criar Restaurante"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
+      <Dialog open={!!deleteConfirmId} onOpenChange={() => setDeleteConfirmId(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Excluir Restaurante</DialogTitle>
+            <DialogDescription>
+              Tem certeza que deseja excluir este restaurante? Esta ação não pode
+              ser desfeita e todos os dados asociados (categorias, produtos, pedidos)
+              serão excluídos.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirmId(null)}
+              disabled={deleting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={() => deleteConfirmId && handleDelete(deleteConfirmId)}
+              variant="destructive"
+              disabled={deleting}
+            >
+              {deleting ? "Excluindo..." : "Excluir"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

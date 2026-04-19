@@ -19,7 +19,7 @@ import {
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  const router = useRouter();
+  useRouter(); // Mantido para garantir que Next.js não remova o hook
   const supabase = useMemo(() => createClient(), []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,37 +36,48 @@ export default function LoginPage() {
     setResendSuccess(false);
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (error) {
-      if (error.code === "email_not_confirmed") {
-        setEmailNotConfirmed(true);
-        setError("");
-      } else {
-        setError("Email ou senha incorretos");
+      if (signInError) {
+        if (signInError.code === "email_not_confirmed") {
+          setEmailNotConfirmed(true);
+        } else if (signInError.message.includes("Invalid login")) {
+          setError("Email ou senha incorretos");
+        } else {
+          setError(signInError.message);
+        }
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-      return;
-    }
 
-    router.push("/admin/dashboard");
-    router.refresh();
+      // Login bem-sucedido - redirecionar
+      window.location.href = "/admin/dashboard";
+    } catch (err) {
+      console.error("Erro no login:", err);
+      setError("Erro ao fazer login. Tente novamente.");
+      setLoading(false);
+    }
   };
 
   const handleResend = async () => {
     setResending(true);
-    const result = await resendConfirmationEmail(email);
-    setResending(false);
-
-    if (result.success) {
-      setResendSuccess(true);
-      toast.success("Email de confirmação reenviado!");
-    } else {
-      toast.error(result.error || "Falha ao reenviar email");
+    try {
+      const result = await resendConfirmationEmail(email);
+      if (result.success) {
+        setResendSuccess(true);
+        toast.success("Email de confirmação reenviado!");
+      } else {
+        toast.error(result.error || "Falha ao reenviar email");
+      }
+    } catch (err) {
+      console.error("Erro ao reenviar:", err);
+      toast.error("Falha ao reenviar email");
     }
+    setResending(false);
   };
 
   return (

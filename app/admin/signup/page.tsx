@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/card";
 
 export default function SignupPage() {
-  const router = useRouter();
+  useRouter(); // Mantido para garantir que Next.js não remova o hook
   const supabase = useMemo(() => createClient(), []);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,34 +34,37 @@ export default function SignupPage() {
     setError("");
     setLoading(true);
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          restaurant_name: restaurantName,
-          whatsapp_number: whatsappNumber,
+    try {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            restaurant_name: restaurantName,
+            whatsapp_number: whatsappNumber,
+          },
         },
-      },
-    });
+      });
 
-    if (signUpError) {
-      setError(signUpError.message);
-      setLoading(false);
-      return;
-    }
+      if (signUpError) {
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
 
-    if (data.user && !data.session) {
-      // Email confirmation required
+      if (!data.user) {
+        setError("Não foi possível criar a conta. Tente novamente.");
+        setLoading(false);
+        return;
+      }
+
+      // Mostrar tela de confirmação pendente - restaurante será criado depois
       setPendingConfirmation(true);
+    } catch (err) {
+      console.error("Erro no signup:", err);
+      setError("Erro ao criar conta. Tente novamente.");
+    } finally {
       setLoading(false);
-      return;
-    }
-
-    if (data.session) {
-      // No confirmation needed (DEV mode) - redirect to dashboard
-      router.push("/admin/dashboard");
-      router.refresh();
     }
   };
 
@@ -87,9 +90,9 @@ export default function SignupPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Create Admin Account</CardTitle>
+          <CardTitle className="text-2xl font-bold">Criar Conta de Administrador</CardTitle>
           <CardDescription>
-            Enter your details to create an admin account
+            Preencha seus dados para criar uma conta de administrador
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -153,12 +156,13 @@ export default function SignupPage() {
                 </p>
               </div>
             ) : (
+              <>
               <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@example.com"
+                placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -166,7 +170,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 type="password"
@@ -178,11 +182,11 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="restaurantName">Restaurant Name</Label>
+              <Label htmlFor="restaurantName">Nome do Restaurante</Label>
               <Input
                 id="restaurantName"
                 type="text"
-                placeholder="My Restaurant"
+                placeholder="Meu Restaurante"
                 value={restaurantName}
                 onChange={(e) => setRestaurantName(e.target.value)}
                 required
@@ -190,7 +194,7 @@ export default function SignupPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="whatsappNumber">WhatsApp Number</Label>
+              <Label htmlFor="whatsappNumber">Número do WhatsApp</Label>
               <Input
                 id="whatsappNumber"
                 type="tel"
@@ -201,15 +205,17 @@ export default function SignupPage() {
                 className="min-h-[44px] text-base"
               />
             </div>
+              </>
+            )}
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full min-h-[44px]" disabled={loading}>
-              {loading ? "Creating account..." : "Create Account"}
+              {loading ? "Criando conta..." : "Criar Conta"}
             </Button>
             <p className="text-sm text-muted-foreground">
-              Already have an account?{" "}
+              Já tem uma conta?{" "}
               <Link href="/admin/login" className="text-primary hover:underline">
-                Sign in
+                Faça login
               </Link>
             </p>
           </CardFooter>
