@@ -6,7 +6,7 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus";
 /**
  * Indicador visual de status offline
  * Mostra ícone WiFi-off quando desconectado
- * Conforme regra Offline-First em .openspec/specs/pediai-rules.md
+ * Conforme regra Offline-First em opencode/openspec/specs/pediai-rules.md
  */
 export function OfflineIndicator() {
   const isOnline = useOnlineStatus();

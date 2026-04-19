@@ -139,7 +139,7 @@ href="/admin/signup?utm_source=landing&utm_medium=cta&utm_content=cta-pizzaria&u
 ## Referências
 
 - [Next.js Metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)
-- [pediai-specification.md](../../../.openspec/specs/pediai-specification.md)
+- [pediai-specification.md](../../../opencode/openspec/specs/pediai-specification.md)
 - [landing.feature](./landing.feature)
 
 ---

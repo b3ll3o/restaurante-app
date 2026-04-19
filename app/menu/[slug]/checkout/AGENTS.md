@@ -218,8 +218,8 @@ E a mensagem deve conter os detalhes do pedido
 
 ## Referências
 
-- [pediai-specification.md](../../../.openspec/specs/pediai-specification.md)
-- [pediai-technical-plan.md](../../../.openspec/specs/pediai-technical-plan.md)
+- [pediai-specification.md](../../../opencode/openspec/specs/pediai-specification.md)
+- [pediai-technical-plan.md](../../../opencode/openspec/specs/pediai-technical-plan.md)
 
 ---
 

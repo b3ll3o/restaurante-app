@@ -259,9 +259,9 @@ A técnica dos 5 Porquês envolve perguntar "por quê?" sucesivamente para chega
 ### Para PRDs de Correção (Bug Fix)
 
 - [ ] RCA ID referenciado no PRD
-- [ ] PRD criado em `.openspec/backlog/prds/`
+- [ ] PRD criado em `opencode/openspec/backlog/prds/`
 - [ ] Após correção: RCA.status = "Completed"
-- [ ] Após correção: PRD movido para `.openspec/backlog/archive/`
+- [ ] Após correção: PRD movido para `opencode/openspec/backlog/archive/`
 
 ---
 

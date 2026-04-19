@@ -1,0 +1,31 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Next.js 16.2.3 + React 19 + TypeScript (strict) + Tailwind CSS 4 + Supabase
+  Architecture: Multi-tenant SaaS for restaurants with cardápio digital and WhatsApp orders
+  Testing: Vitest + Playwright
+  Style: ESLint + Prettier
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    - Follow existing code patterns and conventions
+    tdd: false
+    test_command: ''
+  verify:
+    test_command: ''
+    build_command: 'npm run build'
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas

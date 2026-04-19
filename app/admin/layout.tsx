@@ -1,70 +1,105 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sidebar, SidebarContent } from "@/components/admin/sidebar";
 import { Header } from "@/components/admin/header";
 import { Loader2 } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { RestaurantProvider } from "@/context/RestaurantContext";
+
+const PUBLIC_PATHS = ["/admin/login", "/admin/signup"];
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userEmail, setUserEmail] = useState<string>();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
   const router = useRouter();
 
-  // ✅ useMemo para referência estável
+  const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const mountedRef = useRef(true);
+  const authCheckedRef = useRef(false);
+
   const supabase = useMemo(() => createClient(), []);
 
+  const isPublicPath = PUBLIC_PATHS.includes(pathname || "");
+
   useEffect(() => {
-    // ✅ Verificação NO INÍCIO para evitar redirect loop
-    if (typeof window !== "undefined" && window.location.pathname === "/admin/login") {
-      setIsLoading(false);
+    if (!mountedRef.current) return;
+
+    // For public paths, just set loading false immediately
+    if (isPublicPath) {
+      setIsAuthLoading(false);
+      authCheckedRef.current = true;
       return;
     }
 
+    // For protected paths, check auth
+    if (authCheckedRef.current) return;
+    authCheckedRef.current = true;
+    setIsAuthLoading(true);
+
+    const timeoutId = setTimeout(() => {
+      if (mountedRef.current) {
+        setIsAuthLoading(false);
+        router.push("/admin/login");
+      }
+    }, 10000);
+
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await Promise.race([
-          supabase.auth.getSession(),
-          new Promise<{ data: { session: null }, error: Error }>((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout")), 5000)
-          ),
-        ]).catch(() => ({ data: { session: null }, error: null }));
+        const { data: { session }, error } = await supabase.auth.getSession();
 
-        if (!session) {
+        if (!mountedRef.current) return;
+
+        if (error || !session) {
+          clearTimeout(timeoutId);
           router.push("/admin/login");
           return;
         }
 
+        clearTimeout(timeoutId);
         setUserEmail(session.user.email);
-      } catch {
-        router.push("/admin/login");
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        clearTimeout(timeoutId);
+        if (mountedRef.current) {
+          router.push("/admin/login");
+        }
       } finally {
-        setIsLoading(false);
+        if (mountedRef.current) {
+          setIsAuthLoading(false);
+        }
       }
     };
 
     checkAuth();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session && mountedRef.current) {
         router.push("/admin/login");
       }
     });
 
-    return () => subscription.unsubscribe();
-    // ✅ REMOVIDO: supabase.auth da dependency array
-  }, [router, supabase]);
+    return () => {
+      mountedRef.current = false;
+      clearTimeout(timeoutId);
+      subscription.unsubscribe();
+      authCheckedRef.current = false;
+    };
+  }, [router, supabase, isPublicPath]);
 
-  if (isLoading) {
+  // For public paths, render directly without auth check or RestaurantProvider
+  if (isPublicPath) {
+    return <>{children}</>;
+  }
+
+  if (isAuthLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -73,26 +108,26 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen bg-background">
-      {/* Desktop sidebar - visible on lg+ (≥1024px) */}
-      <div className="hidden lg:block">
-        <Sidebar />
-      </div>
+    <RestaurantProvider>
+      <div className="flex h-screen bg-background">
+        <div className="hidden lg:block">
+          <Sidebar />
+        </div>
 
-      {/* Mobile/tablet drawer - visible on < 1024px */}
-      <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-        <SheetContent side="left" className="p-0 w-64">
-          <SidebarContent onClick={() => setSidebarOpen(false)} />
-        </SheetContent>
-      </Sheet>
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side="left" className="p-0 w-64">
+            <SidebarContent onClick={() => setSidebarOpen(false)} />
+          </SheetContent>
+        </Sheet>
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header
-          userEmail={userEmail}
-          onMenuClick={() => setSidebarOpen(true)}
-        />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <Header
+            userEmail={userEmail}
+            onMenuClick={() => setSidebarOpen(true)}
+          />
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+        </div>
       </div>
-    </div>
+    </RestaurantProvider>
   );
 }

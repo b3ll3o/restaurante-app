@@ -37,7 +37,7 @@ root-causes/
 1. Erro Reportado
        │
        ▼
-2. Criar RCA usando template (.openspec/templates/rca-template.md)
+2. Criar RCA usando template (opencode/openspec/templates/rca-template.md)
        │
        ▼
 3. Classificar Severidade (Critical/High/Medium/Low)
@@ -52,7 +52,7 @@ root-causes/
 6. Preencher todas as 10 seções do template
        │
        ▼
-7. Arquivar em .openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
+7. Arquivar em opencode/openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
 ```
 
 ---
@@ -79,7 +79,7 @@ root-causes/
 
 ## Template RCA
 
-O template oficial está em: `.openspec/templates/rca-template.md`
+O template oficial está em: `opencode/openspec/templates/rca-template.md`
 
 O template contém 10 seções obrigatórias:
 1. Descrição do Erro
@@ -166,10 +166,10 @@ O RCA **NÃO** é considerado válido se:
 
 ```bash
 # Listar todos os RCAs
-ls -la .openspec/root-causes/RCA-*.md
+ls -la opencode/openspec/root-causes/RCA-*.md
 
 # Verificar RCAs sem testes
-grep -L "tests/unit" .openspec/root-causes/RCA-*.md
+grep -L "tests/unit" opencode/openspec/root-causes/RCA-*.md
 ```
 
 ### Dashboard de RCAs
@@ -186,29 +186,29 @@ O fluxo de erro integra-se ao SDD da seguinte forma:
 Erro Reportado
        │
        ▼
-1. RCA criado (.openspec/root-causes/RCA-YYYY-MM-DD-NNN.md)
+1. RCA criado (opencode/openspec/root-causes/RCA-YYYY-MM-DD-NNN.md)
        │
        ▼
 2. PRD implícito (problema identificado) no RCA
        │
        ▼
 3. Se mudança significativa → seguir fluxo SDD completo
-   - Criar change em .openspec/changes/
+   - Criar change em opencode/openspec/changes/
    - Seguir: proposal → spec → design → tasks → verification → archive
        │
        ▼
 4. Se correção simples → apenas RCA documentado
        │
        ▼
-5. Archive do RCA: .openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
+5. Archive do RCA: opencode/openspec/root-causes/RCA-YYYY-MM-DD-NNN.md
 ```
 
 ---
 
 ## Referências
 
-- Template RCA: `.openspec/templates/rca-template.md`
-- Regras do Projeto: `.openspec/specs/pediai-rules.md` (Seção 10)
+- Template RCA: `opencode/openspec/templates/rca-template.md`
+- Regras do Projeto: `opencode/openspec/specs/pediai-rules.md` (Seção 10)
 - SDD Workflow: `AGENTS.md` (Seção de Fluxo SDD)
 
 ---

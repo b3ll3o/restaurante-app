@@ -4,17 +4,21 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Utensils,
+  UtensilsCrossed,
   Package,
   ShoppingCart,
   Settings,
   Link as LinkIcon,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RestaurantSwitcher } from "./RestaurantSwitcher";
+import { useRestaurant } from "@/context/RestaurantContext";
+import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/categories", label: "Categorias", icon: Utensils },
+  { href: "/admin/categories", label: "Categorias", icon: UtensilsCrossed },
   { href: "/admin/products", label: "Produtos", icon: Package },
   { href: "/admin/orders", label: "Pedidos", icon: ShoppingCart },
   { href: "/admin/settings", label: "Configurações", icon: Settings },
@@ -26,12 +30,32 @@ interface SidebarContentProps {
 
 export function SidebarContent({ onClick }: SidebarContentProps) {
   const pathname = usePathname();
+  const { restaurants } = useRestaurant();
 
   return (
     <>
       <div className="flex items-center gap-2 p-6 border-b">
         <LinkIcon className="h-6 w-6 text-primary" />
         <span className="font-semibold text-lg">PediAi</span>
+      </div>
+
+      <div className="p-4 border-b">
+        <RestaurantSwitcher />
+        {restaurants.length === 1 && (
+          <div className="mt-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full text-xs"
+              onClick={() => {
+                window.location.href = "/admin/settings";
+              }}
+            >
+              <Plus className="h-3 w-3 mr-1" />
+              Adicionar restaurante
+            </Button>
+          </div>
+        )}
       </div>
 
       <nav className="flex-1 p-4 space-y-1">

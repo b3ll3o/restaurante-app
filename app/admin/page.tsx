@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Loader2 } from "lucide-react";
 
 export default function AdminRootPage() {
   const router = useRouter();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     const checkAuth = async () => {
-      const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
@@ -21,7 +21,7 @@ export default function AdminRootPage() {
     };
 
     checkAuth();
-  }, [router]);
+  }, [router, supabase]);
 
   return (
     <div className="flex h-screen items-center justify-center">

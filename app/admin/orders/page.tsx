@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useRestaurant } from "@/context/RestaurantContext";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
@@ -54,6 +55,7 @@ interface AlertMessage {
 }
 
 export default function OrdersPage() {
+  const { activeRestaurant } = useRestaurant();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -62,16 +64,23 @@ export default function OrdersPage() {
   const supabase = useMemo(() => createClient(), []);
 
   const fetchOrders = useCallback(async () => {
+    if (!activeRestaurant) {
+      setOrders([]);
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("orders")
       .select("*")
+      .eq("restaurant_id", activeRestaurant.id)
       .order("created_at", { ascending: false });
 
     if (!error && data) {
       setOrders(data);
     }
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, activeRestaurant]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

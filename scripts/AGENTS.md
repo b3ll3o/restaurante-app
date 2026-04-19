@@ -165,7 +165,7 @@ O HTML inclui:
 ## Referências
 
 - [tests/e2e/AGENTS.md](../tests/e2e/AGENTS.md) - Documentação dos testes E2E
-- [.openspec/specs/pediai-quality-rules.md](../.openspec/specs/pediai-quality-rules.md) - Regras de qualidade
+- [opencode/openspec/specs/pediai-quality-rules.md](../opencode/openspec/specs/pediai-quality-rules.md) - Regras de qualidade
 
 ---
 

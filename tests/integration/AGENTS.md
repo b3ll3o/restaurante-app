@@ -199,7 +199,7 @@ Os arquivos `.feature` DEVEM estar no nível mais próximo do módulo que docume
 - [BDD - Gherkin Reference](https://cucumber.io/docs/gherkin/)
 - [Vitest Documentation](https://vitest.dev/)
 - [AGENTS.md - Tests](../tests/AGENTS.md)
-- [Spec: pediai-specification.md](../../.openspec/specs/pediai-specification.md)
+- [Spec: pediai-specification.md](../../opencode/openspec/specs/pediai-specification.md)
 
 ---
 

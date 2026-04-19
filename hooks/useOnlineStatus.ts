@@ -6,7 +6,7 @@ import { TOAST_MESSAGES } from "@/lib/constants";
 
 /**
  * Hook para monitorar status de conexão online/offline
- * Conforme regra Offline-First em .openspec/specs/pediai-rules.md
+ * Conforme regra Offline-First em opencode/openspec/specs/pediai-rules.md
  */
 export function useOnlineStatus(): boolean {
   const [isOnline, setIsOnline] = useState(() => {

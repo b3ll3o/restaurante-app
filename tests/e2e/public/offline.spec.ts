@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 /**
  * Testes E2E para funcionalidades Offline-First
- * Conforme regras em .openspec/specs/menulink-rules.md
+ * Conforme regras em opencode/openspec/specs/menulink-rules.md
  * 
  * Estes testes verificam:
  * 1. Carrinho persiste offline

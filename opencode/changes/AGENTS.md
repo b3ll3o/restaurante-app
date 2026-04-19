@@ -100,16 +100,16 @@ proposal → spec → design → tasks → implementation → verification → a
 
 ```bash
 # Exemplo de arquivamento
-mv .openspec/changes/minha-mudanca .openspec/changes/archive/2026-04-17-minha-mudanca/
+mv opencode/openspec/changes/minha-mudanca opencode/openspec/changes/archive/2026-04-17-minha-mudanca/
 ```
 
 ---
 
 ## Referências
 
-- `.openspec/AGENTS.md` - Visão geral do fluxo SDD
-- `.openspec/specs/` - Especificações do projeto
-- `.openspec/templates/` - Templates de artefatos
+- `opencode/openspec/AGENTS.md` - Visão geral do fluxo SDD
+- `opencode/openspec/specs/` - Especificações do projeto
+- `opencode/openspec/templates/` - Templates de artefatos
 
 ---
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useRestaurant } from "@/context/RestaurantContext";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -65,6 +66,7 @@ interface AlertMessage {
 }
 
 export default function ProductsPage() {
+  const { activeRestaurant } = useRestaurant();
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,27 +86,55 @@ export default function ProductsPage() {
   const supabase = useMemo(() => createClient(), []);
 
   const fetchProducts = useCallback(async () => {
+    if (!activeRestaurant) {
+      setProducts([]);
+      setLoading(false);
+      return;
+    }
+
+    // First get categories for this restaurant to filter products
+    const { data: categoriesData } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("restaurant_id", activeRestaurant.id);
+
+    if (!categoriesData || categoriesData.length === 0) {
+      setProducts([]);
+      setCategories([]);
+      setLoading(false);
+      return;
+    }
+
+    const categoryIds = categoriesData.map(c => c.id);
+
     const { data, error } = await supabase
       .from("products")
       .select("*")
+      .in("category_id", categoryIds)
       .order("display_order", { ascending: true });
 
     if (!error && data) {
       setProducts(data);
     }
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, activeRestaurant]);
 
   const fetchCategories = useCallback(async () => {
+    if (!activeRestaurant) {
+      setCategories([]);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("categories")
       .select("id, name")
+      .eq("restaurant_id", activeRestaurant.id)
       .order("display_order", { ascending: true });
 
     if (!error && data) {
       setCategories(data);
     }
-  }, [supabase]);
+  }, [supabase, activeRestaurant]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect

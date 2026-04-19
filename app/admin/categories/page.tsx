@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useRestaurant } from "@/context/RestaurantContext";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,6 +46,7 @@ interface AlertMessage {
 }
 
 export default function CategoriesPage() {
+  const { activeRestaurant } = useRestaurant();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -55,16 +57,23 @@ export default function CategoriesPage() {
   const supabase = useMemo(() => createClient(), []);
 
   const fetchCategories = useCallback(async () => {
+    if (!activeRestaurant) {
+      setCategories([]);
+      setLoading(false);
+      return;
+    }
+
     const { data, error } = await supabase
       .from("categories")
       .select("*")
+      .eq("restaurant_id", activeRestaurant.id)
       .order("display_order", { ascending: true });
 
     if (!error && data) {
       setCategories(data);
     }
     setLoading(false);
-  }, [supabase]);
+  }, [supabase, activeRestaurant]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -106,9 +115,16 @@ export default function CategoriesPage() {
         fetchCategories();
       }
     } else {
+      if (!activeRestaurant) {
+        setAlert({ type: "error", message: "Nenhum restaurante selecionado" });
+        setSaving(false);
+        return;
+      }
+
       const { error } = await supabase.from("categories").insert({
         name: formData.name,
         display_order: formData.display_order,
+        restaurant_id: activeRestaurant.id,
       });
 
       if (error) {

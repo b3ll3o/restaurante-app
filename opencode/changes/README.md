@@ -9,7 +9,7 @@ PRD.md → Análise → proposal → spec → design → tasks → implementatio
 ## Como Criar Nova Mudança
 
 ```bash
-mkdir -p .openspec/changes/{nome-da-mudanca}
+mkdir -p opencode/openspec/changes/{nome-da-mudanca}
 ```
 
 ## Artefatos Obrigatórios
@@ -25,15 +25,15 @@ Cada change deve conter:
 ## Verificar Status
 
 ```bash
-cat .openspec/changes/{change-name}/status.md
+cat opencode/openspec/changes/{change-name}/status.md
 ```
 
 ## Arquivar Mudança
 
-Após conclusão, mover para `.openspec/archive/{data}/`:
+Após conclusão, mover para `opencode/openspec/archive/{data}/`:
 
 ```bash
-mv .openspec/changes/{change-name} .openspec/archive/{data}/
+mv opencode/openspec/changes/{change-name} opencode/openspec/archive/{data}/
 ```
 
 ## Changes em Andamento

@@ -1,6 +1,6 @@
 /**
  * PediAi Service Worker
- * Implementa cache offline-first conforme regras em .openspec/specs/pediai-rules.md
+ * Implementa cache offline-first conforme regras em opencode/openspec/specs/pediai-rules.md
  */
 
 const STATIC_CACHE_NAME = "pediai-static-v1";

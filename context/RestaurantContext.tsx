@@ -7,6 +7,7 @@ import {
   useEffect,
   useCallback,
   useRef,
+  useMemo,
   ReactNode,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
@@ -64,7 +65,7 @@ export function RestaurantProvider({ children }: { children: ReactNode }) {
   const mountedRef = useRef(true);
   const initializedRef = useRef(false);
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const refresh = useCallback(async () => {
     if (!mountedRef.current) return;

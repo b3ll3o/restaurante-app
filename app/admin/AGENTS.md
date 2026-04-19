@@ -132,8 +132,8 @@ Menu lateral de navegação com links para todas as rotas do admin.
 - [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [shadcn/ui](https://ui.shadcn.com)
 - [Tailwind CSS](https://tailwindcss.com)
-- [Spec: pediai-specification.md](../../.openspec/specs/pediai-specification.md)
-- [Spec: pediai-technical-plan.md](../../.openspec/specs/pediai-technical-plan.md)
+- [Spec: pediai-specification.md](../../opencode/openspec/specs/pediai-specification.md)
+- [Spec: pediai-technical-plan.md](../../opencode/openspec/specs/pediai-technical-plan.md)
 
 ---
 

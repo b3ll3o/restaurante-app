@@ -873,7 +873,7 @@ vi.mock('@/lib/supabase/client');
 - [Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Playwright](https://playwright.dev/docs/intro)
 - [opencode/rules/AGENTS.md](opencode/rules/AGENTS.md) — Regras gerais de qualidade e testes
-- [pediai-unit-tests-checklist.md](../.openspec/specs/pediai-unit-tests-checklist.md)
+- [pediai-unit-tests-checklist.md](../opencode/openspec/specs/pediai-unit-tests-checklist.md)
 
 ---
 

@@ -309,9 +309,9 @@ Nenhuma (componente standalone)
 - [React Documentation](https://react.dev)
 - [Tailwind CSS 4](https://tailwindcss.com)
 - [shadcn/ui Dialog](https://ui.shadcn.com/docs/components/dialog)
-- [pediai-specification.md](../../../.openspec/specs/pediai-specification.md)
-- [pediai-technical-plan.md](../../../.openspec/specs/pediai-technical-plan.md)
-- [landing-page-redesign spec](../../../.openspec/changes/landing-page-redesign/spec.md)
+- [pediai-specification.md](../../../opencode/openspec/specs/pediai-specification.md)
+- [pediai-technical-plan.md](../../../opencode/openspec/specs/pediai-technical-plan.md)
+- [landing-page-redesign spec](../../../opencode/openspec/changes/landing-page-redesign/spec.md)
 
 ---
 

@@ -201,7 +201,7 @@ function podeTransicionarStatus(
 
 - [TypeScript Handbook - Interfaces](https://www.typescriptlang.org/docs/handbook/2/objects.html)
 - [TypeScript Handbook - Types](https://www.typescriptlang.org/docs/handbook/2/typescript-types-101.html)
-- `.openspec/specs/pediai-specification.md` - Requisitos REQ-040 a REQ-045
+- `opencode/openspec/specs/pediai-specification.md` - Requisitos REQ-040 a REQ-045
 
 ---
 

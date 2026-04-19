@@ -144,7 +144,7 @@ O modulo `lib/domain/` dependera de:
 
 - `types/index.ts` - Tipos TypeScript atuais
 - `types/AGENTS.md` - Documentacao de tipos
-- `.openspec/specs/pediai-specification.md` - Regras de negocio formalizadas
+- `opencode/openspec/specs/pediai-specification.md` - Regras de negocio formalizadas
 
 ---
 

@@ -2,6 +2,15 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { VideoSection } from "@/app/components/landing/VideoSection";
 
+// Mock do next/image para evitar problemas com URLs
+// eslint-disable-next-line @next/next/no-img-element
+vi.mock("next/image", () => ({
+  // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+    <img {...props} alt={props.alt || "Video thumbnail"} />
+  ),
+}));
+
 // Mock Dialog from shadcn/ui
 vi.mock("@/components/ui/dialog", () => ({
   Dialog: ({ children, open, onOpenChange }: {
@@ -81,7 +90,7 @@ describe("VideoSection", () => {
     render(
       <VideoSection
         videoUrl="https://youtube.com/watch?v=test"
-        thumbnailUrl="/thumbnail.jpg"
+        thumbnailUrl="https://example.com/thumbnail.jpg"
         testimonialName="Maria Santos"
         testimonialRole="Dona - Restaurante Gourmet"
       />
