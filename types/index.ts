@@ -3,6 +3,7 @@ export interface Restaurant {
   slug: string;
   name: string;
   owner_whatsapp: string;
+  owner_id: string;
   created_at: string;
 }
 

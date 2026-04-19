@@ -2,12 +2,11 @@
 
 import { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
 import { Product } from "@/types";
+import type { CartItem } from "@/types";
 import { STORAGE_KEYS } from "@/lib/constants";
 
-export interface CartItem {
-  product: Product;
-  quantity: number;
-}
+// Re-export CartItem so consumers can import from this module
+export type { CartItem } from "@/types";
 
 interface CartState {
   items: CartItem[];

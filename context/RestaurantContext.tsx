@@ -11,14 +11,7 @@ import {
   ReactNode,
 } from "react";
 import { createClient } from "@/lib/supabase/client";
-
-export interface Restaurant {
-  id: string;
-  name: string;
-  slug: string;
-  owner_whatsapp: string;
-  owner_id: string;
-}
+import type { Restaurant } from "@/types";
 
 interface RestaurantContextValue {
   restaurants: Restaurant[];
