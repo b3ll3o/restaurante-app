@@ -161,10 +161,10 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {alert && (
         <div
-          className={`p-4 rounded-md ${
+          className={`p-3 sm:p-4 rounded-md text-sm sm:text-base ${
             alert.type === "success"
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
@@ -174,19 +174,20 @@ export default function CategoriesPage() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Categorias</h1>
-          <p className="text-muted-foreground">Gerencie as categorias do cardápio</p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Categorias</h1>
+          <p className="text-sm text-muted-foreground hidden sm:block">Gerencie as categorias do cardápio</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => handleOpenDialog()} className="touch-target">
+            <Button onClick={() => handleOpenDialog()} className="touch-target w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              Nova Categoria
+              <span className="hidden sm:inline">Nova Categoria</span>
+              <span className="sm:hidden">Nova</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-full h-full max-w-none md:max-w-[425px] md:h-auto md:max-h-[85vh] overflow-y-auto">
+          <DialogContent className="w-full h-full max-w-none sm:max-w-[425px] sm:h-auto sm:max-h-[85vh] sm:rounded-lg overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingCategory ? "Editar Categoria" : "Nova Categoria"}

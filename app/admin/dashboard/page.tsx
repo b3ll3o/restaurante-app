@@ -231,63 +231,63 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Visão geral do seu restaurante
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Card>
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <Card className="p-3 sm:p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Categorias</CardTitle>
-            <Utensils className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Categorias</CardTitle>
+            <Utensils className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.categories}</div>
-            <p className="text-xs text-muted-foreground">
-              Cardápio cadastradas
+          <CardContent className="p-0">
+            <div className="text-xl sm:text-2xl font-bold">{stats.categories}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
+              Cardápio
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="p-3 sm:p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Produtos</CardTitle>
-            <Package className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Produtos</CardTitle>
+            <Package className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.products}</div>
-            <p className="text-xs text-muted-foreground">
-              Itens no cardápio
+          <CardContent className="p-0">
+            <div className="text-xl sm:text-2xl font-bold">{stats.products}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
+              Itens
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="p-3 sm:p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pedidos Pendentes</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Pendentes</CardTitle>
+            <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.pendingOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              Aguardando confirmação
+          <CardContent className="p-0">
+            <div className="text-xl sm:text-2xl font-bold">{stats.pendingOrders}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
+              Aguardando
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="p-3 sm:p-4">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pedidos Hoje</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-xs sm:text-sm font-medium">Hoje</CardTitle>
+            <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.todayOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              Total de pedidos
+          <CardContent className="p-0">
+            <div className="text-xl sm:text-2xl font-bold">{stats.todayOrders}</div>
+            <p className="text-[10px] sm:text-xs text-muted-foreground">
+              Total
             </p>
           </CardContent>
         </Card>

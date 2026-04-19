@@ -118,7 +118,7 @@ async function capturePage(
   browser: any,
   baseUrl: string,
   page: PageCapture,
-  authenticatedContext?: { context: any; page: any }
+  authenticatedPage?: any
 ): Promise<PageResult> {
   const result: PageResult = {
     name: page.name,
@@ -141,16 +141,12 @@ async function capturePage(
     for (const bp of breakpoints) {
       let context: any;
       let browserPage: any;
-      let needsNewContext = true;
 
-      // Para páginas autenticadas, reutilizar contexto já logado
-      if (page.requiresAuth && authenticatedContext) {
-        // Criar novo contexto com mesmo viewport
-        context = await authenticatedContext.context.newContext({
-          viewport: { width: bp.width, height: bp.height },
-        });
-        browserPage = await context.newPage();
-        needsNewContext = false;
+      // Para páginas autenticadas, reutilizar página já logada
+      if (page.requiresAuth && authenticatedPage) {
+        // Apenas mudar o viewport da página existente
+        await authenticatedPage.setViewportSize({ width: bp.width, height: bp.height });
+        browserPage = authenticatedPage;
       } else {
         context = await browser.newContext({
           viewport: { width: bp.width, height: bp.height },
@@ -190,7 +186,8 @@ async function capturePage(
 
         console.log(`    ✅ ${bp.name}: ${filename}`);
       } finally {
-        if (!needsNewContext) {
+        // Fechar contexto apenas se foi criado novo (páginas não autenticadas)
+        if (!page.requiresAuth || !authenticatedPage) {
           await context.close();
         }
       }
@@ -374,7 +371,7 @@ async function main() {
   // Capturar páginas
   for (const page of PAGES_TO_CAPTURE) {
     console.log(`📄 ${page.name}${page.requiresAuth ? ' 🔐' : ''}`);
-    const result = await capturePage(browser, BASE_URL, page, authenticatedContext || undefined);
+    const result = await capturePage(browser, BASE_URL, page, authenticatedContext?.page);
     results.push(result);
   }
 

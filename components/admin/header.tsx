@@ -21,23 +21,23 @@ export function Header({ userEmail, onMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="flex items-center justify-between h-16 px-4 md:px-6 border-b bg-card">
-      <div className="flex items-center gap-4">
+    <header className="flex items-center justify-between h-14 sm:h-16 px-2 sm:px-4 md:px-6 border-b bg-card shrink-0">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Button
           variant="ghost"
           size="icon"
-          className="lg:hidden touch-target"
+          className="lg:hidden touch-target h-10 w-10"
           onClick={onMenuClick}
           aria-label="Abrir menu"
         >
           <Menu className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10">
+          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 shrink-0">
             <User className="h-4 w-4 text-primary" />
           </div>
-          <div className="hidden md:block">
-            <p className="text-sm font-medium">{userEmail || "Administrador"}</p>
+          <div className="hidden md:block min-w-0">
+            <p className="text-sm font-medium truncate">{userEmail || "Administrador"}</p>
           </div>
         </div>
       </div>

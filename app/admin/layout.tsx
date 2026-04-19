@@ -109,23 +109,23 @@ export default function AdminLayout({
 
   return (
     <RestaurantProvider>
-      <div className="flex h-screen bg-background">
-        <div className="hidden lg:block">
+      <div className="flex h-screen bg-background overflow-hidden">
+        <div className="hidden lg:block shrink-0">
           <Sidebar />
         </div>
 
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-          <SheetContent side="left" className="p-0 w-64">
+          <SheetContent side="left" className="p-0 w-72 sm:w-80">
             <SidebarContent onClick={() => setSidebarOpen(false)} />
           </SheetContent>
         </Sheet>
 
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col min-w-0 overflow-hidden">
           <Header
             userEmail={userEmail}
             onMenuClick={() => setSidebarOpen(true)}
           />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+          <main className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6">{children}</main>
         </div>
       </div>
     </RestaurantProvider>
