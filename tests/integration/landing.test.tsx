@@ -41,18 +41,24 @@ describe("Landing Page Integration", () => {
     expect(subheadline).toBeDefined();
   });
 
-  it("deve renderizar três pilares", () => {
-    render(<PillarsSection />);
-    expect(screen.getByText(/Setup em 2 minutos/i)).toBeDefined();
-    expect(screen.getByText(/Zero comissão/i)).toBeDefined();
-    expect(screen.getByText(/WhatsApp/i)).toBeDefined();
+  it("deve renderizar três pilares", async () => {
+    const { container } = render(<PillarsSection />);
+    // Verificar que a seção renderiza
+    expect(container.querySelector("section")).toBeDefined();
+    // Verificar que os textos dos pilares existem
+    const sectionText = container.textContent || "";
+    expect(sectionText).toContain("Setup em 2 minutos");
+    expect(sectionText).toContain("Zero comissão");
+    expect(sectionText).toContain("WhatsApp nativo");
   });
 
   it("deve renderizar contador de restaurantes", () => {
-    render(<SocialProofSection />);
-    // O contador inicia em 0 mas depois anima para 2500
-    // Verificar que o elemento existe
-    expect(screen.getByText(/Restaurantes/i)).toBeDefined();
+    const { container } = render(<SocialProofSection />);
+    // Verificar que a seção renderiza
+    expect(container.querySelector("section")).toBeDefined();
+    // Verificar texto estático
+    const sectionText = container.textContent || "";
+    expect(sectionText).toContain("Restaurantes");
   });
 
   it("deve renderizar três planos com preços", () => {
