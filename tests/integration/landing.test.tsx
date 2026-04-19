@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { HeroSection } from "@/app/components/landing/HeroSection";
 import { PillarsSection } from "@/app/components/landing/PillarsSection";
@@ -6,31 +6,27 @@ import { SocialProofSection } from "@/app/components/landing/SocialProofSection"
 import { CTASection } from "@/app/components/landing/CTASection";
 import { PricingSection } from "@/app/components/landing/PricingSection";
 
-// Note: jest-cucumber não está instalado, então vamos reescrever como testes regulares
+// Mocks must be at top level
+vi.mock("@/lib/analytics", () => ({}));
+vi.mock("lucide-react", () => ({
+  ArrowRight: () => null,
+  CheckCircle: () => null,
+  Clock: () => null,
+  Zap: () => null,
+  Smartphone: () => null,
+  MessageCircle: () => null,
+  QrCode: () => null,
+  Check: () => null,
+}));
+vi.mock("@/components/ui/dialog", () => ({
+  Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  DialogTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
 
 describe("Landing Page Integration", () => {
-  // Mock all external dependencies
-  beforeEach(() => {
-    vi.mock("@/lib/analytics", () => ({}));
-    vi.mock("lucide-react", () => ({
-      ArrowRight: () => null,
-      CheckCircle: () => null,
-      Clock: () => null,
-      Zap: () => null,
-      Smartphone: () => null,
-      MessageCircle: () => null,
-      QrCode: () => null,
-      Check: () => null,
-    }));
-    vi.mock("@/components/ui/dialog", () => ({
-      Dialog: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-      DialogTrigger: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-      DialogContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-      DialogHeader: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-      DialogTitle: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-    }));
-  });
-
   it("deve renderizar hero section com proposta de valor", () => {
     render(<HeroSection />);
     const section = document.querySelector("section");

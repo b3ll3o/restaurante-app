@@ -92,7 +92,7 @@ test.describe('Responsive Public Menu', () => {
     if (await fab.isVisible()) {
       const box = await fab.boundingBox();
       // FAB should be at bottom of viewport
-      expect(box?.bottom).toBeLessThanOrEqual(667); // viewport height
+      expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(667); // viewport height
     }
   });
 

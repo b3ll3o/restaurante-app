@@ -42,18 +42,14 @@ test.describe('Layout - No Horizontal Overflow', () => {
           return document.documentElement.scrollWidth > document.documentElement.clientWidth;
         });
 
-        expect(hasHorizontalOverflow).toBe(false, 
-          `Page ${page.name} has horizontal overflow on ${viewport.name}`
-        );
+        expect(hasHorizontalOverflow).toBe(false);
 
         // Also check body
         const bodyOverflow = await playwrightPage.evaluate(() => {
           return document.body.scrollWidth > document.body.clientWidth;
         });
 
-        expect(bodyOverflow).toBe(false,
-          `Body of ${page.name} has horizontal overflow on ${viewport.name}`
-        );
+        expect(bodyOverflow).toBe(false);
       });
     }
   }

@@ -23,27 +23,27 @@ const testSchema = z.object({
 describe('Result Type', () => {
   describe('ok()', () => {
     it('deve criar resultado de sucesso com valor', () => {
-      const result = ok(42);
+      const result = ok<never, number>(42);
       expect(result.ok).toBe(true);
-      expect(result.value).toBe(42);
+      if (result.ok) { expect(result.value).toBe(42); }
     });
 
     it('deve criar resultado de sucesso com objeto', () => {
-      const result = ok({ name: 'João', age: 30 });
+      const result = ok<never, { name: string; age: number }>({ name: 'João', age: 30 });
       expect(result.ok).toBe(true);
-      expect(result.value).toEqual({ name: 'João', age: 30 });
+      if (result.ok) { expect(result.value).toEqual({ name: 'João', age: 30 }); }
     });
 
     it('deve criar resultado de sucesso com null', () => {
-      const result = ok(null);
+      const result = ok<never, null>(null);
       expect(result.ok).toBe(true);
-      expect(result.value).toBeNull();
+      if (result.ok) { expect(result.value).toBeNull(); }
     });
 
     it('deve criar resultado de sucesso com undefined', () => {
-      const result = ok(undefined);
+      const result = ok<never, undefined>(undefined);
       expect(result.ok).toBe(true);
-      expect(result.value).toBeUndefined();
+      if (result.ok) { expect(result.value).toBeUndefined(); }
     });
 
     it('deve inferir tipos corretamente', () => {
@@ -58,22 +58,22 @@ describe('Result Type', () => {
 
   describe('err()', () => {
     it('deve criar resultado de erro com mensagem', () => {
-      const result = err('falha ao processar');
+      const result = err<string, never>('falha ao processar');
       expect(result.ok).toBe(false);
-      expect(result.error).toBe('falha ao processar');
+      if (!result.ok) { expect(result.error).toBe('falha ao processar'); }
     });
 
     it('deve criar resultado de erro com objeto', () => {
       const error = { code: 'INVALID_INPUT', message: 'Campo inválido' };
-      const result = err(error);
+      const result = err<{ code: string; message: string }, never>(error);
       expect(result.ok).toBe(false);
-      expect(result.error).toEqual(error);
+      if (!result.ok) { expect(result.error).toEqual(error); }
     });
 
     it('deve criar resultado de erro com número', () => {
-      const result = err(404);
+      const result = err<number, never>(404);
       expect(result.ok).toBe(false);
-      expect(result.error).toBe(404);
+      if (!result.ok) { expect(result.error).toBe(404); }
     });
 
     it('deve inferir tipos corretamente', () => {
@@ -155,7 +155,7 @@ describe('Result Type', () => {
     });
 
     it('não deve mapear erro', () => {
-      const result = err('original error');
+      const result = err<string, number>('original error');
       const mapped = map(result, (value) => value * 2);
       expect(isErr(mapped)).toBe(true);
       if (isErr(mapped)) {
@@ -199,7 +199,7 @@ describe('Result Type', () => {
     });
 
     it('não deve mapear sucesso', () => {
-      const result = ok(42);
+      const result = ok<never, number>(42);
       const mapped = mapErr(result, (error) => new Error(error));
       expect(isOk(mapped)).toBe(true);
       if (isOk(mapped)) {
@@ -348,8 +348,9 @@ describe('Result Type', () => {
       const result = fromZod(testSchema, { name: 'Maria', age: 25 });
       expect(result.ok).toBe(true);
       if (isOk(result)) {
-        expect(result.value.name).toBe('Maria');
-        expect(result.value.age).toBe(25);
+        const value = result.value as unknown as { name: string; age: number };
+        expect(value.name).toBe('Maria');
+        expect(value.age).toBe(25);
       }
     });
   });

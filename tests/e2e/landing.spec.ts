@@ -104,9 +104,9 @@ test.describe("Landing Page - Multi-Viewport", () => {
     await ctaSection.scrollIntoViewIfNeeded();
 
     // Form fields visible
-    await expect(page.getByPlaceholderText(/Seu nome completo/i)).toBeVisible();
-    await expect(page.getByPlaceholderText(/seu@email\.com/i)).toBeVisible();
-    await expect(page.getByPlaceholderText(/\(11\) 99999-9999/i)).toBeVisible();
+    await expect(page.getByPlaceholder(/Seu nome completo/i)).toBeVisible();
+    await expect(page.getByPlaceholder(/seu@email\.com/i)).toBeVisible();
+    await expect(page.getByPlaceholder(/\(11\) 99999-9999/i)).toBeVisible();
   });
 
   test("Video testimonial modal opens on click", async ({ page }) => {

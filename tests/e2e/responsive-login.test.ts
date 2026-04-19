@@ -58,7 +58,7 @@ test.describe('Responsive Login', () => {
       if (isVisible) {
         const box = await button.boundingBox();
         if (box && box.width > 0 && box.height > 0) {
-          expect(box.height).toBeGreaterThanOrEqual(44, `Button ${i} height should be >= 44px`);
+          expect(box.height).toBeGreaterThanOrEqual(44);
         }
       }
     }

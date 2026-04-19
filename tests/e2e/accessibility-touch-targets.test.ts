@@ -44,9 +44,7 @@ test.describe('Accessibility - Touch Targets', () => {
           if (isVisible && !isDisabled) {
             const box = await button.boundingBox();
             if (box && box.width > 0 && box.height > 0) {
-              expect(box.height).toBeGreaterThanOrEqual(44, 
-                `Button "${await button.textContent()}" on ${adminPage.name} (${device.name}) has height ${box.height}px, expected >= 44px`
-              );
+              expect(box.height).toBeGreaterThanOrEqual(44);
             }
           }
         }
