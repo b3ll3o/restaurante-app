@@ -1,7 +1,7 @@
 #!/usr/bin/env npx tsx
 /**
  * Script para gerar relatório de validação visual de UI
- * Versão otimizada com timeouts menores
+ * Versão com correção de autenticação - mantém contexto autenticado
  */
 
 import { chromium, Browser, Page, BrowserContext } from '@playwright/test';
@@ -59,27 +59,40 @@ async function loginToAdmin(browser: Browser, baseUrl: string): Promise<BrowserC
   console.log('  🔐 Fazendo login...');
   
   try {
-    const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+    const context = await browser.newContext({ 
+      viewport: { width: 1280, height: 720 },
+      ignoreHTTPSErrors: true 
+    });
     const page = await context.newPage();
 
     await page.goto(`${baseUrl}/admin/login`, { timeout: 15000 });
     await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
 
+    // Aguardar campos do formulário
+    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 5000 });
+
     // Preencher credenciais
-    const emailInput = page.locator('input[type="email"], input[name="email"]');
-    const passwordInput = page.locator('input[type="password"], input[name="password"]');
-    
-    await emailInput.fill(AUTH_CREDENTIALS.email, { timeout: 5000 });
-    await passwordInput.fill(AUTH_CREDENTIALS.password, { timeout: 5000 });
+    await page.fill('input[type="email"], input[name="email"]', AUTH_CREDENTIALS.email);
+    await page.fill('input[type="password"], input[name="password"]', AUTH_CREDENTIALS.password);
 
     // Clicar no botão de login
-    await page.locator('button[type="submit"]').click({ timeout: 5000 });
+    await page.click('button[type="submit"]');
 
-    // Aguardar navegação
-    await page.waitForTimeout(3000);
+    // Aguardar redirect para dashboard (sinal de login bem-sucedido)
+    try {
+      await page.waitForURL('**/admin/dashboard**', { timeout: 10000 });
+      console.log('  ✅ Login realizado com sucesso');
+    } catch {
+      // Se não redirecionar, verifica se ainda está na página de login
+      const currentUrl = page.url();
+      if (currentUrl.includes('/admin/login')) {
+        console.log('  ⚠️ Login pode ter falhado, tentando continuar...');
+      } else {
+        console.log('  ✅ Login realizado');
+      }
+    }
 
-    console.log('  ✅ Login realizado');
-    await page.close();
+    // Manter o contexto para reutilização
     return context;
 
   } catch (error) {
@@ -88,11 +101,10 @@ async function loginToAdmin(browser: Browser, baseUrl: string): Promise<BrowserC
   }
 }
 
-async function capturePage(
+async function capturePublicPage(
   browser: Browser,
   baseUrl: string,
-  page: PageCapture,
-  authContext?: BrowserContext | null
+  page: PageCapture
 ): Promise<PageResult> {
   const result: PageResult = {
     name: page.name,
@@ -105,7 +117,6 @@ async function capturePage(
   const fullUrl = `${baseUrl}${page.url}`;
   console.log(`  📸 ${fullUrl}`);
 
-  // Capturar em todos os breakpoints
   const breakpoints = [
     { name: 'desktop', width: 1280, height: 720 },
     { name: 'mobile', width: 375, height: 667 },
@@ -114,19 +125,78 @@ async function capturePage(
 
   try {
     for (const bp of breakpoints) {
-      const context = await browser.newContext({ viewport: { width: bp.width, height: bp.height } });
+      const context = await browser.newContext({ 
+        viewport: { width: bp.width, height: bp.height },
+        ignoreHTTPSErrors: true 
+      });
       const browserPage = await context.newPage();
 
-      // Aplicar cookies se precisar de auth
-      if (page.requiresAuth && authContext) {
-        const cookies = await authContext.cookies();
-        await context.addCookies(cookies);
-      }
+      await browserPage.goto(fullUrl, { timeout: 20000, waitUntil: 'networkidle' });
+      await browserPage.waitForTimeout(500);
 
-      await browserPage.goto(fullUrl, { timeout: 20000, waitUntil: 'domcontentloaded' });
-      await browserPage.waitForTimeout(1000);
+      const filename = `${bp.name}${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
+      const screenshotPath = path.join(OUTPUT_DIR, filename);
+      
+      await browserPage.screenshot({ path: screenshotPath, fullPage: true });
 
-      const filename = `${bp.name}-${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
+      if (bp.name === 'desktop') result.screenshotPath = screenshotPath;
+      else if (bp.name === 'mobile') result.mobileScreenshotPath = screenshotPath;
+      else if (bp.name === 'tablet') result.tabletScreenshotPath = screenshotPath;
+
+      console.log(`    ✅ ${bp.name}: ${filename}`);
+      await context.close();
+    }
+
+    result.status = 'success';
+
+  } catch (error) {
+    result.error = error instanceof Error ? error.message : 'Erro desconhecido';
+    console.log(`    ❌ Erro: ${result.error}`);
+  }
+
+  return result;
+}
+
+async function captureAuthenticatedPage(
+  authContext: BrowserContext,
+  baseUrl: string,
+  page: PageCapture
+): Promise<PageResult> {
+  const result: PageResult = {
+    name: page.name,
+    url: page.url,
+    description: page.description,
+    screenshotPath: null,
+    status: 'error',
+  };
+
+  const fullUrl = `${baseUrl}${page.url}`;
+  console.log(`  📸 ${fullUrl} (autenticado)`);
+
+  const breakpoints = [
+    { name: 'desktop', width: 1280, height: 720 },
+    { name: 'mobile', width: 375, height: 667 },
+    { name: 'tablet', width: 768, height: 1024 },
+  ];
+
+  try {
+    for (const bp of breakpoints) {
+      // Criar novo contexto com viewport específico mas herdando cookies do contexto autenticado
+      const context = await authContext.browser()!.newContext({ 
+        viewport: { width: bp.width, height: bp.height },
+        ignoreHTTPSErrors: true 
+      });
+      
+      // Copiar cookies do contexto autenticado
+      const cookies = await authContext.cookies();
+      await context.addCookies(cookies);
+      
+      const browserPage = await context.newPage();
+
+      await browserPage.goto(fullUrl, { timeout: 20000, waitUntil: 'networkidle' });
+      await browserPage.waitForTimeout(500);
+
+      const filename = `${bp.name}${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
       const screenshotPath = path.join(OUTPUT_DIR, filename);
       
       await browserPage.screenshot({ path: screenshotPath, fullPage: true });
@@ -295,8 +365,14 @@ async function main() {
   // Capturar páginas
   for (const page of PAGES_TO_CAPTURE) {
     console.log(`\n📄 ${page.name}${page.requiresAuth ? ' 🔐' : ''}`);
-    const result = await capturePage(browser, BASE_URL, page, authContext);
-    results.push(result);
+    
+    if (page.requiresAuth && authContext) {
+      const result = await captureAuthenticatedPage(authContext, BASE_URL, page);
+      results.push(result);
+    } else {
+      const result = await capturePublicPage(browser, BASE_URL, page);
+      results.push(result);
+    }
   }
 
   // Finalizar
