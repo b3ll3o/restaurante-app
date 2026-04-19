@@ -270,6 +270,54 @@ function generateHTMLReport(results: PageResult[]): string {
   const timestamp = new Date().toISOString();
   const successfulPages = results.filter(r => r.status === 'success').length;
 
+  // Função para sanitizar texto (evitar XSS)
+  const escapeHtml = (text: string): string => {
+    const div = { innerHTML: '' } as any;
+    return String(text)
+      .replace(/&/g, '&')
+      .replace(/</g, '<')
+      .replace(/>/g, '>')
+      .replace(/"/g, '"')
+      .replace(/'/g, '&#039;');
+  };
+
+  // Função para criar card de página
+  const createPageCard = (page: PageResult, isAuthPage: boolean = false): string => {
+    const statusIcon = page.status === 'success' ? '✅' : '❌';
+    const statusClass = page.status === 'success' ? 'status-success' : 'status-error';
+    const statusText = page.status === 'success' ? 'Sucesso' : 'Erro';
+    
+    let screenshotsHtml = '';
+    if (page.status === 'success') {
+      screenshotsHtml = `
+        <div class="screenshots">
+          <h3>Screenshots</h3>
+          <div class="screenshot-grid">
+            ${page.screenshotPath ? `<div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="${escapeHtml(path.relative(OUTPUT_DIR, page.screenshotPath))}" target="_blank"><img src="${escapeHtml(path.relative(OUTPUT_DIR, page.screenshotPath))}" alt="Desktop"></a></div>` : ''}
+            ${page.mobileScreenshotPath ? `<div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="${escapeHtml(path.relative(OUTPUT_DIR, page.mobileScreenshotPath))}" target="_blank"><img src="${escapeHtml(path.relative(OUTPUT_DIR, page.mobileScreenshotPath))}" alt="Mobile"></a></div>` : ''}
+            ${page.tabletScreenshotPath ? `<div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="${escapeHtml(path.relative(OUTPUT_DIR, page.tabletScreenshotPath))}" target="_blank"><img src="${escapeHtml(path.relative(OUTPUT_DIR, page.tabletScreenshotPath))}" alt="Tablet"></a></div>` : ''}
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="page-card${isAuthPage ? ' auth-page' : ''}">
+        <div class="page-header">
+          <h2>${statusIcon} ${escapeHtml(page.name)}</h2>
+          <span class="status-badge ${statusClass}">${statusText}</span>
+        </div>
+        <p class="page-description">${escapeHtml(page.description)}</p>
+        <p class="page-url"><code>${escapeHtml(page.url)}</code></p>
+        ${isAuthPage ? '<span class="auth-badge">📊 Mock Data</span>' : ''}
+        ${page.error ? `<p class="error-message">❌ ${escapeHtml(page.error)}</p>` : ''}
+        ${screenshotsHtml}
+      </div>`;
+  };
+
+  // Separar páginas públicas e admin
+  const publicPages = results.filter(r => !r.url.startsWith('/admin') || r.url === '/admin/login' || r.url === '/admin/signup');
+  const adminPages = results.filter(r => r.url.startsWith('/admin') && r.url !== '/admin/login' && r.url !== '/admin/signup');
+
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -326,49 +374,12 @@ function generateHTMLReport(results: PageResult[]): string {
     
     <h2 class="section-title">🌐 Páginas Públicas</h2>
     <div class="pages-container">
-      ${results.filter(r => !r.url.startsWith('/admin') || r.url === '/admin/login' || r.url === '/admin/signup').map(page => `
-        <div class="page-card">
-          <div class="page-header">
-            <h2>${page.status === 'success' ? '✅' : '❌'} ${page.name}</h2>
-            <span class="status-badge ${page.status === 'success' ? 'status-success' : 'status-error'}">${page.status === 'success' ? 'Sucesso' : 'Erro'}</span>
-          </div>
-          <p class="page-description">${page.description}</p>
-          <p class="page-url"><code>${page.url}</code></p>
-          ${page.error ? `<p class="error-message">❌ ${page.error}</p>` : ''}
-          ${page.status === 'success' ? `
-          <div class="screenshots">
-            <h3>Screenshots</h3>
-            <div class="screenshot-grid">
-              ${page.screenshotPath ? `<div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="${path.relative(OUTPUT_DIR, page.screenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.screenshotPath)}" alt="Desktop"></a></div>` : ''}
-              ${page.mobileScreenshotPath ? `<div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" alt="Mobile"></a></div>` : ''}
-              ${page.tabletScreenshotPath ? `<div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" alt="Tablet"></a></div>` : ''}
-            </div>
-          </div>` : ''}
-        </div>`).join('')}
+      ${publicPages.map(page => createPageCard(page, false)).join('')}
     </div>
     
     <h2 class="section-title">🔐 Páginas do Painel Administrativo (Mock Data)</h2>
     <div class="pages-container">
-      ${results.filter(r => r.url.startsWith('/admin') && r.url !== '/admin/login' && r.url !== '/admin/signup').map(page => `
-        <div class="page-card auth-page">
-          <div class="page-header">
-            <h2>${page.status === 'success' ? '✅' : '❌'} ${page.name}</h2>
-            <span class="status-badge ${page.status === 'success' ? 'status-success' : 'status-error'}">${page.status === 'success' ? 'Sucesso' : 'Erro'}</span>
-          </div>
-          <p class="page-description">${page.description}</p>
-          <p class="page-url"><code>${page.url}</code></p>
-          <span class="auth-badge">📊 Mock Data</span>
-          ${page.error ? `<p class="error-message">❌ ${page.error}</p>` : ''}
-          ${page.status === 'success' ? `
-          <div class="screenshots">
-            <h3>Screenshots</h3>
-            <div class="screenshot-grid">
-              ${page.screenshotPath ? `<div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="${path.relative(OUTPUT_DIR, page.screenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.screenshotPath)}" alt="Desktop"></a></div>` : ''}
-              ${page.mobileScreenshotPath ? `<div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" alt="Mobile"></a></div>` : ''}
-              ${page.tabletScreenshotPath ? `<div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" alt="Tablet"></a></div>` : ''}
-            </div>
-          </div>` : ''}
-        </div>`).join('')}
+      ${adminPages.map(page => createPageCard(page, true)).join('')}
     </div>
     
     <footer>
