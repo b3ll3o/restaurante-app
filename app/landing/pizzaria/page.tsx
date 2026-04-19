@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import { SocialProofSection, CTASection } from '../../components/landing';
-import { PizzariaLanding } from '../../components/landing/segments';
+import { HeroSection, SocialProofSection, PillarsSection, CTASection } from '../../components/landing';
 import { page_view } from '../../../lib/analytics';
 
 export const metadata: Metadata = {
@@ -13,8 +12,9 @@ export default function PizzariaLandingPage() {
 
   return (
     <main>
-      <PizzariaLanding />
+      <HeroSection />
       <SocialProofSection />
+      <PillarsSection />
       <CTASection />
     </main>
   );

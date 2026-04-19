@@ -277,6 +277,7 @@ Nenhuma (componente standalone)
 7. **EXATAMENTE 3 pilares**: PillarsSection deve exibir exatamente 3 pilares (REQ-LP-02)
 8. **Counter > 2000**: SocialProofSection deve mostrar valor > 2000 (CA-LP-05)
 9. **≥3 logos**: SocialProofSection deve exibir pelo menos 3 logos de parceiros (REQ-LP-04)
+10. **CONSISTÊNCIA DE TEMA (REGRRA CRÍTICA)**: O tema visual (cores, gradientes) deve ser consistente em TODO o projeto. NÃO criar componentes com cores diferentes para cada landing segmentada. Manter o tema padrão do PediAi (primary color com gradientes neutros) para garantir consistência visual em todas as páginas.
 
 ---
 
