@@ -61,5 +61,50 @@
     "status": "success",
     "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-landing-restaurante.png",
     "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-landing-restaurante.png"
+  },
+  {
+    "name": "Dashboard Admin",
+    "url": "/admin/dashboard",
+    "description": "Dashboard principal do admin",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-dashboard.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-dashboard.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-dashboard.png"
+  },
+  {
+    "name": "Categorias Admin",
+    "url": "/admin/categories",
+    "description": "Gestão de categorias do cardápio",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-categories.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-categories.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-categories.png"
+  },
+  {
+    "name": "Produtos Admin",
+    "url": "/admin/products",
+    "description": "Gestão de produtos do cardápio",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-products.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-products.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-products.png"
+  },
+  {
+    "name": "Pedidos Admin",
+    "url": "/admin/orders",
+    "description": "Gestão de pedidos",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-orders.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-orders.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-orders.png"
+  },
+  {
+    "name": "Configurações Admin",
+    "url": "/admin/settings",
+    "description": "Configurações do restaurante",
+    "screenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/desktop-admin-settings.png",
+    "status": "success",
+    "mobileScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/mobile-admin-settings.png",
+    "tabletScreenshotPath": "/home/leo/projetos/restaurante/tests/e2e/ui-validation-report/tablet-admin-settings.png"
   }
 ]

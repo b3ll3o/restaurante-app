@@ -1,58 +1,41 @@
 #!/usr/bin/env npx tsx
 /**
  * Script para gerar relatório de validação visual de UI
- * 
- * Usa Playwright para navegar pelas páginas e tirar screenshots
- * Gera um relatório HTML com os resultados
- * 
- * Uso: npx tsx scripts/generate-ui-report.ts
+ * Versão otimizada com timeouts menores
  */
 
 import { chromium, Browser, Page, BrowserContext } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Configuração
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const OUTPUT_DIR = path.join(process.cwd(), 'tests/e2e', 'ui-validation-report');
 
-// Páginas para capturar (menu requer restaurante configurado no Supabase)
-const PAGES_TO_CAPTURE = [
-  {
-    name: 'Landing Page',
-    url: '/',
-    description: 'Página inicial do PediAi com CTA para cadastro',
-  },
-  {
-    name: 'Login Admin',
-    url: '/admin/login',
-    description: 'Página de login do painel administrativo',
-  },
-  {
-    name: 'Cadastro Admin',
-    url: '/admin/signup',
-    description: 'Página de cadastro de novo restaurante',
-  },
-  {
-    name: 'Landing Pizzaria',
-    url: '/landing/pizzaria',
-    description: 'Landing page segmentada para pizzarias',
-  },
-  {
-    name: 'Landing Hamburgueria',
-    url: '/landing/hamburgueria',
-    description: 'Landing page segmentada para hamburguerias',
-  },
-  {
-    name: 'Landing Bar',
-    url: '/landing/bar',
-    description: 'Landing page segmentada para bares',
-  },
-  {
-    name: 'Landing Restaurante',
-    url: '/landing/restaurante',
-    description: 'Landing page segmentada para restaurantes',
-  },
+const AUTH_CREDENTIALS = {
+  email: 'andreazzi-leonardo@hotmail.com',
+  password: 'Teste@01',
+};
+
+interface PageCapture {
+  name: string;
+  url: string;
+  description: string;
+  requiresAuth?: boolean;
+}
+
+const PAGES_TO_CAPTURE: PageCapture[] = [
+  { name: 'Landing Page', url: '/', description: 'Página inicial do PediAi' },
+  { name: 'Login Admin', url: '/admin/login', description: 'Página de login do painel admin' },
+  { name: 'Cadastro Admin', url: '/admin/signup', description: 'Página de cadastro' },
+  { name: 'Landing Pizzaria', url: '/landing/pizzaria', description: 'Landing para pizzarias' },
+  { name: 'Landing Hamburgueria', url: '/landing/hamburgueria', description: 'Landing para hamburguerias' },
+  { name: 'Landing Bar', url: '/landing/bar', description: 'Landing para bares' },
+  { name: 'Landing Restaurante', url: '/landing/restaurante', description: 'Landing para restaurantes' },
+  { name: 'Dashboard Admin', url: '/admin/dashboard', description: 'Dashboard principal', requiresAuth: true },
+  { name: 'Categorias Admin', url: '/admin/categories', description: 'Gestão de categorias', requiresAuth: true },
+  { name: 'Produtos Admin', url: '/admin/products', description: 'Gestão de produtos', requiresAuth: true },
+  { name: 'Pedidos Admin', url: '/admin/orders', description: 'Gestão de pedidos', requiresAuth: true },
+  { name: 'Configurações Admin', url: '/admin/settings', description: 'Configurações', requiresAuth: true },
 ];
 
 interface PageResult {
@@ -72,10 +55,44 @@ async function ensureDir(dir: string): Promise<void> {
   }
 }
 
+async function loginToAdmin(browser: Browser, baseUrl: string): Promise<BrowserContext | null> {
+  console.log('  🔐 Fazendo login...');
+  
+  try {
+    const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+    const page = await context.newPage();
+
+    await page.goto(`${baseUrl}/admin/login`, { timeout: 15000 });
+    await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
+
+    // Preencher credenciais
+    const emailInput = page.locator('input[type="email"], input[name="email"]');
+    const passwordInput = page.locator('input[type="password"], input[name="password"]');
+    
+    await emailInput.fill(AUTH_CREDENTIALS.email, { timeout: 5000 });
+    await passwordInput.fill(AUTH_CREDENTIALS.password, { timeout: 5000 });
+
+    // Clicar no botão de login
+    await page.locator('button[type="submit"]').click({ timeout: 5000 });
+
+    // Aguardar navegação
+    await page.waitForTimeout(3000);
+
+    console.log('  ✅ Login realizado');
+    await page.close();
+    return context;
+
+  } catch (error) {
+    console.log(`  ❌ Erro no login: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    return null;
+  }
+}
+
 async function capturePage(
   browser: Browser,
   baseUrl: string,
-  page: { name: string; url: string; description: string }
+  page: PageCapture,
+  authContext?: BrowserContext | null
 ): Promise<PageResult> {
   const result: PageResult = {
     name: page.name,
@@ -85,90 +102,48 @@ async function capturePage(
     status: 'error',
   };
 
-  let context: BrowserContext | null = null;
-  let browserPage: Page | null = null;
+  const fullUrl = `${baseUrl}${page.url}`;
+  console.log(`  📸 ${fullUrl}`);
+
+  // Capturar em todos os breakpoints
+  const breakpoints = [
+    { name: 'desktop', width: 1280, height: 720 },
+    { name: 'mobile', width: 375, height: 667 },
+    { name: 'tablet', width: 768, height: 1024 },
+  ];
 
   try {
-    // Desktop
-    context = await browser.newContext({
-      viewport: { width: 1280, height: 720 },
-    });
-    browserPage = await context.newPage();
-    
-    const fullUrl = `${baseUrl}${page.url}`;
-    console.log(`  📸 Capturando: ${fullUrl}`);
-    
-    const response = await browserPage.goto(fullUrl, {
-      waitUntil: 'networkidle',
-      timeout: 30000,
-    });
+    for (const bp of breakpoints) {
+      const context = await browser.newContext({ viewport: { width: bp.width, height: bp.height } });
+      const browserPage = await context.newPage();
 
-    if (!response || response.status() >= 400) {
-      result.error = `HTTP ${response?.status() || 'sem resposta'}`;
-      console.log(`  ❌ Erro: ${result.error}`);
-    } else {
-      // Tirar screenshot desktop
-      const desktopPath = path.join(OUTPUT_DIR, `desktop-${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`);
-      await browserPage.screenshot({
-        path: desktopPath,
-        fullPage: true,
-      });
-      result.screenshotPath = desktopPath;
-      result.status = 'success';
-      console.log(`  ✅ Desktop: ${desktopPath}`);
+      // Aplicar cookies se precisar de auth
+      if (page.requiresAuth && authContext) {
+        const cookies = await authContext.cookies();
+        await context.addCookies(cookies);
+      }
+
+      await browserPage.goto(fullUrl, { timeout: 20000, waitUntil: 'domcontentloaded' });
+      await browserPage.waitForTimeout(1000);
+
+      const filename = `${bp.name}-${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
+      const screenshotPath = path.join(OUTPUT_DIR, filename);
+      
+      await browserPage.screenshot({ path: screenshotPath, fullPage: true });
+
+      if (bp.name === 'desktop') result.screenshotPath = screenshotPath;
+      else if (bp.name === 'mobile') result.mobileScreenshotPath = screenshotPath;
+      else if (bp.name === 'tablet') result.tabletScreenshotPath = screenshotPath;
+
+      console.log(`    ✅ ${bp.name}: ${filename}`);
+      await context.close();
     }
 
-    await context.close();
-    context = null;
-
-    // Mobile (375x667 - iPhone SE)
-    context = await browser.newContext({
-      viewport: { width: 375, height: 667 },
-      deviceScaleFactor: 2,
-    });
-    browserPage = await context.newPage();
-    
-    await browserPage.goto(fullUrl, {
-      waitUntil: 'networkidle',
-      timeout: 30000,
-    });
-
-    const mobilePath = path.join(OUTPUT_DIR, `mobile-${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`);
-    await browserPage.screenshot({
-      path: mobilePath,
-      fullPage: true,
-    });
-    result.mobileScreenshotPath = mobilePath;
-    console.log(`  ✅ Mobile: ${mobilePath}`);
-
-    await context.close();
-    context = null;
-
-    // Tablet (768x1024 - iPad)
-    context = await browser.newContext({
-      viewport: { width: 768, height: 1024 },
-    });
-    browserPage = await context.newPage();
-    
-    await browserPage.goto(fullUrl, {
-      waitUntil: 'networkidle',
-      timeout: 30000,
-    });
-
-    const tabletPath = path.join(OUTPUT_DIR, `tablet-${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`);
-    await browserPage.screenshot({
-      path: tabletPath,
-      fullPage: true,
-    });
-    result.tabletScreenshotPath = tabletPath;
-    console.log(`  ✅ Tablet: ${tabletPath}`);
+    result.status = 'success';
 
   } catch (error) {
     result.error = error instanceof Error ? error.message : 'Erro desconhecido';
-    console.log(`  ❌ Erro: ${result.error}`);
-  } finally {
-    if (context) await context.close().catch(() => {});
-    if (browserPage) await browserPage.close().catch(() => {});
+    console.log(`    ❌ Erro: ${result.error}`);
   }
 
   return result;
@@ -177,54 +152,6 @@ async function capturePage(
 function generateHTMLReport(results: PageResult[]): string {
   const timestamp = new Date().toISOString();
   const successfulPages = results.filter(r => r.status === 'success').length;
-  const failedPages = results.filter(r => r.status === 'error').length;
-
-  const pagesHTML = results.map(page => {
-    const statusIcon = page.status === 'success' ? '✅' : '❌';
-    const statusClass = page.status === 'success' ? 'status-success' : 'status-error';
-    
-    return `
-    <div class="page-card">
-      <div class="page-header">
-        <h2>${statusIcon} ${page.name}</h2>
-        <span class="status-badge ${statusClass}">${page.status === 'success' ? 'Sucesso' : 'Erro'}</span>
-      </div>
-      <p class="page-description">${page.description}</p>
-      <p class="page-url"><code>${page.url}</code></p>
-      ${page.error ? `<p class="error-message">❌ ${page.error}</p>` : ''}
-      
-      ${page.status === 'success' ? `
-      <div class="screenshots">
-        <h3>Screenshots</h3>
-        <div class="screenshot-grid">
-          <div class="screenshot-item">
-            <h4>Desktop (1280x720)</h4>
-            <a href="${path.relative(OUTPUT_DIR, page.screenshotPath!)}" target="_blank">
-              <img src="${path.relative(OUTPUT_DIR, page.screenshotPath!)}" alt="Desktop - ${page.name}" loading="lazy">
-            </a>
-          </div>
-          ${page.mobileScreenshotPath ? `
-          <div class="screenshot-item">
-            <h4>Mobile (375x667)</h4>
-            <a href="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" target="_blank">
-              <img src="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" alt="Mobile - ${page.name}" loading="lazy">
-            </a>
-          </div>
-          ` : ''}
-          ${page.tabletScreenshotPath ? `
-          <div class="screenshot-item">
-            <h4>Tablet (768x1024)</h4>
-            <a href="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" target="_blank">
-              <img src="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" alt="Tablet - ${page.name}" loading="lazy">
-            </a>
-          </div>
-          ` : ''}
-        </div>
-      </div>
-      ` : ''}
-    </div>
-    `;
-  }).join('\n');
 
   return `<!DOCTYPE html>
 <html lang="pt-BR">
@@ -233,187 +160,37 @@ function generateHTMLReport(results: PageResult[]): string {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Relatório de Validação Visual - PediAi</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background: #f5f5f5;
-    }
-    
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-    
-    header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 2rem;
-      border-radius: 12px;
-      margin-bottom: 2rem;
-    }
-    
-    header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .summary {
-      display: flex;
-      gap: 2rem;
-      margin-top: 1rem;
-    }
-    
-    .summary-item {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-    }
-    
-    .summary-item .number {
-      font-size: 1.5rem;
-      font-weight: bold;
-    }
-    
-    .summary-item .label {
-      font-size: 0.875rem;
-      opacity: 0.9;
-    }
-    
-    .pages-container {
-      display: grid;
-      gap: 1.5rem;
-    }
-    
-    .page-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-    
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-    
-    .page-header h2 {
-      font-size: 1.25rem;
-      color: #1a1a1a;
-    }
-    
-    .status-badge {
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    
-    .status-success {
-      background: #dcfce7;
-      color: #166534;
-    }
-    
-    .status-error {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-    
-    .page-description {
-      color: #666;
-      margin-bottom: 0.5rem;
-    }
-    
-    .page-url {
-      margin-bottom: 1rem;
-    }
-    
-    .page-url code {
-      background: #f3f4f6;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.875rem;
-      color: #7c3aed;
-    }
-    
-    .error-message {
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 0.75rem;
-      border-radius: 8px;
-      margin: 1rem 0;
-    }
-    
-    .screenshots h3 {
-      font-size: 1rem;
-      color: #333;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .screenshot-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1rem;
-    }
-    
-    .screenshot-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      overflow: hidden;
-    }
-    
-    .screenshot-item h4 {
-      background: #f9fafb;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.875rem;
-      color: #666;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    
-    .screenshot-item img {
-      width: 100%;
-      height: auto;
-      display: block;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    
-    .screenshot-item img:hover {
-      transform: scale(1.02);
-    }
-    
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #666;
-      font-size: 0.875rem;
-    }
-    
-    @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
-      }
-      
-      .summary {
-        flex-direction: column;
-        gap: 1rem;
-      }
-      
-      .screenshot-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; background: #f5f5f5; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; }
+    header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    .auth-info { background: rgba(255,255,255,0.2); padding: 0.75rem 1rem; border-radius: 8px; margin-top: 1rem; font-size: 0.875rem; }
+    .summary { display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+    .summary-item { background: rgba(255,255,255,0.2); padding: 0.75rem 1.5rem; border-radius: 8px; }
+    .summary-item .number { font-size: 1.5rem; font-weight: bold; }
+    .summary-item .label { font-size: 0.875rem; opacity: 0.9; }
+    .section-title { font-size: 1.5rem; margin: 2rem 0 1rem; color: #1a1a1a; }
+    .pages-container { display: grid; gap: 1.5rem; }
+    .page-card { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .page-card.auth-page { border-left: 4px solid #667eea; }
+    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .page-header h2 { font-size: 1.25rem; color: #1a1a1a; }
+    .status-badge { padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+    .status-success { background: #dcfce7; color: #166534; }
+    .status-error { background: #fee2e2; color: #991b1b; }
+    .auth-badge { display: inline-block; background: #e0e7ff; color: #4338ca; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.75rem; margin-left: 0.5rem; }
+    .page-description { color: #666; margin-bottom: 0.5rem; }
+    .page-url { margin-bottom: 1rem; }
+    .page-url code { background: #f3f4f6; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem; color: #7c3aed; }
+    .error-message { background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 8px; margin: 1rem 0; }
+    .screenshots h3 { font-size: 1rem; color: #333; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #eee; }
+    .screenshot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .screenshot-item { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .screenshot-item h4 { background: #f9fafb; padding: 0.5rem 0.75rem; font-size: 0.875rem; color: #666; border-bottom: 1px solid #e5e7eb; }
+    .screenshot-item img { width: 100%; height: auto; display: block; cursor: pointer; }
+    .screenshot-item img:hover { opacity: 0.9; }
+    footer { text-align: center; padding: 2rem; color: #666; font-size: 0.875rem; }
   </style>
 </head>
 <body>
@@ -421,33 +198,68 @@ function generateHTMLReport(results: PageResult[]): string {
     <header>
       <h1>📸 Relatório de Validação Visual</h1>
       <p>Relatório automático de screenshots das páginas do PediAi</p>
+      <div class="auth-info">🔐 Testes realizados com: <strong>${AUTH_CREDENTIALS.email}</strong></div>
       <div class="summary">
-        <div class="summary-item">
-          <div class="number">${results.length}</div>
-          <div class="label">Total de Páginas</div>
-        </div>
-        <div class="summary-item">
-          <div class="number">${successfulPages}</div>
-          <div class="label">✅ Sucesso</div>
-        </div>
-        <div class="summary-item">
-          <div class="number">${failedPages}</div>
-          <div class="label">❌ Erros</div>
-        </div>
-        <div class="summary-item">
-          <div class="number">${timestamp.split('T')[0]}</div>
-          <div class="label">Data</div>
-        </div>
+        <div class="summary-item"><div class="number">${results.length}</div><div class="label">Total</div></div>
+        <div class="summary-item"><div class="number">${successfulPages}</div><div class="label">✅ Sucesso</div></div>
+        <div class="summary-item"><div class="number">${results.length - successfulPages}</div><div class="label">❌ Erros</div></div>
+        <div class="summary-item"><div class="number">${timestamp.split('T')[0]}</div><div class="label">Data</div></div>
       </div>
     </header>
     
+    <h2 class="section-title">🌐 Páginas Públicas</h2>
     <div class="pages-container">
-      ${pagesHTML}
+      ${results.filter(r => !r.url.startsWith('/admin') || r.url === '/admin/login' || r.url === '/admin/signup').map(page => {
+        const isAuthPage = page.url.startsWith('/admin') && page.url !== '/admin/login' && page.url !== '/admin/signup';
+        return `
+        <div class="page-card ${isAuthPage ? 'auth-page' : ''}">
+          <div class="page-header">
+            <h2>${page.status === 'success' ? '✅' : '❌'} ${page.name}</h2>
+            <span class="status-badge ${page.status === 'success' ? 'status-success' : 'status-error'}">${page.status === 'success' ? 'Sucesso' : 'Erro'}</span>
+          </div>
+          <p class="page-description">${page.description}</p>
+          <p class="page-url"><code>${page.url}</code></p>
+          ${isAuthPage ? '<span class="auth-badge">🔐 Requer autenticação</span>' : ''}
+          ${page.error ? `<p class="error-message">❌ ${page.error}</p>` : ''}
+          ${page.status === 'success' ? `
+          <div class="screenshots">
+            <h3>Screenshots</h3>
+            <div class="screenshot-grid">
+              ${page.screenshotPath ? `<div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="${path.relative(OUTPUT_DIR, page.screenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.screenshotPath)}" alt="Desktop"></a></div>` : ''}
+              ${page.mobileScreenshotPath ? `<div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" alt="Mobile"></a></div>` : ''}
+              ${page.tabletScreenshotPath ? `<div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" alt="Tablet"></a></div>` : ''}
+            </div>
+          </div>` : ''}
+        </div>`;
+      }).join('')}
+    </div>
+    
+    <h2 class="section-title">🔐 Páginas do Painel Administrativo</h2>
+    <div class="pages-container">
+      ${results.filter(r => r.url.startsWith('/admin') && r.url !== '/admin/login' && r.url !== '/admin/signup').map(page => `
+        <div class="page-card auth-page">
+          <div class="page-header">
+            <h2>${page.status === 'success' ? '✅' : '❌'} ${page.name}</h2>
+            <span class="status-badge ${page.status === 'success' ? 'status-success' : 'status-error'}">${page.status === 'success' ? 'Sucesso' : 'Erro'}</span>
+          </div>
+          <p class="page-description">${page.description}</p>
+          <p class="page-url"><code>${page.url}</code></p>
+          <span class="auth-badge">🔐 Requer autenticação</span>
+          ${page.error ? `<p class="error-message">❌ ${page.error}</p>` : ''}
+          ${page.status === 'success' ? `
+          <div class="screenshots">
+            <h3>Screenshots</h3>
+            <div class="screenshot-grid">
+              ${page.screenshotPath ? `<div class="screenshot-item"><h4>Desktop (1280x720)</h4><a href="${path.relative(OUTPUT_DIR, page.screenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.screenshotPath)}" alt="Desktop"></a></div>` : ''}
+              ${page.mobileScreenshotPath ? `<div class="screenshot-item"><h4>Mobile (375x667)</h4><a href="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.mobileScreenshotPath)}" alt="Mobile"></a></div>` : ''}
+              ${page.tabletScreenshotPath ? `<div class="screenshot-item"><h4>Tablet (768x1024)</h4><a href="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" target="_blank"><img src="${path.relative(OUTPUT_DIR, page.tabletScreenshotPath)}" alt="Tablet"></a></div>` : ''}
+            </div>
+          </div>` : ''}
+        </div>`).join('')}
     </div>
     
     <footer>
-      <p>Gerado automaticamente pelo script scripts/generate-ui-report.ts</p>
-      <p>Base URL: ${BASE_URL}</p>
+      <p>Gerado automaticamente | Base URL: ${BASE_URL} | Usuário: ${AUTH_CREDENTIALS.email}</p>
     </footer>
   </div>
 </body>
@@ -456,65 +268,52 @@ function generateHTMLReport(results: PageResult[]): string {
 
 async function main() {
   console.log('🚀 Gerando relatório de validação visual...\n');
+  console.log(`📧 Usuário: ${AUTH_CREDENTIALS.email}\n`);
 
-  // Verificar se o servidor está rodando
+  // Verificar servidor
   try {
     const response = await fetch(BASE_URL);
-    if (!response.ok) {
-      console.log(`⚠️  Servidor respondeu com status ${response.status}`);
-    } else {
-      console.log(`✅ Servidor encontrado em ${BASE_URL}`);
-    }
+    console.log(`✅ Servidor encontrado: ${BASE_URL} (${response.status})`);
   } catch {
     console.log(`❌ Servidor não está rodando em ${BASE_URL}`);
-    console.log('   Inicie o servidor com: npm run dev');
-    console.log('   ou configure BASE_URL para a URL correta');
+    console.log('   Execute: npm run dev');
     process.exit(1);
   }
 
-  // Criar diretório de saída
   await ensureDir(OUTPUT_DIR);
-  console.log(`📁 Diretório de saída: ${OUTPUT_DIR}\n`);
+  console.log(`📁 Saída: ${OUTPUT_DIR}\n`);
 
   // Iniciar browser
   console.log('🔧 Iniciando browser...');
   const browser = await chromium.launch({ headless: true });
-  console.log('✅ Browser iniciado\n');
+  console.log('');
 
+  // Login
+  const authContext = await loginToAdmin(browser, BASE_URL);
   const results: PageResult[] = [];
 
-  // Capturar cada página
+  // Capturar páginas
   for (const page of PAGES_TO_CAPTURE) {
-    console.log(`\n📄 Processando: ${page.name}`);
-    const result = await capturePage(browser, BASE_URL, page);
+    console.log(`\n📄 ${page.name}${page.requiresAuth ? ' 🔐' : ''}`);
+    const result = await capturePage(browser, BASE_URL, page, authContext);
     results.push(result);
   }
 
-  // Fechar browser
+  // Finalizar
+  if (authContext) await authContext.close();
   await browser.close();
-  console.log('\n✅ Browser fechado\n');
+  console.log('\n✅ Concluído\n');
 
-  // Gerar relatório HTML
-  console.log('📝 Gerando relatório HTML...');
+  // Gerar relatórios
+  console.log('📝 Gerando relatórios...');
   const htmlReport = generateHTMLReport(results);
-  const reportPath = path.join(OUTPUT_DIR, 'index.html');
-  fs.writeFileSync(reportPath, htmlReport);
-  console.log(`✅ Relatório gerado: ${reportPath}`);
-
-  // Salvar JSON com resultados
-  const jsonPath = path.join(OUTPUT_DIR, 'results.json');
-  fs.writeFileSync(jsonPath, JSON.stringify(results, null, 2));
-  console.log(`✅ Resultados salvos: ${jsonPath}`);
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'index.html'), htmlReport);
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'results.json'), JSON.stringify(results, null, 2));
+  console.log(`✅ Relatório: file://${OUTPUT_DIR}/index.html`);
 
   // Resumo
-  console.log('\n' + '='.repeat(50));
-  console.log('📊 RESUMO');
-  console.log('='.repeat(50));
-  console.log(`Total de páginas: ${results.length}`);
-  console.log(`Sucesso: ${results.filter(r => r.status === 'success').length}`);
-  console.log(`Erros: ${results.filter(r => r.status === 'error').length}`);
-  console.log(`\n📁 Relatório: file://${reportPath}`);
-  console.log('='.repeat(50));
+  const success = results.filter(r => r.status === 'success').length;
+  console.log(`\n📊 ${results.length} páginas | ${success} ✅ | ${results.length - success} ❌\n`);
 }
 
 main().catch(console.error);
