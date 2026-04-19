@@ -14,7 +14,8 @@
     "test:coverage": "vitest --run --coverage",
     "test:coverage:e2e": "tsx scripts/generate-test-coverage.ts",
     "test:watch": "vitest --watch",
-    "test:ui": "vitest --ui"
+    "test:ui": "vitest --ui",
+    "validate:pre-push": "node scripts/validate-pre-push.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.11",

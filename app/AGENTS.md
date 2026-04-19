@@ -81,105 +81,16 @@ Cada sub-módulo possui seu próprio AGENTS.md com documentação detalhada:
 
 ---
 
-## Design Responsivo
+## Regras de Responsividade
 
-### Breakpoints
+O projeto segue as regras de **mobile-first** definidas em `opencode/rules/AGENTS.md`:
 
-O projeto utiliza os breakpoints padrão do Tailwind CSS:
+- Touch targets mínimo 44x44px (REQ-RESP-08, REQ-RESP-11)
+- Nenhum overflow horizontal (REQ-RESP-09, REQ-RESP-12)
+- Font-size base mínimo 16px para evitar zoom iOS (REQ-RESP-10)
+- Sidebar: Drawer em mobile (<1024px), fixa em desktop (≥1024px)
 
-| Breakpoint | Largura | Tailwind Prefix | Uso |
-|------------|---------|-----------------|-----|
-| Mobile | < 768px | Default (mobile-first) | Layouts compactos |
-| Tablet | 768px - 1023px | `md:` | Tablets e telas médias |
-| Desktop | ≥ 1024px | `lg:` | Desktop e telas grandes |
-
-### Mobile-First
-
-O projeto segue a metodologia **mobile-first**:
-1. Estilos base são definidos para mobile
-2. breakpoints maiores (`md:`, `lg:`) adicionam estilos para telas maiores
-
-```tsx
-// ✅ Mobile-first
-<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-
-// ❌ Desktop-first (evitar)
-<div className="grid grid-cols-4 md:grid-cols-2 grid-cols-1">
-```
-
-### Touch Targets
-
-Todos os elementos interativos **DEVEM** ter touch target mínimo de 44x44px:
-
-```css
-/* app/globals.css */
-.touch-target {
-  min-height: 44px;
-  min-width: 44px;
-}
-```
-
-| Requisito | Descrição | Ref |
-|-----------|-----------|-----|
-| REQ-RESP-08 | Touch targets mínimo 44x44px | spec.md |
-| REQ-RESP-11 | Touch targets em todos breakpoints | spec.md |
-
-### Overflow Horizontal
-
-O projeto **NÃO DEVE** ter overflow horizontal em nenhum breakpoint:
-
-```css
-/* app/globals.css */
-body {
-  overflow-x: hidden;
-}
-```
-
-| Requisito | Descrição | Ref |
-|-----------|-----------|-----|
-| REQ-RESP-09 | Nenhum overflow horizontal | spec.md |
-| REQ-RESP-12 | Overflow-x: hidden em todos breakpoints | spec.md |
-
-### Tipografia Responsiva
-
-| Elemento | Tamanho Mínimo | Ref |
-|----------|----------------|-----|
-| Corpo de texto | 16px | REQ-RESP-10, REQ-RESP-13 |
-| Linha altura | 1.5 | REQ-RESP-10 |
-| Contraste | 4.5:1 (normal), 3:1 (grande) | REQ-RESP-14 |
-
-### Sidebar Responsiva
-
-| Breakpoint | Comportamento | Implementação |
-|------------|---------------|---------------|
-| Mobile (<1024px) | Drawer (Sheet) | `<Sheet>` com `side="left"` |
-| Desktop (≥1024px) | Sidebar fixa | `<aside className="w-64">` |
-
-### Layouts Adaptativos Comuns
-
-**Table → Cards (Admin)**:
-```tsx
-<Table className="hidden lg:block" />
-<div className="grid gap-4 lg:hidden">
-  {/* Cards */}
-</div>
-```
-
-**Grid 1→2 colunas (Products)**:
-```tsx
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-```
-
-**FAB Cart (Mobile)**:
-```tsx
-<Button className="fixed bottom-6 right-6 pb-24">
-  <ShoppingCart />
-</Button>
-```
-
----
-
-## Dependências
+**Referência**: [opencode/rules/AGENTS.md - Seção 5 (Mobile-First)](opencode/rules/AGENTS.md#5-regras-de-mobile-first)
 
 ---
 
@@ -201,11 +112,12 @@ body {
 - [Next.js 16 Documentation](https://nextjs.org/docs)
 - [React 19 Documentation](https://react.dev)
 - [Supabase Auth](https://supabase.com/docs/guides/auth)
+- [opencode/rules/AGENTS.md](opencode/rules/AGENTS.md) — Regras gerais do projeto
 - [menulink-specification.md](../.openspec/specs/menulink-specification.md)
 - [menulink-technical-plan.md](../.openspec/specs/menulink-technical-plan.md)
 
 ---
 
-**Versão**: 1.1
-**Última Atualização**: 2026-04-17
+**Versão**: 1.2
+**Última Atualização**: 2026-04-19
 **Autor**: AI Agent

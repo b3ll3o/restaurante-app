@@ -9,132 +9,18 @@ O módulo **Tests** contém toda a infraestrutura de testes automatizados do pro
 
 ---
 
-## Estratégia de Testes (TDD/BDD/ATDD)
+## Paradigmas de Testes
 
-### TDD (Test-Driven Development) — Testes Unitários
+Este módulo implementa os paradigmas definidos em `opencode/rules/AGENTS.md`:
 
-**Quando aplicar**: Toda lógica de negócio, utilitários, hooks e funções puras.
+| Paradigma | Aplicação | Referência |
+|-----------|-----------|------------|
+| **TDD** | Testes unitários (RED → GREEN → REFACTOR) | [opencode/rules/AGENTS.md §7.4](opencode/rules/AGENTS.md#74-fluxo-tdd) |
+| **BDD** | Testes de integração com Gherkin | [opencode/rules/AGENTS.md §7.5](opencode/rules/AGENTS.md#75-fluxo-para-novas-funcionalidades) |
+| **ATDD** | Testes E2E com Playwright | [opencode/rules/AGENTS.md §7.5](opencode/rules/AGENTS.md#75-fluxo-para-novas-funcionalidades) |
 
-**Fluxo**: RED (escrever teste que falha) → GREEN (código mínimo para passar) → REFACTOR (melhorar mantendo testes).
-
-**Cobertura mínima obrigatória**: 80% linhas, 80% functions, 80% branches, 80% statements.
-
-**Ferramentas**:
-- Vitest (test runner)
-- Testing Library (React)
-- @vitest/coverage-v8 (cobertura)
-
-**Estratégia de Mock/Stub**:
-```typescript
-// Mock de módulo completo
-vi.mock('@/lib/supabase/client', () => ({
-  createClient: vi.fn(() => ({
-    auth: { getSession: vi.fn() },
-    from: vi.fn(() => ({
-      select: vi.fn(() => ({ eq: vi.fn(() => ({ single: vi.fn() })) })),
-      insert: vi.fn(() => ({ select: vi.fn() })),
-    })),
-  })),
-}));
-
-// Mock de função específica
-vi.spyOn(localStorage, 'getItem').mockReturnValue('{"cart":[]}');
-
-// Stub de fetch
-global.fetch = vi.fn(() => Promise.resolve({ json: () => Promise.resolve({}) }));
-```
-
-**Critérios de conclusão**:
-- [x] Código escrito após teste que falha
-- [x] Testes passam
-- [x] Cobertura ≥80%
-- [x] Sem dependências externas reais
-
----
-
-### BDD (Behavior-Driven Development) — Testes de Integração
-
-**Quando aplicar**: Interação entre módulos, API routes, contexto de carrinho.
-
-**Formato**: Gherkin (Given-When-Then) para documentar comportamento.
-
-**Ferramenta**: Playwright com arquivos `.feature`.
-
-**Localização dos arquivos BDD (REGRA DE PROXIMIDADE)**:
-
-| Módulo | Arquivo BDD |
-|--------|-------------|
-| `app/admin/login/` | `login.feature` |
-| `app/admin/signup/` | `signup.feature` |
-| `app/admin/dashboard/` | `dashboard.feature` |
-| `app/admin/categories/` | `categories.feature` |
-| `app/admin/products/` | `products.feature` |
-| `app/admin/orders/` | `orders.feature` |
-| `app/menu/[slug]/` | `menu.feature` |
-| `app/api/orders/` | `orders.feature` |
-
-**Estrutura de Cenário BDD com @integration-test**:
-```gherkin
-@integration-test="tests/integration/orders.test.ts"
-Funcionalidade: Criação de Pedido
-
-Cenário: Cliente cria pedido com dados válidos
-  Dado que o cliente está na página do cardápio "bar-do-joao"
-  Quando preenche "Maria Silva" no campo nome
-  E preenche "5511888888888" no campo WhatsApp
-  E seleciona "pix" como forma de pagamento
-  E clica em "Confirmar Pedido"
-  Então o pedido deve ser criado com status "pending"
-  E deve aparecer mensagem de sucesso
-```
-
-**Tags de integração**:
-- `@integration-test="caminho/para/teste.test.ts"` — Link obrigatório para teste de integração que valida o cenário
-- `@unit` — Teste unitário
-- `@e2e` — Teste end-to-end
-- `@critical` — Fluxo crítico (obrigatório para PR)
-
-**Critérios de conclusão**:
-- [x] Cenário BDD criado com tag @integration-test
-- [x] Arquivo .feature no nível do módulo que documenta
-- [x] Teste de integração existente apontado pela tag
-- [x] Todos os Given/When/Then mapeados para código
-
----
-
-### ATDD (Acceptance Test-Driven Development) — Testes E2E
-
-**Quando aplicar**: Fluxos críticos do usuário (criar pedido, gerenciar cardápio).
-
-**Foco**: 100% dos fluxos críticos automatizados com Playwright.
-
-**Critérios de aceitação por tarefa**:
-| Tarefa | Critério de Aceitação |
-|--------|----------------------|
-| Criar pedido | Dado cliente com itens no carrinho, quando confirma pedido, então pedido tem status "pending" |
-| Login admin | Dado usuário com credenciais válidas, quando faz login, então redirecionado para dashboard |
-| Gerenciar categorias | Dado admin logado, quando cria categoria, então aparece na listagem |
-
-**Checklist QA (testes exploratórios)**:
-- [ ] Campos obrigatórios validados com mensagens claras
-- [ ] Estados de loading implementados
-- [ ] Erros de rede tratados com retry ou mensagem ao usuário
-- [ ] Responsividade em mobile (375px, 768px, 1024px)
-- [ ] Acessibilidade: contraste, focus visível, labels em inputs
-- [ ] Performance: tempo de resposta < 2s para operações críticas
-
-**Fluxos críticos E2E (100% cobertura obrigatória)**:
-1. Criação de pedido (checkout completo)
-2. Login/logout do admin
-3. CRUD de categorias
-4. CRUD de produtos
-5. Visualização de pedidos
-
-**Critérios de conclusão**:
-- [x] Playwright test executando com sucesso
-- [x] Teste isolado por ambiente (dev/staging/prod)
-- [x] Page Objects utilizados para reduzir duplicação
-- [x] Screenshots de falha salvos automaticamente
+**Cobertura mínima**: ≥80% (unitários), 100% (fluxos críticos E2E)
+**Referência**: [opencode/rules/AGENTS.md §3.2, §7](opencode/rules/AGENTS.md)
 
 ---
 
@@ -864,42 +750,15 @@ npm run test:all
 
 ## Gates de Qualidade
 
-### CI/CD
+Os gates de qualidade são definidos em `opencode/rules/AGENTS.md §3.3`.
 
-```yaml
-# .github/workflows/test.yml
-name: Tests
+**Antes de fazer commit, TODO seguinte DEVE passar:**
+- `npm run lint` (0 errors, 0 warnings)
+- `npm run build` (Build passa)
+- `npm run test:unit` (100% passando)
+- `npx tsc --noEmit` (0 TypeScript errors)
 
-on: [push, pull_request]
-
-jobs:
-  unit-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run test:unit -- --coverage
-      - uses: codecov/codecov-action@v4
-
-  e2e-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run test:e2e
-```
-
-### Fail Fast
-
-- Se unit tests falham → não roda E2E
-- Se coverage < 80% → PR bloqueado
-- Se lint falha → PR bloqueado
+**Referência**: [opencode/rules/AGENTS.md §3.3](opencode/rules/AGENTS.md#33-gates-de-qualidade-regra-crítica---bloqueante)
 
 ---
 
@@ -1013,10 +872,11 @@ vi.mock('@/lib/supabase/client');
 - [Vitest Documentation](https://vitest.dev/)
 - [Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Playwright](https://playwright.dev/docs/intro)
+- [opencode/rules/AGENTS.md](opencode/rules/AGENTS.md) — Regras gerais de qualidade e testes
 - [menulink-unit-tests-checklist.md](../.openspec/specs/menulink-unit-tests-checklist.md)
 
 ---
 
-**Versão**: 1.2
-**Última Atualização**: 2026-04-17
+**Versão**: 1.3
+**Última Atualização**: 2026-04-19
 **Autor**: AI Agent

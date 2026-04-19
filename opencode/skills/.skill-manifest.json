@@ -1,0 +1,54 @@
+{
+  "pluginVersion": "0.2.1",
+  "sharedHash": "9ff94dca610e4d421bdcf15e3953fb862aff7cce12607cc2362f1014dc5a9235",
+  "skills": {
+    "requirements-interview": {
+      "hash": "ce1d991a8bdb819aeecd44f2d7a55b3f213df151d87159c56e1c4e1a5606ebf9",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "cartography": {
+      "hash": "b9d8830e6d1507a9849bbbc39538a643fc608a614913f9d41e01a31643e24c88",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "plan-reviewer": {
+      "hash": "d8491ba985a65b6cccd921ac86d1883087c06599c6c3037d7b21377a28ec3b77",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-init": {
+      "hash": "467f73f080e121b0531bb5711f1dd730c5abb8871d6192c35e30b348669dbc3e",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-propose": {
+      "hash": "d0f01fa133c2c1819f48f62cef910953b9cbdc63965eb7e5127181c71e60852e",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-spec": {
+      "hash": "22f86e73d01d7537ca125f2bb14177a5122254b078e0130667c4755f1ceae031",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-design": {
+      "hash": "d154c4b1a545fcd5f4ef4c23616fb6b3c330ee5010ecf0811cbcfc0d2d89ff6c",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-tasks": {
+      "hash": "876f83d389f6c3ac3a72db0dc057b512859b3f8ba4dd1e752e4d0d767e4cb3cf",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-apply": {
+      "hash": "9648493ea56ccd880652d509587a5d5e632ec8aab1cf855e3b4dfd59a539d21c",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "executing-plans": {
+      "hash": "3c5961c221e21248987809fd4a8a692fa5f550dedf856fa19ba051507c7224f8",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-verify": {
+      "hash": "c81a8363d6dd17f51f8bd825849902b579520a48ece19b62ce35c03d5aca0c00",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    },
+    "sdd-archive": {
+      "hash": "d4e7be42218ece3a96ea6ac7b2799dcc7fb169b50c91b46de47318cfb7108002",
+      "installedAt": "2026-04-19T16:28:06.722Z"
+    }
+  }
+}
