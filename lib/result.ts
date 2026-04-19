@@ -51,8 +51,8 @@ export type ResultError = z.infer<typeof resultErrorSchema>;
  * // { ok: true, value: 42 }
  * ```
  */
-export function ok<L = never, R = unknown>(value: R): Result<L, R> {
-  return { ok: true, value };
+export function ok<L, R>(value: R): Result<L, R> {
+  return { ok: true, value } as Result<L, R>;
 }
 
 /**
@@ -69,8 +69,8 @@ export function ok<L = never, R = unknown>(value: R): Result<L, R> {
  * // { ok: false, error: "falha ao processar" }
  * ```
  */
-export function err<L, R = unknown>(error: L): Result<L, R> {
-  return { ok: false, error };
+export function err<L, R>(error: L): Result<L, R> {
+  return { ok: false, error } as Result<L, R>;
 }
 
 /**

@@ -65,14 +65,16 @@ describe("VideoSection", () => {
 
   it("deve renderizar nome do entrevistado default", () => {
     render(<VideoSection />);
-    const name = screen.getByText(/João Silva/i);
-    expect(name).toBeDefined();
+    // O nome aparece em múltiplos lugares (card footer, dialog title, dialog footer)
+    const names = screen.getAllByText(/João Silva/i);
+    expect(names.length).toBeGreaterThan(0);
   });
 
   it("deve renderizar cargo/empresa default", () => {
     render(<VideoSection />);
-    const role = screen.getByText(/Proprietário - Pizzaria Bella Napoli/i);
-    expect(role).toBeDefined();
+    // O role aparece em múltiplos lugares (card footer, dialog footer)
+    const roles = screen.getAllByText(/Proprietário - Pizzaria Bella Napoli/i);
+    expect(roles.length).toBeGreaterThan(0);
   });
 
   it("deve renderizar com props customizadas", () => {
@@ -84,8 +86,11 @@ describe("VideoSection", () => {
         testimonialRole="Dona - Restaurante Gourmet"
       />
     );
-    expect(screen.getByText(/Maria Santos/i)).toBeDefined();
-    expect(screen.getByText(/Dona - Restaurante Gourmet/i)).toBeDefined();
+    // Nome e role aparecem em múltiplos lugares no Dialog
+    const names = screen.getAllByText(/Maria Santos/i);
+    expect(names.length).toBeGreaterThan(0);
+    const roles = screen.getAllByText(/Dona - Restaurante Gourmet/i);
+    expect(roles.length).toBeGreaterThan(0);
   });
 
   it("deve renderizar ícone de play", () => {

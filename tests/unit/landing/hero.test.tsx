@@ -13,10 +13,16 @@ vi.mock("lucide-react", () => ({
 }));
 
 describe("HeroSection", () => {
-  it("deve renderizar headline principal", () => {
+  it("deve renderizar headline principal (primeira linha)", () => {
     render(<HeroSection />);
-    const headline = screen.getByText(/Aumente suas vendas diretas sem pagar comissão/i);
+    const headline = screen.getByText(/Aumente suas vendas diretas/i);
     expect(headline).toBeDefined();
+  });
+
+  it("deve renderizar headline segunda linha", () => {
+    render(<HeroSection />);
+    const headlineSecondLine = screen.getByText(/sem pagar comissão/i);
+    expect(headlineSecondLine).toBeDefined();
   });
 
   it("deve renderizar badge zero comissão", () => {
@@ -47,13 +53,13 @@ describe("HeroSection", () => {
 
   it("deve renderizar sem props (conteúdo default)", () => {
     render(<HeroSection />);
-    const headline = screen.getByText(/Aumente suas vendas diretas sem pagar comissão/i);
+    const headline = screen.getByText(/Aumente suas vendas diretas/i);
     expect(headline).toBeDefined();
   });
 
   it("deve renderizar subheadline", () => {
     render(<HeroSection />);
-    const subheadline = screen.getByText(/Crie seu cardápio online em minutos/i);
+    const subheadline = screen.getByText(/Crie seu cardápio digital em minutos/i);
     expect(subheadline).toBeDefined();
   });
 

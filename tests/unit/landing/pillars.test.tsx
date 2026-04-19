@@ -33,10 +33,10 @@ describe("PillarsSection", () => {
 
   it("deve renderizar exatamente 3 pilares default", () => {
     render(<PillarsSection />);
-    // Verificar os 3 pilares específicos do redesign
-    expect(screen.getByText(/Setup em 2 minutos/i)).toBeDefined();
-    expect(screen.getByText(/Zero comissão/i)).toBeDefined();
-    expect(screen.getByText(/WhatsApp/i)).toBeDefined();
+    // Verificar os 3 pilares específicos do redesign - usar getAllByText para evitar ambiguidade
+    expect(screen.getAllByText(/Setup em 2 minutos/i)).toHaveLength(1);
+    expect(screen.getAllByText(/Zero comissão/i)).toHaveLength(1);
+    expect(screen.getAllByText(/WhatsApp nativo/i)).toHaveLength(1);
   });
 
   it("deve renderizar ícone do primeiro pilar (Setup)", () => {
@@ -45,13 +45,13 @@ describe("PillarsSection", () => {
     expect(icon).toBeDefined();
   });
 
-  it("deve renderizar ícone do segundo pilar (WhatsApp)", () => {
+  it("deve renderizar ícone do segundo pilar (Zero comissão)", () => {
     render(<PillarsSection />);
     const icon = document.querySelector('[data-testid="icon-message-circle"]');
     expect(icon).toBeDefined();
   });
 
-  it("deve renderizar ícone do terceiro pilar (QR Code)", () => {
+  it("deve renderizar ícone do terceiro pilar (WhatsApp)", () => {
     render(<PillarsSection />);
     const icon = document.querySelector('[data-testid="icon-qrcode"]');
     expect(icon).toBeDefined();
@@ -74,7 +74,9 @@ describe("PillarsSection", () => {
     render(<PillarsSection />);
     const section = document.querySelector("section");
     expect(section).toBeDefined();
-    expect(section?.className).toContain("grid");
+    // O grid está no div interno, não na section
+    const gridDiv = document.querySelector(".grid");
+    expect(gridDiv).toBeDefined();
   });
 
   it("deve ter cards com classe rounded-lg", () => {

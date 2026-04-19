@@ -4,21 +4,17 @@
 
 | #  | Data       | Título                          | Fase     | Status       |
 |----|------------|--------------------------------|----------|--------------|
-| 003 | 2026-04-17 | Landing Pages Segmentadas       | SDD      | done         |
-| 004 | 2026-04-17 | Testes de Interface com Relatório | SDD  | done         |
-| 005 | 2026-04-17 | String Constants Refactor       | SDD      | done         |
-| 006 | 2026-04-17 | Data Security Protection       | SDD      | done         |
-| 007 | 2026-04-17 | CSS Mobile-First Responsividade | SDD      | done         |
-| 008 | 2026-04-17 | Supabase Env Build Fix         | SDD      | done         |
+| 014 | 2026-04-17 | Correção do Fluxo de Email Não Confirmado | SDD      | done         |
+| 015 | 2026-04-17 | Melhores Práticas de Desenvolvimento | SDD      | done         |
 
 ## Pipeline Visual
 
 ```
-PROMPT     ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  -
-INTERVIEW  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  -
+PROMPT     ░░░░░░░░░░░░░░░░░░░  -
+INTERVIEW  ░░░░░░░░░░░░░░░░░░░  -
 PRD        ░░░░░░░░░░░░░░░░░░░  -
 SDD        ░░░░░░░░░░░░░░░░░░░  -
-DONE       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  6 PRDs
+DONE       ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  2 PRDs (014, 015)
 ```
 
 ## Estrutura de Pastas
@@ -67,6 +63,8 @@ Consulte `.openspec/backlog/archive/` para ver os PRDs arquivados.
 | 007 | 2026-04-17 | CSS Mobile-First Responsividade | done | [Ver](./archive/007-2026-04-17-mobile-css-fix/) |
 | 008 | 2026-04-17 | Supabase Env Build Fix         | done | [Ver](./archive/008-2026-04-17-supabase-env-build-fix/) |
 | 009 | 2026-04-17 | PWA Icons Fix                 | done | [Ver](./archive/009-2026-04-17-pwa-icons-fix/) |
+| 014 | 2026-04-17 | Correção do Fluxo de Email Não Confirmado | done | [Ver](./archive/014-2026-04-17-email-not-confirmed-handling/) |
+| 015 | 2026-04-17 | Melhores Práticas de Desenvolvimento | done | [Ver](./archive/015-2026-04-17-project-best-practices/) |
 
 ## Fluxo de Arquivamento
 
@@ -102,9 +100,10 @@ Consulte [AGENTS.md](./AGENTS.md) para as regras completas do backlog.
 | Data | Ação | Commit |
 |------|------|--------|
 | 2026-04-17 | PRDs 003-009 implementados e arquivados | `16de575` |
+| 2026-04-19 | PRDs 014-015 implementados e arquivados | `3cc8493` |
 
 ---
 
-**Última atualização:** 2026-04-17
-**Total de PRDs arquivados:** 9
+**Última atualização:** 2026-04-19
+**Total de PRDs arquivados:** 11
 **Changes ativas:** 0

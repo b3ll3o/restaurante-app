@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   ok,
   err,
@@ -235,13 +235,7 @@ describe('Result Type', () => {
 
     it('deve lançar Error (não string) para resultado de erro', () => {
       const result = err('falha');
-      try {
-        unwrap(result);
-        fail('Deveria ter lançado');
-      } catch (e) {
-        expect(e).toBeInstanceOf(Error);
-        expect((e as Error).message).toBe('falha');
-      }
+      expect(() => unwrap(result)).toThrow('falha');
     });
   });
 

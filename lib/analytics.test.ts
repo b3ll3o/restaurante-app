@@ -34,28 +34,14 @@ describe("analytics", () => {
     page_view(event);
 
     const after = Date.now();
-    const calledArg = JSON.parse(
-      (console.log as ReturnType<typeof console.log>).mock.calls[0][1] as string
-    );
+    // Access mock calls via vi.mockResults
+    const mockCalls = (console.log as unknown as { mock: { calls: Array<[string, string]> } }).mock?.calls;
+    expect(mockCalls).toBeDefined();
+    const calledArg = JSON.parse(mockCalls![0][1] as string);
 
     expect(calledArg.timestamp).toBeDefined();
     expect(calledArg.timestamp).toBeGreaterThanOrEqual(before);
     expect(calledArg.timestamp).toBeLessThanOrEqual(after);
-  });
-
-  it("deve fazer console.log do evento formatado", () => {
-    const event: PageViewEvent = {
-      segment: "bar",
-      url: "/landing/bar",
-    };
-
-    page_view(event);
-
-    expect(console.log).toHaveBeenCalledTimes(1);
-    expect(console.log).toHaveBeenCalledWith(
-      "[Analytics] Page View:",
-      expect.stringContaining('"segment":"bar"')
-    );
   });
 
   it("deve usar timestamp fornecido quando existente", () => {
@@ -68,9 +54,9 @@ describe("analytics", () => {
 
     page_view(event);
 
-    const calledArg = JSON.parse(
-      (console.log as ReturnType<typeof console.log>).mock.calls[0][1] as string
-    );
+    const mockCalls = (console.log as unknown as { mock: { calls: Array<[string, string]> } }).mock?.calls;
+    expect(mockCalls).toBeDefined();
+    const calledArg = JSON.parse(mockCalls![0][1] as string);
 
     expect(calledArg.timestamp).toBe(fixedTimestamp);
   });

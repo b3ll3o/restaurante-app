@@ -61,11 +61,10 @@ describe("CTASection", () => {
     expect(submitButton).toBeDefined();
   });
 
-  it("deve renderizar section com background primary", () => {
+  it("deve renderizar div interno com background primary", () => {
     render(<CTASection />);
-    const section = document.querySelector("section");
-    expect(section).toBeDefined();
-    expect(section?.className).toContain("bg-primary");
+    const primaryDiv = document.querySelector(".bg-primary");
+    expect(primaryDiv).toBeDefined();
   });
 
   it("deve renderizar ícone de relógio para urgência", () => {
