@@ -1,4 +1,4 @@
-# Sidebar - MenuLink
+# Sidebar - PediAi
 
 ## Visão Geral
 
@@ -55,7 +55,7 @@ O sidebar possui dois comportamentos:
 
 ### Comportamento
 
-1. Renderiza logo MenuLink no topo
+1. Renderiza logo PediAi no topo
 2. Lista itens de navegação com ícone e label
 3. Destaca item ativo baseado na URL atual
 4. Seção de ajuda no rodapé com informações de suporte
@@ -96,7 +96,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-2 p-6 border-b">
         <LinkIcon className="h-6 w-6 text-primary" />
-        <span className="font-semibold text-lg">MenuLink</span>
+        <span className="font-semibold text-lg">PediAi</span>
       </div>
 
       {/* Navegação */}
@@ -222,4 +222,4 @@ Todos os itens de navegação têm `touch-target` (min 44x44px) para acessibilid
 
 **Versão**: 1.0
 **Última Atualização**: 2026-04-17
-**Autor**: AI Agent
+**Autor**: AI Agentnt

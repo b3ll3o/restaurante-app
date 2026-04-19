@@ -9,7 +9,7 @@ import { OfflineIndicator } from "@/components/ui/offline-indicator";
  * - Registra Service Worker
  * - Renderiza indicador de status online/offline
  * - Configura Toaster para notificações
- * Conforme regra Offline-First em .openspec/specs/menulink-rules.md
+ * Conforme regra Offline-First em .openspec/specs/pediai-rules.md
  */
 export function OfflineProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {

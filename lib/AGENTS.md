@@ -1,4 +1,4 @@
-# Library (lib/) - MenuLink
+# Library (lib/) - PediAi
 
 ## Visão Geral
 

@@ -1,11 +1,11 @@
-# MenuLink - Documentação Consolidada
+# PediAi - Documentação Consolidada
 
 ## Visão Geral
 
 SaaS multi-tenant para restaurantes com cardápio digital e pedidos via WhatsApp.
 
 **Idioma**: Português Brasileiro (pt-BR)
-**Versão**: 5.0
+**Versão**: 5.1
 **Última Atualização**: 2026-04-19
 
 ### Stack
@@ -60,14 +60,18 @@ WHATSAPP_PHONE_NUMBER_ID=
 
 **ATENÇÃO**: Todas as regras estão em `opencode/rules/AGENTS.md`. Este arquivo é apenas visão geral.
 
+#### Regras de Manutenibilidade
+
+O projeto está sujeito a mudanças frequentes, portanto a manutenibilidade é prioritária. Vide `opencode/rules/AGENTS.md` seção 4.
+
 ### Documentação Central (Source of Truth)
 
 | Documento | Descrição |
 |-----------|-----------|
 | [AGENTS.md](../../AGENTS.md) | **PRINCIPAL** - Visão geral, regras, workflows SDD |
 | [opencode/rules/AGENTS.md](./rules/AGENTS.md) | **FONTE CENTRALIZADA** de todas as regras |
-| [opencode/specs/menulink-specification.md](./specs/menulink-specification.md) | Requisitos RFC 2119 |
-| [opencode/specs/menulink-technical-plan.md](./specs/menulink-technical-plan.md) | Arquitetura técnica |
+| [opencode/specs/pediai-specification.md](./specs/pediai-specification.md) | Requisitos RFC 2119 |
+| [opencode/specs/pediai-technical-plan.md](./specs/pediai-technical-plan.md) | Arquitetura técnica |
 
 ### Módulos (documentação junto ao código)
 
@@ -101,7 +105,7 @@ WHATSAPP_PHONE_NUMBER_ID=
 
 ### Visão Geral
 
-Este documento identifica e documenta as personas de cliente do MenuLink, suas dores, motivações e como o produto atende cada uma. **Este arquivo é fonte de contexto para todas as decisões de produto, backlog items e landing pages.**
+Este documento identifica e documenta as personas de cliente do PediAi, suas dores, motivações e como o produto atende cada uma. **Este arquivo é fonte de contexto para todas as decisões de produto, backlog items e landing pages.**
 
 ---
 
@@ -139,7 +143,7 @@ Todo restaurante pequeno/médio no Brasil enfrenta estes desafios:
 
 ### 1.3 Mercado Endereçável
 
-| Segmento | Tamanho Aproximado | Dor Principal | Fit com MenuLink |
+| Segmento | Tamanho Aproximado | Dor Principal | Fit com PediAi |
 |----------|-------------------|---------------|------------------|
 | Pizzarias | ~60.000 | Pedidos sem parar (24h), comissões | Alto |
 | Hamburguerias artesanais | ~100.000 | Gestão de delivery, comissão iFood | Alto |
@@ -258,7 +262,7 @@ São os clientes com maior fit, dor mais aguda e propensão a pagar.
 
 | Objeção | Resposta |
 |---------|----------|
-| "Já tenho iFood, por que pagar mais?" | "MenuLink não é pra substituir cliente novo. É pra cliente que já te conhece pedir direto, sem comissão." |
+| "Já tenho iFood, por que pagar mais?" | "PediAi não é pra substituir cliente novo. É pra cliente que já te conhece pedir direto, sem comissão." |
 | "Preciso de entrega com logistics" | "Começa com QR Code na mesa ou retirada. Entrega é próximo passo." |
 | "Meu público é jovem, usa app" | "Jovem também tem WhatsApp. E prefere pedir sem baixar app." |
 | "Quanto sai por mês?" | "Plano começa em R$ 49/mês. Se fizer 2 pedidos a mais por dia, já pagou." |
@@ -417,8 +421,8 @@ São os clientes com maior fit, dor mais aguda e propensão a pagar.
 
 | Objeção | Resposta |
 |---------|----------|
-| "Não tenho endereço fixo" | "O MenuLink é baseado no seu slug. Onde quer que você esteja, seu cardápio é o mesmo." |
-| "Já uso Instagram pra vender" | "Instagram é pra descoberta. MenuLink é pra conversão — pedido direto." |
+| "Não tenho endereço fixo" | "O PediAi é baseado no seu slug. Onde quer que você esteja, seu cardápio é o mesmo." |
+| "Já uso Instagram pra vender" | "Instagram é pra descoberta. PediAi é pra conversão — pedido direto." |
 | "Preciso de delivery" | "Começa com retirada e encomendas. Delivery é próximo passo." |
 
 **Landing Page**: `/lp/food-truck` (futuro)
@@ -511,7 +515,7 @@ São perfis que **NÃO são nosso cliente ideal**:
 | **Restaurante fast-food de rede** (McDonald's, Burger King) | Já tem sistema próprio, app próprio, não precisa | Não é fit |
 | **Restaurante 5 estrelas** (alta gastronomia) | Experiência é personalizada, garçon é parte do serviço | Não é fit |
 | **Restaurante sem WhatsApp** | Pré-requisito é ter WhatsApp | Ajudar a criar primeiro |
-| **Dono que quer só delivery com logística** | MenuLink não tem entregador próprio | Recomendar iFood/Rappi |
+| **Dono que quer só delivery com logística** | PediAi não tem entregador próprio | Recomendar iFood/Rappi |
 | **Cliente que quer gestão completa** (estoque, financeiro) | Funcionalidade futura ou não é escopo | Escalar para ERP depois |
 
 ---
@@ -730,11 +734,11 @@ mkdir -p opencode/changes/minha-mudanca
 |-----------|-----------|
 | [AGENTS.md](../../AGENTS.md) | Visão geral do projeto (Source of Truth) |
 | [opencode/rules/AGENTS.md](./rules/AGENTS.md) | **FONTE CENTRALIZADA** de regras |
-| [opencode/specs/menulink-specification.md](./specs/menulink-specification.md) | Requisitos RFC 2119 |
-| [opencode/specs/menulink-technical-plan.md](./specs/menulink-technical-plan.md) | Arquitetura técnica |
+| [opencode/specs/pediai-specification.md](./specs/pediai-specification.md) | Requisitos RFC 2119 |
+| [opencode/specs/pediai-technical-plan.md](./specs/pediai-technical-plan.md) | Arquitetura técnica |
 
 ---
 
-**Versão**: 5.0
+**Versão**: 5.1
 **Última Atualização**: 2026-04-19
 **Autor**: AI Agent

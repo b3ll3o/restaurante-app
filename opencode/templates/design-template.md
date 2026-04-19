@@ -2,7 +2,7 @@
 
 ## Fonte da Verdade
 
-Este documento é parte das especificações do MenuLink.
+Este documento é parte das especificações do PediAi.
 
 ---
 

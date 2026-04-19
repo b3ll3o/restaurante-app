@@ -1,8 +1,8 @@
-# Tests - MenuLink
+# Tests - PediAi
 
 ## Visão Geral
 
-O módulo **Tests** contém toda a infraestrutura de testes automatizados do projeto MenuLink, seguindo os paradigmas **TDD**, **BDD** e **ATDD**. O projeto aplica cobertura mínima de 80% para testes unitários e 100% de cobertura E2E nos fluxos críticos.
+O módulo **Tests** contém toda a infraestrutura de testes automatizados do projeto PediAi, seguindo os paradigmas **TDD**, **BDD** e **ATDD**. O projeto aplica cobertura mínima de 80% para testes unitários e 100% de cobertura E2E nos fluxos críticos.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Vitest + Testing Library + Playwright
@@ -873,7 +873,7 @@ vi.mock('@/lib/supabase/client');
 - [Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Playwright](https://playwright.dev/docs/intro)
 - [opencode/rules/AGENTS.md](opencode/rules/AGENTS.md) — Regras gerais de qualidade e testes
-- [menulink-unit-tests-checklist.md](../.openspec/specs/menulink-unit-tests-checklist.md)
+- [pediai-unit-tests-checklist.md](../.openspec/specs/pediai-unit-tests-checklist.md)
 
 ---
 

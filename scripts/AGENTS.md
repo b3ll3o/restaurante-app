@@ -1,8 +1,8 @@
-# Scripts - MenuLink
+# Scripts - PediAi
 
 ## Visão Geral
 
-O diretório **scripts/** contém scripts utilitários para build, quality e automação do projeto MenuLink.
+O diretório **scripts/** contém scripts utilitários para build, quality e automação do projeto PediAi.
 
 **Idioma**: Português Brasileiro (pt-BR)
 
@@ -165,7 +165,7 @@ O HTML inclui:
 ## Referências
 
 - [tests/e2e/AGENTS.md](../tests/e2e/AGENTS.md) - Documentação dos testes E2E
-- [.openspec/specs/menulink-quality-rules.md](../.openspec/specs/menulink-quality-rules.md) - Regras de qualidade
+- [.openspec/specs/pediai-quality-rules.md](../.openspec/specs/pediai-quality-rules.md) - Regras de qualidade
 
 ---
 

@@ -1,8 +1,8 @@
-# MenuLink - Unit Tests Checklist (TDD)
+# PediAi - Unit Tests Checklist (TDD)
 
 ## Fonte da Verdade
 
-Este documento contém o checklist de testes unitários para a lógica mínima necessária, derivados da `menulink-specification.md` e `menulink-technical-plan.md`.
+Este documento contém o checklist de testes unitários para a lógica mínima necessária, derivados da `pediai-specification.md` e `pediai-technical-plan.md`.
 
 ---
 
@@ -302,5 +302,6 @@ npm run test:watch
 
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
+| 1.2 | 2026-04-19 | AI Agent | Atualização de versionamento |
 | 1.1 | 2026-04-19 | AI Agent | Verificação e correção de referências opencode |
 | 1.0 | 2026-04-15 | AI Agent | Versão inicial |

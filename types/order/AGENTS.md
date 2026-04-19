@@ -1,4 +1,4 @@
-# Types/Order - MenuLink
+# Types/Order - PediAi
 
 ## Visão Geral
 
@@ -201,7 +201,7 @@ function podeTransicionarStatus(
 
 - [TypeScript Handbook - Interfaces](https://www.typescriptlang.org/docs/handbook/2/objects.html)
 - [TypeScript Handbook - Types](https://www.typescriptlang.org/docs/handbook/2/typescript-types-101.html)
-- `.openspec/specs/menulink-specification.md` - Requisitos REQ-040 a REQ-045
+- `.openspec/specs/pediai-specification.md` - Requisitos REQ-040 a REQ-045
 
 ---
 

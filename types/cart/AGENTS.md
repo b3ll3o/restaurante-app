@@ -1,8 +1,8 @@
-# Types/Cart - MenuLink
+# Types/Cart - PediAi
 
 ## Visão Geral
 
-O módulo **Types/Cart** contém as definições de tipos relacionados ao carrinho de compras do MenuLink. Este módulo é responsável por tipar as entidades `CartItem` e a estrutura de estado do `Cart` utilizada no gerenciamento de estado do carrinho.
+O módulo **Types/Cart** contém as definições de tipos relacionados ao carrinho de compras do PediAi. Este módulo é responsável por tipar as entidades `CartItem` e a estrutura de estado do `Cart` utilizada no gerenciamento de estado do carrinho.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: TypeScript (strict mode)

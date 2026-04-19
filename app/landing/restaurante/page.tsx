@@ -3,7 +3,7 @@ import { HeroSection, PillarsSection, SocialProofSection, CTASection } from '../
 import { page_view } from '../../../lib/analytics';
 
 export const metadata: Metadata = {
-  title: 'Reservas online e carta digital para restaurantes | MenuLink',
+  title: 'Reservas online e carta digital para restaurantes | PediAi',
   description: 'Aguarde reservas online, gerencie carta de vinhos digital e melhore a experiência dos clientes.',
 };
 

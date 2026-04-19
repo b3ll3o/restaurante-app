@@ -1,8 +1,8 @@
-# Components - MenuLink
+# Components - PediAi
 
 ## Visão Geral
 
-O módulo **Components** contém todos os componentes React reutilizáveis da aplicação MenuLink. O módulo é dividido em dois sub-módulos principais: `ui/` (componentes de interface baseados em shadcn/ui) e `admin/` (componentes específicos do painel administrativo).
+O módulo **Components** contém todos os componentes React reutilizáveis da aplicação PediAi. O módulo é dividido em dois sub-módulos principais: `ui/` (componentes de interface baseados em shadcn/ui) e `admin/` (componentes específicos do painel administrativo).
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: React 19 + TypeScript (strict) + Tailwind CSS 4 + Radix UI

@@ -1,11 +1,11 @@
-# Root Causes - MenuLink
+# Root Causes - PediAi
 
 ## Visão Geral
 
-Este diretório armazena os RCAs (Root Cause Analysis) do projeto MenuLink. Todo erro reportado deve ter seu RCA documentado seguindo o processo de tratamento de erros.
+Este diretório armazena os RCAs (Root Cause Analysis) do projeto PediAi. Todo erro reportado deve ter seu RCA documentado seguindo o processo de tratamento de erros.
 
 **Idioma**: Português Brasileiro (pt-BR)  
-**Processo**: Fluxo de Tratamento de Erros (Seção 10 do menulink-rules.md)
+**Processo**: Fluxo de Tratamento de Erros (Seção 10 do pediai-rules.md)
 
 ---
 
@@ -208,7 +208,7 @@ Erro Reportado
 ## Referências
 
 - Template RCA: `.openspec/templates/rca-template.md`
-- Regras do Projeto: `.openspec/specs/menulink-rules.md` (Seção 10)
+- Regras do Projeto: `.openspec/specs/pediai-rules.md` (Seção 10)
 - SDD Workflow: `AGENTS.md` (Seção de Fluxo SDD)
 
 ---

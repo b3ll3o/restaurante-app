@@ -29,7 +29,7 @@
 | 10 | documentation-proximity | Documentação longe do código | Regra: AGENTS.md no mesmo nível do elemento | ✅ CONCLUÍDO |
 | 11 | email-conf-auth-issue | Email confirmation causando issues | ⚠️ Pendente config manual Supabase Dashboard | ⚠️ COM WARNINGS |
 | 12 | email-not-confirmed-handling | Fluxo de email não confirmado ruim | `resendConfirmationEmail`, UI melhorada | ✅ CONCLUÍDO |
-| 13 | error-handling-rule | Tratamento de erros inconsistente | RCA template, `menulink-rules.md` §11 | ✅ CONCLUÍDO |
+| 13 | error-handling-rule | Tratamento de erros inconsistente | RCA template, `pediai-rules.md` §11 | ✅ CONCLUÍDO |
 | 14 | general-review | Necessidade de revisão geral | Revisão completa do codebase | ✅ CONCLUÍDO |
 | 15 | landing-page-redesign | Landing page com messaging inconsistente | Redesign com "Zero comissão" messaging | ✅ CONCLUÍDO |
 | 16 | module-organization | Estrutura de módulos confusa | Reorganização em `app/`, `components/`, `lib/`, etc | ✅ CONCLUÍDO |
@@ -390,7 +390,7 @@ PRD → proposal → spec → design → tasks → apply → verify → archive 
 
 ---
 
-**Versão**: 1.1
+**Versão**: 1.2
 **Última Atualização**: 2026-04-19
 **Origem**: Análise de 25 changes arquivadas em `opencode/changes/archive/`
 
@@ -400,5 +400,6 @@ PRD → proposal → spec → design → tasks → apply → verify → archive 
 
 | Versão | Data | Correções |
 |--------|------|-----------|
+| 1.2 | 2026-04-19 | Atualizada versão para 1.2 com mesma data de consolidação |
 | 1.1 | 2026-04-19 | Corrigidos: typo "Occorrências"→"Ocorrências", "código清明"→"código mais limpo", "proximity Rule"→"Proximity Rule", "Specs vagass"→"Specs vagas", referências de seção inválidas (§6, §11, §4, §5), origens "menu-public"/"orders-management" substituídas, entrada duplicada em gaps de documentação |
 | 1.0 | 2026-04-19 | Versão inicial |

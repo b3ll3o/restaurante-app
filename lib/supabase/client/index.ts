@@ -6,7 +6,7 @@ export function createClient() {
 
   if (!supabaseUrl || !supabaseKey) {
     console.error(
-      "[MenuLink] Variáveis de ambiente do Supabase não configuradas. " +
+      "[PediAi] Variáveis de ambiente do Supabase não configuradas. " +
       "NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY são obrigatórias."
     );
   }

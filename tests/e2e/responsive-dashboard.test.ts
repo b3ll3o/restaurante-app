@@ -61,7 +61,7 @@ test.describe('Responsive Dashboard', () => {
     await menuButton.click();
 
     // Sidebar content should now be visible in a drawer
-    const sidebarContent = page.locator('text=MenuLink');
+    const sidebarContent = page.locator('text=PediAi');
     await expect(sidebarContent).toBeVisible();
 
     // Clicking outside should close drawer (via Sheet overlay)

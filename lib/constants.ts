@@ -1,7 +1,11 @@
 /**
- * Constantes centralizadas do MenuLink
+ * Constantes centralizadas do PediAi
  * Substitui strings literais repetidas pelo codebase
  */
+
+// App Identity
+export const APP_NAME = "PediAi";
+export const APP_TAGLINE = "Cardápio digital sem comissão";
 
 // Locale
 export const LOCALE = {
@@ -36,5 +40,5 @@ export const CURRENCY = {
 
 // Storage Keys
 export const STORAGE_KEYS = {
-  cart: "menulink_cart",
+  cart: `${APP_NAME.toLowerCase()}_cart`,
 } as const;

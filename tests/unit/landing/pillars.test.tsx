@@ -27,7 +27,7 @@ vi.mock("lucide-react", () => ({
 describe("PillarsSection", () => {
   it("deve renderizar título da seção", () => {
     render(<PillarsSection />);
-    const title = screen.getByText(/Por que escolher o MenuLink/i);
+    const title = screen.getByText(/Por que escolher o PediAi/i);
     expect(title).toBeDefined();
   });
 

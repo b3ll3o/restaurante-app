@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MenuLink - Cardápio Digital",
+  title: "PediAi - Cardápio Digital",
   description: "Cardápio digital para restaurantes - Faça pedidos pelo WhatsApp",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "MenuLink",
+    title: "PediAi",
   },
 };
 

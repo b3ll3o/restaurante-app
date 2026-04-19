@@ -1,8 +1,8 @@
-# API Routes - MenuLink
+# API Routes - PediAi
 
 ## Visão Geral
 
-O módulo **API Routes** (`app/api/`) contém os endpoints da API REST do MenuLink. Este módulo é responsável por receber requisições de clientes externos (cardápio público) e processar operações como criação de pedidos.
+O módulo **API Routes** (`app/api/`) contém os endpoints da API REST do PediAi. Este módulo é responsável por receber requisições de clientes externos (cardápio público) e processar operações como criação de pedidos.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Next.js 16.2.3 + TypeScript (strict) + Supabase

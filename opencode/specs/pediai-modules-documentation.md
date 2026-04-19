@@ -1,15 +1,15 @@
-# MenuLink - Documentação de Módulos e Sub-módulos
+# PediAi - Documentação de Módulos e Sub-módulos
 
 ## Fonte da Verdade
 
-Este documento descreve todos os módulos e sub-módulos do sistema MenuLink, suas responsabilidades e dependências.
+Este documento descreve todos os módulos e sub-módulos do sistema PediAi, suas responsabilidades e dependências.
 
 ---
 
 ## 1. Arquitetura Geral
 
 ```
-MenuLink/
+PediAi/
 ├── app/                    # Next.js App Router
 ├── components/            # Componentes React
 ├── lib/                   # Utilitários e serviços
@@ -181,12 +181,12 @@ MenuLink/
 ### 9.1 Sub-módulo: Specs (`opencode/specs/`)
 - **Responsabilidade**: Especificações do sistema (SDD)
 - **Documentos**:
-  - `menulink-specification.md` - Regras de negócio (RFC 2119)
-  - `menulink-technical-plan.md` - Plano técnico
-  - `menulink-unit-tests-checklist.md` - Checklist de testes
-  - `menulink-acceptance-tests.feature` - Cenários BDD
-  - `menulink-quality-rules.md` - Regras de qualidade
-  - `menulink-modules-documentation.md` - Este documento
+  - `pediai-specification.md` - Regras de negócio (RFC 2119)
+  - `pediai-technical-plan.md` - Plano técnico
+  - `pediai-unit-tests-checklist.md` - Checklist de testes
+  - `pediai-acceptance-tests.feature` - Cenários BDD
+  - `pediai-quality-rules.md` - Regras de qualidade
+  - `pediai-modules-documentation.md` - Este documento
 
 ### 9.2 Sub-módulo: Changes (`opencode/changes/`)
 - **Responsabilidade**: Controle de mudanças em andamento
@@ -270,6 +270,8 @@ App Router → Components → Context → Hooks → Lib → Types
 
 ## 14. Manutenção e Evolução
 
+> **Princípio de Manutenibilidade** (AGENTS.md §4): Todo código gerado deve ser de fácil manutenção, correção, atualização e alteração. Priorizar código simples e legível, baixo acoplamento entre módulos e funções com responsabilidade única.
+
 ### 14.1 Novos Módulos
 1. Criar documentação no `opencode/specs/`
 2. Definir interface pública
@@ -293,8 +295,8 @@ App Router → Components → Context → Hooks → Lib → Types
 ## 15. Referências
 
 1. `AGENTS.md` - Regras do projeto
-2. `menulink-quality-rules.md` - Regras de qualidade
-3. `menulink-technical-plan.md` - Arquitetura técnica
+2. `pediai-quality-rules.md` - Regras de qualidade
+3. `pediai-technical-plan.md` - Arquitetura técnica
 4. `package.json` - Dependências do projeto
 
 ---
@@ -303,6 +305,7 @@ App Router → Components → Context → Hooks → Lib → Types
 
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
+| 1.2 | 2026-04-19 | AI Agent | Sincronização com AGENTS.md §4: adicionado princípio de manutenibilidade na seção 14 |
 | 1.1 | 2026-04-17 | AI Agent | Atualização pós reorganização de módulos (module-organization) |
 | 1.0 | 2026-04-15 | AI Agent | Documentação inicial de módulos |
 

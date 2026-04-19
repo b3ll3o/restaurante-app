@@ -1,8 +1,8 @@
-# Database (supabase/) - MenuLink
+# Database (supabase/) - PediAi
 
 ## Visão Geral
 
-Módulo **Database/Supabase** contém o schema SQL do PostgreSQL e as configurações de autenticação do sistema MenuLink.
+Módulo **Database/Supabase** contém o schema SQL do PostgreSQL e as configurações de autenticação do sistema PediAi.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: PostgreSQL + Supabase (Database + Auth + Storage)
@@ -103,7 +103,7 @@ SMTP_HOST=smtp.seu-email.com
 SMTP_PORT=587
 SMTP_USER=seu-email@dominio.com
 SMTP_PASS=sua-senha
-SMTP_FROM=noreply@menulink.com.br
+SMTP_FROM=noreply@pediai.com.br
 ```
 
 ### 2.3 Onde Encontrar no Supabase

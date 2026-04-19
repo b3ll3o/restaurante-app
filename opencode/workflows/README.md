@@ -1,8 +1,8 @@
-# Workflows - MenuLink
+# Workflows - PediAi
 
 ## Visão Geral
 
-Este diretório cataloga todos os fluxos (workflows) da aplicação MenuLink.
+Este diretório cataloga todos os fluxos (workflows) da aplicação PediAi.
 
 ## Arquivos
 

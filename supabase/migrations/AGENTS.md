@@ -1,8 +1,8 @@
-# Migrations - MenuLink
+# Migrations - PediAi
 
 ## Visão Geral
 
-Módulo responsável pelo versionamento e aplicação de alterações no schema do banco de dados PostgreSQL do MenuLink.
+Módulo responsável pelo versionamento e aplicação de alterações no schema do banco de dados PostgreSQL do PediAi.
 
 **Idioma**: Português Brasileiro (pt-BR)
 

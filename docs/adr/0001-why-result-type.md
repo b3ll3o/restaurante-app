@@ -6,7 +6,7 @@ Aceito
 
 ## Contexto
 
-O projeto MenuLink utiliza TypeScript com strict mode para garantir type safety em toda a aplicação. Однако, atualmente o projeto depende principalmente de `throw/catch` para error handling, o que apresenta alguns problemas:
+O projeto PediAi utiliza TypeScript com strict mode para garantir type safety em toda a aplicação. Однако, atualmente o projeto depende principalmente de `throw/catch` para error handling, o que apresenta alguns problemas:
 
 ### Problemas Identificados
 
@@ -93,7 +93,7 @@ function fromPromise<L, R>(promise: Promise<R>): Promise<Result<L, Error>>;
 
 **Decisão**: Rejeitada
 
-**Justificativa**: Para as necessidades do MenuLink, uma implementação simples é suficiente. Adicionar dependência externa aumenta bundle size sem benefícios proporcionais.
+**Justificativa**: Para as necessidades do PediAi, uma implementação simples é suficiente. Adicionar dependência externa aumenta bundle size sem benefícios proporcionais.
 
 ### 3. Usar biblioteca `ts-results`
 
@@ -110,7 +110,7 @@ function fromPromise<L, R>(promise: Promise<R>): Promise<Result<L, Error>>;
 
 **Decisão**: Rejeitada
 
-**Justificativa**: A implementação própria nos dá controle total e permite customização para casos específicos do MenuLink.
+**Justificativa**: A implementação própria nos dá controle total e permite customização para casos específicos do PediAi.
 
 ## Consequências
 

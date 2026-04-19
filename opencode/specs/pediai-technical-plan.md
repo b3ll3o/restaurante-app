@@ -1,4 +1,4 @@
-# MenuLink - Technical Plan (SDD)
+# PediAi - Technical Plan (SDD)
 
 ## 1. Visão Geral da Arquitetura
 
@@ -14,7 +14,8 @@
 **Princípios de Arquitetura (REGRAS OBRIGATÓRIAS):**
 - **Mobile-First**: Todo desenvolvimento começa em mobile, escala para desktop
 - **Offline-First**: Aplicação funciona offline com sincronização posterior
-- **详见**: `opencode/specs/menulink-quality-rules.md` seções 3.5 e 3.6
+- **Manutenibilidade**: O projeto está sujeito a mudanças frequentes. Código deve ser simples, legível, com baixo acoplamento e funções pequenas de responsabilidade única (ver `opencode/rules/AGENTS.md` seção 4)
+- **详见**: `opencode/specs/pediai-quality-rules.md` seções 3.5 e 3.6
 
 **Arquitetura de Camadas:**
 ```
@@ -286,5 +287,6 @@ Admin              Next.js              Supabase Auth
 
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
+| 2.1 | 2026-04-19 | AI Agent | Adicionado princípio de manutenibilidade (seção 4 de AGENTS.md) |
 | 2.0 | 2026-04-19 | AI Agent | Atualização para versão 5.0 do projeto (sincronizado com AGENTS.md) |
 | 1.0 | 2026-04-15 | AI Agent | Versão inicial |

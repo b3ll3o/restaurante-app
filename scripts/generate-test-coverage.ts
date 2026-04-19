@@ -342,7 +342,7 @@ function generateHTML(report: CoverageReport, outputPath: string): void {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatório de Cobertura E2E - MenuLink</title>
+  <title>Relatório de Cobertura E2E - PediAi</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.6; }

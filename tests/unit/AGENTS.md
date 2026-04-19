@@ -1,8 +1,8 @@
-# Testes Unitários - MenuLink
+# Testes Unitários - PediAi
 
 ## Visão Geral
 
-Módulo de testes unitários do projeto MenuLink. Responsável por garantir que cada unidade de código (funções, hooks, utilitários, componentes) funcione corretamente de forma isolada.
+Módulo de testes unitários do projeto PediAi. Responsável por garantir que cada unidade de código (funções, hooks, utilitários, componentes) funcione corretamente de forma isolada.
 
 **Framework**: Vitest
 **Padrão de linguagem**: BDD (describe/it/expect)

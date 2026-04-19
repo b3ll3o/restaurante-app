@@ -31,7 +31,7 @@ test.describe("Landing Page - Multi-Viewport", () => {
     await page.goto("/");
 
     // Scroll to pillars section
-    await page.getByText(/Por que escolher o MenuLink/i).scrollIntoViewIfNeeded();
+    await page.getByText(/Por que escolher o PediAi/i).scrollIntoViewIfNeeded();
 
     // Exactly 3 pillars visible
     await expect(page.getByText(/Setup em 2 minutos/i)).toBeVisible();

@@ -1,9 +1,18 @@
 import { defineConfig, devices } from '@playwright/test';
 
 /**
- * Configuração do Playwright para testes E2E do MenuLink
- * 
+ * Configuração do Playwright para testes E2E do PediAi
+ *
  * Documentação: https://playwright.dev/docs/test-configuration
+ *
+ * NOTA: Para executar testes em Docker (necessário quando faltam
+ * dependências do sistema como libnspr4, libnss3, etc.), use:
+ *   - docker compose run --rm e2e
+ *   - docker compose run --rm e2e npx playwright test --ui
+ *   - docker compose run --rm e2e npx playwright test --debug
+ *
+ * O servidor web configurado em webServer usa 'npm run dev' que
+ * funciona tanto localmente quanto no container Docker.
  */
 export default defineConfig({
   // Diretório dos testes

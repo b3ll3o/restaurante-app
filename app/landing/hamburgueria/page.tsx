@@ -3,7 +3,7 @@ import { HeroSection, PillarsSection, SocialProofSection, CTASection } from '../
 import { page_view } from '../../../lib/analytics';
 
 export const metadata: Metadata = {
-  title: 'Cardápio visual para hamburguerias | MenuLink',
+  title: 'Cardápio visual para hamburguerias | PediAi',
   description: 'Crie cardápio visual com QR code para pedidos direto na mesa. Sem comissão, sem complicações.',
 };
 

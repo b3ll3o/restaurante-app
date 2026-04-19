@@ -1,8 +1,8 @@
-# Landing Pages Segmentadas - MenuLink
+# Landing Pages Segmentadas - PediAi
 
 ## Visão Geral
 
-Módulo de landing pages segmentadas do MenuLink. Cada landing page é direcionada para um tipo específico de restaurante (pizzaria, hamburgueria, bar, restaurante) com conteúdo personalizado e UTM tracking.
+Módulo de landing pages segmentadas do PediAi. Cada landing page é direcionada para um tipo específico de restaurante (pizzaria, hamburgueria, bar, restaurante) com conteúdo personalizado e UTM tracking.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Next.js 16.2.3 + React 19 + TypeScript (strict)
@@ -139,7 +139,7 @@ href="/admin/signup?utm_source=landing&utm_medium=cta&utm_content=cta-pizzaria&u
 ## Referências
 
 - [Next.js Metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata)
-- [menulink-specification.md](../../../.openspec/specs/menulink-specification.md)
+- [pediai-specification.md](../../../.openspec/specs/pediai-specification.md)
 - [landing.feature](./landing.feature)
 
 ---

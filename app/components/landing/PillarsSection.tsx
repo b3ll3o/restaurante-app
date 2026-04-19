@@ -35,7 +35,7 @@ export function PillarsSection() {
       <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">
-            Por que escolher o MenuLink?
+            Por que escolher o PediAi?
           </h2>
           <p className="mx-auto max-w-2xl text-muted-foreground">
             A solução completa para digitalizar seu restaurante sem pagar comissão

@@ -3,7 +3,7 @@ import { HeroSection, PillarsSection, SocialProofSection, CTASection } from '../
 import { page_view } from '../../../lib/analytics';
 
 export const metadata: Metadata = {
-  title: 'Cardápio digital para pizzarias | MenuLink',
+  title: 'Cardápio digital para pizzarias | PediAi',
   description: 'Digitalize sua pizzaria com cardápio online, integração com iFood e pedidos via WhatsApp sem pagar comissão.',
 };
 

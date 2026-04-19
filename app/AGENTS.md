@@ -1,4 +1,4 @@
-# App Router - MenuLink
+# App Router - PediAi
 
 ## Visão Geral
 
@@ -113,8 +113,8 @@ O projeto segue as regras de **mobile-first** definidas em `opencode/rules/AGENT
 - [React 19 Documentation](https://react.dev)
 - [Supabase Auth](https://supabase.com/docs/guides/auth)
 - [opencode/rules/AGENTS.md](opencode/rules/AGENTS.md) — Regras gerais do projeto
-- [menulink-specification.md](../.openspec/specs/menulink-specification.md)
-- [menulink-technical-plan.md](../.openspec/specs/menulink-technical-plan.md)
+- [pediai-specification.md](../.openspec/specs/pediai-specification.md)
+- [pediai-technical-plan.md](../.openspec/specs/pediai-technical-plan.md)
 
 ---
 

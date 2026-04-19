@@ -1,8 +1,8 @@
-# Landing Page Components - MenuLink
+# Landing Page Components - PediAi
 
 ## Visão Geral
 
-Módulo de componentes da Landing Page do MenuLink. Composto por seções reutilizáveis que formam uma página de alta conversão para conquista de restaurantes.
+Módulo de componentes da Landing Page do PediAi. Composto por seções reutilizáveis que formam uma página de alta conversão para conquista de restaurantes.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: React 19 + TypeScript (strict) + Tailwind CSS 4
@@ -86,7 +86,7 @@ Nenhuma (componente standalone - sem prop `segment`)
 ## Sub-módulo: PillarsSection
 
 ### Responsabilidade
-Seção de pilares/benefícios. Mostra os **3 principais diferenciais** do MenuLink em cards.
+Seção de pilares/benefícios. Mostra os **3 principais diferenciais** do PediAi em cards.
 
 ### Interface Pública
 
@@ -309,8 +309,8 @@ Nenhuma (componente standalone)
 - [React Documentation](https://react.dev)
 - [Tailwind CSS 4](https://tailwindcss.com)
 - [shadcn/ui Dialog](https://ui.shadcn.com/docs/components/dialog)
-- [menulink-specification.md](../../../.openspec/specs/menulink-specification.md)
-- [menulink-technical-plan.md](../../../.openspec/specs/menulink-technical-plan.md)
+- [pediai-specification.md](../../../.openspec/specs/pediai-specification.md)
+- [pediai-technical-plan.md](../../../.openspec/specs/pediai-technical-plan.md)
 - [landing-page-redesign spec](../../../.openspec/changes/landing-page-redesign/spec.md)
 
 ---

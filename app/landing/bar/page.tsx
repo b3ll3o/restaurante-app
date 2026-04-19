@@ -3,7 +3,7 @@ import { HeroSection, PillarsSection, SocialProofSection, CTASection } from '../
 import { page_view } from '../../../lib/analytics';
 
 export const metadata: Metadata = {
-  title: 'Controle de comanda para bares | MenuLink',
+  title: 'Controle de comanda para bares | PediAi',
   description: 'Divisão de conta automática e comanda individual. Gestão simplificada para bares.',
 };
 

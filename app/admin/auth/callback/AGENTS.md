@@ -1,4 +1,4 @@
-# Auth Callback - MenuLink
+# Auth Callback - PediAi
 
 ## Visão Geral
 

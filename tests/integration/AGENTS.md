@@ -1,8 +1,8 @@
-# Testes de Integração - MenuLink
+# Testes de Integração - PediAi
 
 ## Visão Geral
 
-Módulo de testes de integração que valida a interação entre módulos do sistema MenuLink. Cada teste de integração é derivado de cenários BDD documentados em arquivos `.feature` nos respectivos módulos.
+Módulo de testes de integração que valida a interação entre módulos do sistema PediAi. Cada teste de integração é derivado de cenários BDD documentados em arquivos `.feature` nos respectivos módulos.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: Vitest + Supabase Test Utils
@@ -199,7 +199,7 @@ Os arquivos `.feature` DEVEM estar no nível mais próximo do módulo que docume
 - [BDD - Gherkin Reference](https://cucumber.io/docs/gherkin/)
 - [Vitest Documentation](https://vitest.dev/)
 - [AGENTS.md - Tests](../tests/AGENTS.md)
-- [Spec: menulink-specification.md](../../.openspec/specs/menulink-specification.md)
+- [Spec: pediai-specification.md](../../.openspec/specs/pediai-specification.md)
 
 ---
 

@@ -1,4 +1,4 @@
-# OfflineIndicator - MenuLink
+# OfflineIndicator - PediAi
 
 ## Visão Geral
 

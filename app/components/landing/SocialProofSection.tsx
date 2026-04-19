@@ -72,7 +72,7 @@ export function SocialProofSection() {
         {/* Partner Logos Section - REQ-LP-04 */}
         <div className="border-t pt-12">
           <p className="mb-6 text-center text-sm font-medium text-muted-foreground">
-            Mais de 2.500 restaurantes já usam o MenuLink
+            Mais de 2.500 restaurantes já usam o PediAi
           </p>
           <div className="flex flex-wrap items-center justify-center gap-8">
             {partners.slice(0, 3).map((partner) => (

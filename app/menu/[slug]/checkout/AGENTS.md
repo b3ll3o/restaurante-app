@@ -1,4 +1,4 @@
-# Checkout - MenuLink
+# Checkout - PediAi
 
 ## Visão Geral
 
@@ -218,8 +218,8 @@ E a mensagem deve conter os detalhes do pedido
 
 ## Referências
 
-- [menulink-specification.md](../../../.openspec/specs/menulink-specification.md)
-- [menulink-technical-plan.md](../../../.openspec/specs/menulink-technical-plan.md)
+- [pediai-specification.md](../../../.openspec/specs/pediai-specification.md)
+- [pediai-technical-plan.md](../../../.openspec/specs/pediai-technical-plan.md)
 
 ---
 

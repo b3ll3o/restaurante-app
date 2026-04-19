@@ -1,4 +1,4 @@
-# Supabase Client - MenuLink
+# Supabase Client - PediAi
 
 ## Visão Geral
 

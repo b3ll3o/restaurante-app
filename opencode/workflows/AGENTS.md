@@ -1,8 +1,8 @@
-# Workflows - MenuLink
+# Workflows - PediAi
 
 ## Visão Geral
 
-Este documento cataloga todos os fluxos (workflows) da aplicação MenuLink, organizados por categoria. Cada fluxo descreve etapas sequenciais, arquivos envolvidos, estados, decisões, API calls e interações de usuário.
+Este documento cataloga todos os fluxos (workflows) da aplicação PediAi, organizados por categoria. Cada fluxo descreve etapas sequenciais, arquivos envolvidos, estados, decisões, API calls e interações de usuário.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Última Atualização**: 2026-04-19
@@ -246,18 +246,18 @@ Este documento cataloga todos os fluxos (workflows) da aplicação MenuLink, org
 
 **Arquivo**: `context/cart-context.tsx`
 
-**Descrição**: Carrinho persistido em localStorage com chave `menulink_cart`. Dados sobrevivem refresh mas são isolados por restaurante.
+**Descrição**: Carrinho persistido em localStorage com chave `pediai_cart`. Dados sobrevivem refresh mas são isolados por restaurante.
 
 **Etapas**:
 1. `CartProvider` inicializa `useReducer` com estado `{ items: [], restaurantId: null }`
 2. `useEffect` no mount: `loadFromStorage()`
-3. `loadFromStorage()`: verifica `typeof window`, tenta `localStorage.getItem('menulink_cart')`
+3. `loadFromStorage()`: verifica `typeof window`, tenta `localStorage.getItem('pediai_cart')`
 4. Se existe: `JSON.parse()` e retorna `{ items, restaurantId }`
 5. Se erro: `console.warn` e retorna estado vazio
 6. `dispatch LOAD_FROM_STORAGE` com payload carregado
 7. `useEffect` em `[state]`: `saveToStorage(state)`
 8. `saveToStorage()`: cria objeto `{ items, restaurantId, updatedAt: Date.now() }`
-9. `localStorage.setItem('menulink_cart', JSON.stringify(stored))`
+9. `localStorage.setItem('pediai_cart', JSON.stringify(stored))`
 10. Se erro: `console.warn`
 
 **Estados**: `loading` (hydrate) | `loaded` | `saving`

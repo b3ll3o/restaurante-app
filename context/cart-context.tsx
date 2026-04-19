@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useReducer, useEffect, ReactNode } from "react";
 import { Product } from "@/types";
+import { STORAGE_KEYS } from "@/lib/constants";
 
 export interface CartItem {
   product: Product;
@@ -34,7 +35,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 // Chave para localStorage - conforme regra Offline-First
-const CART_STORAGE_KEY = "menulink_cart";
+const CART_STORAGE_KEY = STORAGE_KEYS.cart;
 
 interface StoredCart {
   items: CartItem[];

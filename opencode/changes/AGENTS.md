@@ -1,8 +1,8 @@
-# Changes - MenuLink
+# Changes - PediAi
 
 ## Visão Geral
 
-Controle de mudanças do projeto MenuLink seguindo o fluxo OpenSpec (SDD - Specification-Driven Development).
+Controle de mudanças do projeto PediAi seguindo o fluxo OpenSpec (SDD - Specification-Driven Development).
 
 **Idioma**: Português Brasileiro (pt-BR)
 

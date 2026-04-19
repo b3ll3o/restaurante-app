@@ -1,4 +1,4 @@
-# Settings - MenuLink
+# Settings - PediAi
 
 ## Visão Geral
 

@@ -1,8 +1,8 @@
-# MenuLink - Acceptance Tests (BDD/ATDD)
+# PediAi - Acceptance Tests (BDD/ATDD)
 
 ## Fonte da Verdade
 
-Este arquivo contém os cenários de comportamento históricos em sintaxe Gherkin (Dado/Quando/Então), derivados da `menulink-specification.md`.
+Este arquivo contém os cenários de comportamento históricos em sintaxe Gherkin (Dado/Quando/Então), derivados da `pediai-specification.md`.
 
 **ATENÇÃO**: A partir de 2026-04-16, os cenários BDD DEVEM seguir a **regra de proximidade**:
 - Arquivos `.feature` DEVEM estar no nível mais próximo do módulo que documentam
@@ -280,3 +280,4 @@ Este arquivo contém os cenários de comportamento históricos em sintaxe Gherki
 | Versão | Data | Autor | Mudanças |
 |--------|------|-------|----------|
 | 1.0 | 2026-04-15 | AI Agent | Versão inicial |
+| 1.1 | 2026-04-19 | AI Agent | Atualização de versionamento |

@@ -1,4 +1,4 @@
-# WhatsApp Service - MenuLink
+# WhatsApp Service - PediAi
 
 ## Visão Geral
 

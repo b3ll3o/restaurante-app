@@ -1,5 +1,5 @@
 /**
- * Script de validação pré-push para MenuLink
+ * Script de validação pré-push para PediAi
  * Executa: build, lint, typecheck, unit tests e coverage
  */
 
@@ -40,7 +40,7 @@ function runCommand(command, options = {}) {
 
 function main() {
     log('\n======================================', BLUE);
-    log('  MenuLink - Validação Pre-Push', BLUE);
+    log('  PediAi - Validação Pre-Push', BLUE);
     log('======================================\n', BLUE);
 
     let allPassed = true;

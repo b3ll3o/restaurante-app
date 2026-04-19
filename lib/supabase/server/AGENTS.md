@@ -1,4 +1,4 @@
-# Supabase Server - MenuLink
+# Supabase Server - PediAi
 
 ## Visão Geral
 

@@ -1,8 +1,8 @@
-# Types - MenuLink
+# Types - PediAi
 
 ## Visão Geral
 
-O módulo **Types** contém todas as definições de tipos TypeScript do domínio da aplicação MenuLink. Este módulo é fundamental para a type safety em toda a aplicação.
+O módulo **Types** contém todas as definições de tipos TypeScript do domínio da aplicação PediAi. Este módulo é fundamental para a type safety em toda a aplicação.
 
 **Idioma**: Português Brasileiro (pt-BR)  
 **Stack**: TypeScript (strict mode)

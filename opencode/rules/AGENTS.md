@@ -1,8 +1,8 @@
-# MenuLink - Regras do Projeto
+# PediAi - Regras do Projeto
 
 ## Visão Geral
 
-MenuLink é um SaaS multi-tenant para restaurantes que permite gerenciamento de cardápio digital e pedidos via WhatsApp.
+PediAi é um SaaS multi-tenant para restaurantes que permite gerenciamento de cardápio digital e pedidos via WhatsApp.
 
 **Idioma**: Português Brasileiro (pt-BR) para documentação e UI. Nomes técnicos em inglês.
 **Paradigma**: SDD (Specification-Driven Development)
@@ -75,7 +75,7 @@ opencode/         # Documentação IA centralizada
 
 ### Papéis dos Agentes
 
-O projeto MenuLink utiliza uma arquitetura multi-agente para execução do fluxo SDD:
+O projeto PediAi utiliza uma arquitetura multi-agente para execução do fluxo SDD:
 
 | Agente | Tipo | Responsabilidade | Gate |
 |--------|------|------------------|------|
@@ -402,6 +402,20 @@ WHATSAPP_PHONE_NUMBER_ID=
 | **ATDD** | Fluxos críticos do usuário | Critérios de aceitação |
 | **DDD** | Entidades, value objects, aggregates | Linguagem ubíqua |
 | **SDD** | Mudanças significativas | proposal → spec → design → tasks → verify → archive |
+
+---
+
+## 4. Regras de Manutenibilidade
+
+**Princípio**: Todo código gerado deve ser de fácil manutenção, correção, atualização e alteração. O projeto está sujeito a mudanças frequentes, portanto a manutenibilidade é prioritária.
+
+**Implicações**:
+- Priorizar código simples e legível sobre otimizações prematuras
+- Evitar acoplamento forte entre módulos
+- Usar abstrações quando necessário, mas sem over-engineering
+- Escrever código auto-documentado com nomes claros
+- Manter funções pequenas e com responsabilidade única
+- Garantir que mudanças impactem o mínimo possível de arquivos
 
 ---
 
@@ -894,9 +908,9 @@ opencode/
 ├── rules/            # Regras centralizadas do projeto
 │   └── AGENTS.md     # Fonte centralizada de TODAS as regras
 ├── specs/          # Especificações SDD (Source of Truth)
-│   ├── menulink-specification.md
-│   ├── menulink-technical-plan.md
-│   └── menulink-quality-rules.md
+│   ├── pediai-specification.md
+│   ├── pediai-technical-plan.md
+│   ├── pediai-quality-rules.md
 ├── docs/           # Documentação adicional
 │   ├── OPENCODE.md # Configuração OpenCode
 │   ├── PERSONAS.md # Personas de cliente
@@ -914,8 +928,8 @@ opencode/
 | Necessidade | Arquivo |
 |-------------|---------|
 | Regras completas do projeto | `opencode/rules/AGENTS.md` |
-| Specs do sistema | `opencode/specs/menulink-specification.md` |
-| Arquitetura técnica | `opencode/specs/menulink-technical-plan.md` |
+| Specs do sistema | `opencode/specs/pediai-specification.md` |
+| Arquitetura técnica | `opencode/specs/pediai-technical-plan.md` |
 | Personas de cliente | `opencode/docs/PERSONAS.md` |
 | Pipelines | `opencode/docs/PIPELINES.md` |
 

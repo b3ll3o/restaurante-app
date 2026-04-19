@@ -1,7 +1,7 @@
 {
-  "name": "MenuLink - Cardápio Digital",
-  "short_name": "MenuLink",
-  "description": "Cardápio digital para restaurantes - Faça pedidos pelo WhatsApp",
+  "name": "PediAi - Cardápio Digital",
+  "short_name": "PediAi",
+  "description": "Cardápio digital para restaurantes - Receba pedidos no WhatsApp",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

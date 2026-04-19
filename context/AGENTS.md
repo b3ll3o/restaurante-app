@@ -1,8 +1,8 @@
-# Context - MenuLink
+# Context - PediAi
 
 ## Visão Geral
 
-O módulo **Context** contém os contextos React globais da aplicação MenuLink, responsáveis pelo gerenciamento de estado compartilhado entre componentes.
+O módulo **Context** contém os contextos React globais da aplicação PediAi, responsáveis pelo gerenciamento de estado compartilhado entre componentes.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: React 19 + TypeScript (strict)

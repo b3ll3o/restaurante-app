@@ -1,6 +1,6 @@
 /**
  * Utilitários de autenticação do Supabase
- * @package MenuLink
+ * @package PediAi
  */
 
 import { createBrowserClient } from "@supabase/ssr";
@@ -52,7 +52,7 @@ export async function resendConfirmationEmail(email: string): Promise<{
 
     return { success: true };
   } catch (err) {
-    console.error("[MenuLink] Erro ao reenviar email de confirmação:", err);
+    console.error("[PediAi] Erro ao reenviar email de confirmação:", err);
     return {
       success: false,
       error: "Falha ao reenviar email de confirmação. Tente novamente.",

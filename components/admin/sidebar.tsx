@@ -31,7 +31,7 @@ export function SidebarContent({ onClick }: SidebarContentProps) {
     <>
       <div className="flex items-center gap-2 p-6 border-b">
         <LinkIcon className="h-6 w-6 text-primary" />
-        <span className="font-semibold text-lg">MenuLink</span>
+        <span className="font-semibold text-lg">PediAi</span>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">

@@ -197,7 +197,7 @@ test.describe('Carrinho localStorage', () => {
 
     // Verifica localStorage foi atualizado
     const cartData = await page.evaluate(() => {
-      return localStorage.getItem('menulink_cart');
+      return localStorage.getItem('pediai_cart');
     });
 
     expect(cartData).not.toBeNull();

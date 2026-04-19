@@ -1,4 +1,4 @@
-# Dashboard - MenuLink
+# Dashboard - PediAi
 
 ## Visão Geral
 

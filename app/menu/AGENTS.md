@@ -1,4 +1,4 @@
-# Cardápio Público - MenuLink
+# Cardápio Público - PediAi
 
 ## Visão Geral
 
@@ -83,8 +83,8 @@ O cardápio utiliza componentes auxiliares documentados em `app/menu/[slug]/AGEN
 - [Next.js Dynamic Routes](https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes)
 - [React Context](https://react.dev/learn/passing-data-deeply-with-context)
 - [Tailwind CSS](https://tailwindcss.com)
-- [menulink-specification.md](../../.openspec/specs/menulink-specification.md)
-- [menulink-technical-plan.md](../../.openspec/specs/menulink-technical-plan.md)
+- [pediai-specification.md](../../.openspec/specs/pediai-specification.md)
+- [pediai-technical-plan.md](../../.openspec/specs/pediai-technical-plan.md)
 
 ---
 

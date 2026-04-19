@@ -68,7 +68,7 @@ export function HeroSection() {
           <p className="mt-8 text-sm text-muted-foreground">
             Junte-se a{" "}
             <span className="font-semibold text-foreground">+500 restaurantes</span>
-            {" "}que já usam o MenuLink
+            {" "}que já usam o PediAi
           </p>
         </div>
       </div>

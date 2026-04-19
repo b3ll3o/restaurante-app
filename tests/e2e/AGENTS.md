@@ -1,4 +1,4 @@
-# Testes E2E - MenuLink
+# Testes E2E - PediAi
 
 ## Visão Geral
 

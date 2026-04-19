@@ -1,8 +1,8 @@
-# Schema do Banco de Dados (supabase/schema/) - MenuLink
+# Schema do Banco de Dados (supabase/schema/) - PediAi
 
 ## Visão Geral
 
-O módulo **Schema** contém a definição do banco de dados PostgreSQL do MenuLink, implementado via Supabase. Responsável por: persistir restaurantes, categorias, produtos, pedidos e itens de pedido; garantir isolamento multi-tenant por `restaurant_id`; e proteger dados via Row Level Security (RLS).
+O módulo **Schema** contém a definição do banco de dados PostgreSQL do PediAi, implementado via Supabase. Responsável por: persistir restaurantes, categorias, produtos, pedidos e itens de pedido; garantir isolamento multi-tenant por `restaurant_id`; e proteger dados via Row Level Security (RLS).
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: PostgreSQL + Supabase + uuid-ossp

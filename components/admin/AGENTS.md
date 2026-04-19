@@ -1,8 +1,8 @@
-# Admin Components - MenuLink
+# Admin Components - PediAi
 
 ## Visão Geral
 
-O módulo **Admin Components** (`components/admin/`) contém componentes React específicos para o painel administrativo do MenuLink. Diferente dos componentes UI base, estes componentes encapsulam lógica de negócio do admin.
+O módulo **Admin Components** (`components/admin/`) contém componentes React específicos para o painel administrativo do PediAi. Diferente dos componentes UI base, estes componentes encapsulam lógica de negócio do admin.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: React 19 + TypeScript (strict) + Tailwind CSS 4

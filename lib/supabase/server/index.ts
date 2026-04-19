@@ -28,7 +28,7 @@ export async function createClient(): Promise<SupabaseClient> {
   if (!supabaseUrl || !supabaseAnonKey) {
     if (!warningShown) {
       console.warn(
-        "[MenuLink] Variáveis de ambiente do Supabase não configuradas. " +
+        "[PediAi] Variáveis de ambiente do Supabase não configuradas. " +
           "NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY são obrigatórias. " +
           "Em build CI/CD, isso é esperado - usando fallback null client."
       );

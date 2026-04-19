@@ -1,8 +1,8 @@
-# Backlog - MenuLink
+# Backlog - PediAi
 
 ## Visão Geral
 
-Este documento rastreia o backlog de ideias, melhorias e correções do projeto MenuLink.
+Este documento rastreia o backlog de ideias, melhorias e correções do projeto PediAi.
 
 ---
 

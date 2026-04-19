@@ -1,8 +1,8 @@
-# UI Components - MenuLink
+# UI Components - PediAi
 
 ## Visão Geral
 
-O módulo **UI Components** (`components/ui/`) contém componentes de interface de usuário baseados no shadcn/ui e Radix UI primitives. Estes componentes são reutilizáveis em toda a aplicação MenuLink.
+O módulo **UI Components** (`components/ui/`) contém componentes de interface de usuário baseados no shadcn/ui e Radix UI primitives. Estes componentes são reutilizáveis em toda a aplicação PediAi.
 
 **Idioma**: Português Brasileiro (pt-BR)
 **Stack**: React 19 + TypeScript (strict) + Tailwind CSS 4 + Radix UI

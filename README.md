@@ -1,14 +1,14 @@
-# MenuLink - Cardápio Digital para Restaurantes
+# PediAi - Cardápio Digital para Restaurantes
 
 > Transforme o cardápio do seu restaurante em uma experiência digital moderna e receba pedidos diretamente pelo WhatsApp.
 
 ---
 
-## O que é o MenuLink?
+## O que é o PediAi?
 
-O MenuLink é um **sistema de cardápio digital** que permite restaurantes criarem seus cardápios online de forma simples, sem mensalidades caras ou apps complexos.
+O PediAi é um **sistema de cardápio digital** que permite restaurantes criarem seus cardápios online de forma simples, sem mensalidades caras ou apps complexos.
 
-**Problema que resolve:** Muitos restaurantes ainda trabalham com cardápios físicos ou precisam pagar comissões altas para apps de delivery. O MenuLink oferece uma alternativa simples onde o cliente acessa o cardápio pelo link, escolhe os itens e faz o pedido - tudo via WhatsApp, sem intermediários.
+**Problema que resolve:** Muitos restaurantes ainda trabalham com cardápios físicos ou precisam pagar comissões altas para apps de delivery. o PediAi oferece uma alternativa simples onde o cliente acessa o cardápio pelo link, escolhe os itens e faz o pedido - tudo via WhatsApp, sem intermediários.
 
 ---
 
@@ -20,7 +20,7 @@ O MenuLink é um **sistema de cardápio digital** que permite restaurantes criar
 
 ---
 
-## O que o MenuLink faz hoje (Versão Atual)
+## O que o PediAi faz hoje (Versão Atual)
 
 ### Para o Dono do Restaurante (Painel Admin)
 
@@ -51,7 +51,7 @@ O MenuLink é um **sistema de cardápio digital** que permite restaurantes criar
 
 ---
 
-## O que o MenuLink vai fazer (Em breve)
+## O que o PediAi vai fazer (Em breve)
 
 As seguintes funcionalidades estão planejadas para versões futuras:
 
@@ -133,7 +133,7 @@ Dono do Restaurante                    Cliente
 
 ## Tecnologias
 
-O MenuLink foi construído com:
+O PediAi foi construído com:
 
 - **Next.js** - Tecnologia moderna para sites rápidos
 - **React** - Interface interativa e responsiva
@@ -210,7 +210,7 @@ restaurante/
 ## FAQ - Perguntas Frequentes
 
 **Preciso pagar para usar?**
-Não. O MenuLink é código aberto e gratuito. Você só paga pela hospedagem (ex: Vercel) e pelo banco de dados (ex: Supabase - plano gratuito disponível).
+Não. O PediAi é código aberto e gratuito. Você só paga pela hospedagem (ex: Vercel) e pelo banco de dados (ex: Supabase - plano gratuito disponível).
 
 **O cliente precisa instalar algo?**
 Não. O cliente acessa o cardápio pelo link e faz o pedido pelo WhatsApp, sem instalar apps.
@@ -244,4 +244,4 @@ Este projeto é livre para uso e modificação.
 
 ---
 
-**MenuLink** - Cardápio digital simples, moderno e sem complicações.
+**PediAi** - Cardápio digital simples, moderno e sem complicações.

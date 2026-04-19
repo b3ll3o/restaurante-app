@@ -1,0 +1,59 @@
+# =============================================================================
+# Dockerfile for MenuLink E2E Tests
+# =============================================================================
+# Usage:
+#   docker compose up -d app     # Start the app first (background)
+#   docker compose run --rm e2e   # Run E2E tests
+#
+# Or use the npm scripts:
+#   npm run test:e2e:docker      # Run tests in Docker
+#   npm run test:e2e:docker:ui    # Run with Playwright UI
+#   npm run test:e2e:docker:debug # Run in debug mode
+#
+# Prerequisites:
+#   - Docker and Docker Compose installed
+#   - No system dependencies needed on host machine
+# =============================================================================
+
+FROM mcr.microsoft.com/playwright:v1.59.1-focal
+
+# Install Playwright system dependencies
+RUN apt-get update && apt-get install -y \
+    libnspr4 \
+    libnss3 \
+    libasound2t64 \
+    libatk-bridge2.0-0t64 \
+    libatk1.0-0t64 \
+    libcups2t64 \
+    libdrm2 \
+    libxkbcommon0 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxrandr2 \
+    libgbm1 \
+    libpango-1.0-0 \
+    libcairo2 \
+    libatspi2.0-0 \
+    libxshmfence1 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install dependencies
+RUN npm ci
+
+# Install Playwright browsers
+RUN npx playwright install --with-deps chromium firefox webkit
+
+# Copy source code
+COPY . .
+
+# Expose port for dev server
+EXPOSE 3000
+
+# Default command runs E2E tests
+CMD ["npx", "playwright", "test"]

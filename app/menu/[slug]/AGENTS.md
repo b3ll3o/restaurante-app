@@ -1,4 +1,4 @@
-# Menu (Cardápio Público) - MenuLink
+# Menu (Cardápio Público) - PediAi
 
 ## Visão Geral
 

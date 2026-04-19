@@ -1,10 +1,10 @@
 /**
- * MenuLink Service Worker
- * Implementa cache offline-first conforme regras em .openspec/specs/menulink-rules.md
+ * PediAi Service Worker
+ * Implementa cache offline-first conforme regras em .openspec/specs/pediai-rules.md
  */
 
-const STATIC_CACHE_NAME = "menulink-static-v1";
-const DYNAMIC_CACHE_NAME = "menulink-dynamic-v1";
+const STATIC_CACHE_NAME = "pediai-static-v1";
+const DYNAMIC_CACHE_NAME = "pediai-dynamic-v1";
 
 // URLs para cachear imediatamente na instalação
 const PRECACHE_URLS = [
