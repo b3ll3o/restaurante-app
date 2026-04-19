@@ -1,10 +1,10 @@
 #!/usr/bin/env npx tsx
 /**
  * Script para gerar relatório de validação visual de UI
- * Versão com correção de autenticação - mantém contexto autenticado
+ * Versão com correção robusta de autenticação
  */
 
-import { chromium, Browser, Page, BrowserContext } from '@playwright/test';
+import { chromium, BrowserContext } from '@playwright/test';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -55,8 +55,12 @@ async function ensureDir(dir: string): Promise<void> {
   }
 }
 
-async function loginToAdmin(browser: Browser, baseUrl: string): Promise<BrowserContext | null> {
-  console.log('  🔐 Fazendo login...');
+async function loginAndGetCookies(
+  baseUrl: string
+): Promise<{ cookies: any[]; storageState: string } | null> {
+  console.log('  🔐 Fazendo login para obter cookies...');
+  
+  const browser = await chromium.launch({ headless: true });
   
   try {
     const context = await browser.newContext({ 
@@ -65,11 +69,11 @@ async function loginToAdmin(browser: Browser, baseUrl: string): Promise<BrowserC
     });
     const page = await context.newPage();
 
-    await page.goto(`${baseUrl}/admin/login`, { timeout: 15000 });
+    await page.goto(`${baseUrl}/admin/login`, { timeout: 30000 });
     await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
 
     // Aguardar campos do formulário
-    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 5000 });
+    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 });
 
     // Preencher credenciais
     await page.fill('input[type="email"], input[name="email"]', AUTH_CREDENTIALS.email);
@@ -78,33 +82,44 @@ async function loginToAdmin(browser: Browser, baseUrl: string): Promise<BrowserC
     // Clicar no botão de login
     await page.click('button[type="submit"]');
 
-    // Aguardar redirect para dashboard (sinal de login bem-sucedido)
+    // Aguardar redirect para dashboard
     try {
-      await page.waitForURL('**/admin/dashboard**', { timeout: 10000 });
-      console.log('  ✅ Login realizado com sucesso');
+      await page.waitForURL('**/admin/dashboard**', { timeout: 15000 });
+      console.log('  ✅ Login realizado com sucesso - redirect para dashboard');
     } catch {
-      // Se não redirecionar, verifica se ainda está na página de login
       const currentUrl = page.url();
+      console.log(`  ⚠️ URL atual após login: ${currentUrl}`);
       if (currentUrl.includes('/admin/login')) {
-        console.log('  ⚠️ Login pode ter falhado, tentando continuar...');
-      } else {
-        console.log('  ✅ Login realizado');
+        console.log('  ⚠️ Login pode ter falhado');
       }
     }
 
-    // Manter o contexto para reutilização
-    return context;
+    // Aguardar conteúdo carregar
+    await page.waitForTimeout(2000);
+
+    // Obter cookies
+    const cookies = await context.cookies();
+    console.log(`  📦 Obtidos ${cookies.length} cookies`);
+
+    // Salvar storage state (mais confiável que cookies para auth)
+    const storageState = await context.storageState();
+    
+    await browser.close();
+    
+    return { cookies, storageState };
 
   } catch (error) {
     console.log(`  ❌ Erro no login: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    await browser.close();
     return null;
   }
 }
 
-async function capturePublicPage(
-  browser: Browser,
+async function capturePage(
+  browser: any,
   baseUrl: string,
-  page: PageCapture
+  page: PageCapture,
+  authStorageState?: string
 ): Promise<PageResult> {
   const result: PageResult = {
     name: page.name,
@@ -115,7 +130,7 @@ async function capturePublicPage(
   };
 
   const fullUrl = `${baseUrl}${page.url}`;
-  console.log(`  📸 ${fullUrl}`);
+  console.log(`  📸 ${fullUrl}${page.requiresAuth ? ' (autenticado)' : ''}`);
 
   const breakpoints = [
     { name: 'desktop', width: 1280, height: 720 },
@@ -125,76 +140,22 @@ async function capturePublicPage(
 
   try {
     for (const bp of breakpoints) {
-      const context = await browser.newContext({ 
+      // Criar contexto com ou sem autenticação
+      const contextOptions: any = { 
         viewport: { width: bp.width, height: bp.height },
         ignoreHTTPSErrors: true 
-      });
+      };
+      
+      // Se requer autenticação e temos storage state, usar
+      if (page.requiresAuth && authStorageState) {
+        contextOptions.storageState = authStorageState;
+      }
+      
+      const context = await browser.newContext(contextOptions);
       const browserPage = await context.newPage();
 
-      await browserPage.goto(fullUrl, { timeout: 20000, waitUntil: 'networkidle' });
-      await browserPage.waitForTimeout(500);
-
-      const filename = `${bp.name}${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
-      const screenshotPath = path.join(OUTPUT_DIR, filename);
-      
-      await browserPage.screenshot({ path: screenshotPath, fullPage: true });
-
-      if (bp.name === 'desktop') result.screenshotPath = screenshotPath;
-      else if (bp.name === 'mobile') result.mobileScreenshotPath = screenshotPath;
-      else if (bp.name === 'tablet') result.tabletScreenshotPath = screenshotPath;
-
-      console.log(`    ✅ ${bp.name}: ${filename}`);
-      await context.close();
-    }
-
-    result.status = 'success';
-
-  } catch (error) {
-    result.error = error instanceof Error ? error.message : 'Erro desconhecido';
-    console.log(`    ❌ Erro: ${result.error}`);
-  }
-
-  return result;
-}
-
-async function captureAuthenticatedPage(
-  authContext: BrowserContext,
-  baseUrl: string,
-  page: PageCapture
-): Promise<PageResult> {
-  const result: PageResult = {
-    name: page.name,
-    url: page.url,
-    description: page.description,
-    screenshotPath: null,
-    status: 'error',
-  };
-
-  const fullUrl = `${baseUrl}${page.url}`;
-  console.log(`  📸 ${fullUrl} (autenticado)`);
-
-  const breakpoints = [
-    { name: 'desktop', width: 1280, height: 720 },
-    { name: 'mobile', width: 375, height: 667 },
-    { name: 'tablet', width: 768, height: 1024 },
-  ];
-
-  try {
-    for (const bp of breakpoints) {
-      // Criar novo contexto com viewport específico mas herdando cookies do contexto autenticado
-      const context = await authContext.browser()!.newContext({ 
-        viewport: { width: bp.width, height: bp.height },
-        ignoreHTTPSErrors: true 
-      });
-      
-      // Copiar cookies do contexto autenticado
-      const cookies = await authContext.cookies();
-      await context.addCookies(cookies);
-      
-      const browserPage = await context.newPage();
-
-      await browserPage.goto(fullUrl, { timeout: 20000, waitUntil: 'networkidle' });
-      await browserPage.waitForTimeout(500);
+      await browserPage.goto(fullUrl, { timeout: 30000, waitUntil: 'networkidle' });
+      await browserPage.waitForTimeout(1000);
 
       const filename = `${bp.name}${page.url.replace(/\//g, '-').replace(/^-/, '')}.png`;
       const screenshotPath = path.join(OUTPUT_DIR, filename);
@@ -280,16 +241,14 @@ function generateHTMLReport(results: PageResult[]): string {
     <h2 class="section-title">🌐 Páginas Públicas</h2>
     <div class="pages-container">
       ${results.filter(r => !r.url.startsWith('/admin') || r.url === '/admin/login' || r.url === '/admin/signup').map(page => {
-        const isAuthPage = page.url.startsWith('/admin') && page.url !== '/admin/login' && page.url !== '/admin/signup';
         return `
-        <div class="page-card ${isAuthPage ? 'auth-page' : ''}">
+        <div class="page-card">
           <div class="page-header">
             <h2>${page.status === 'success' ? '✅' : '❌'} ${page.name}</h2>
             <span class="status-badge ${page.status === 'success' ? 'status-success' : 'status-error'}">${page.status === 'success' ? 'Sucesso' : 'Erro'}</span>
           </div>
           <p class="page-description">${page.description}</p>
           <p class="page-url"><code>${page.url}</code></p>
-          ${isAuthPage ? '<span class="auth-badge">🔐 Requer autenticação</span>' : ''}
           ${page.error ? `<p class="error-message">❌ ${page.error}</p>` : ''}
           ${page.status === 'success' ? `
           <div class="screenshots">
@@ -358,25 +317,24 @@ async function main() {
   const browser = await chromium.launch({ headless: true });
   console.log('');
 
-  // Login
-  const authContext = await loginToAdmin(browser, BASE_URL);
+  // Obter cookies de autenticação
+  const authResult = await loginAndGetCookies(BASE_URL);
+  const storageState = authResult?.storageState;
+  
+  if (!storageState) {
+    console.log('⚠️ Não foi possível fazer login - páginas autenticadas podem não funcionar\n');
+  }
+  
   const results: PageResult[] = [];
 
   // Capturar páginas
   for (const page of PAGES_TO_CAPTURE) {
     console.log(`\n📄 ${page.name}${page.requiresAuth ? ' 🔐' : ''}`);
-    
-    if (page.requiresAuth && authContext) {
-      const result = await captureAuthenticatedPage(authContext, BASE_URL, page);
-      results.push(result);
-    } else {
-      const result = await capturePublicPage(browser, BASE_URL, page);
-      results.push(result);
-    }
+    const result = await capturePage(browser, BASE_URL, page, storageState);
+    results.push(result);
   }
 
   // Finalizar
-  if (authContext) await authContext.close();
   await browser.close();
   console.log('\n✅ Concluído\n');
 
