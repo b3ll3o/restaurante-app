@@ -171,10 +171,10 @@ export default function OrdersPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {alert && (
         <div
-          className={`p-4 rounded-md ${
+          className={`p-3 sm:p-4 rounded-md text-sm sm:text-base ${
             alert.type === "success"
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
@@ -185,8 +185,8 @@ export default function OrdersPage() {
       )}
 
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Pedidos</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Pedidos</h1>
+        <p className="text-sm text-muted-foreground hidden sm:block">
           Gerencie os pedidos recebidos
         </p>
       </div>
@@ -355,7 +355,7 @@ export default function OrdersPage() {
       </Card>
 
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent className="w-full h-full max-w-none md:max-w-[500px] md:h-auto md:max-h-[85vh] overflow-y-auto">
+        <DialogContent className="w-full h-full max-w-none sm:max-w-[500px] sm:h-auto sm:max-h-[85vh] sm:rounded-lg overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Detalhes do Pedido</DialogTitle>
             <DialogDescription>

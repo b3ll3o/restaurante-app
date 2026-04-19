@@ -193,10 +193,10 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {alert && (
         <div
-          className={`p-4 rounded-md ${
+          className={`p-3 sm:p-4 rounded-md text-sm sm:text-base ${
             alert.type === "success"
               ? "bg-green-100 text-green-800"
               : "bg-red-100 text-red-800"
@@ -206,16 +206,15 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Configurações</h1>
-          <p className="text-muted-foreground">
-            Gerencie seus restaurantes
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Configurações</h1>
+          <p className="text-sm text-muted-foreground hidden sm:block">Gerencie seus restaurantes</p>
         </div>
-        <Button onClick={() => setShowCreateDialog(true)} className="min-h-[44px]">
+        <Button onClick={() => setShowCreateDialog(true)} className="touch-target w-full sm:w-auto">
           <Plus className="h-4 w-4 mr-2" />
-          Novo Restaurante
+          <span className="hidden sm:inline">Novo Restaurante</span>
+          <span className="sm:hidden">Novo</span>
         </Button>
       </div>
 
