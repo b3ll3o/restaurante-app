@@ -274,6 +274,33 @@ PRD.md → Análise → proposal → spec → design → tasks → implementatio
 | verification | Compliance report (código + docs) | Deep agent |
 | archive | Consolidado e arquivado | Tech Lead |
 
+### Regra de Commit (REGRA CRÍTICA - BLOQUEANTE)
+
+**ANTES DE FAZER COMMIT, TODO SEGUINTE DEVE PASSAR:**
+
+```bash
+npm run lint      # 0 errors, 0 warnings
+npm run build     # Build passa
+npm run test:unit # 100% testes unitários passando
+npx tsc --noEmit # 0 TypeScript errors
+```
+
+| Verificação | Target | Prioridade |
+|-------------|--------|------------|
+| Lint | 0 errors, 0 warnings | Crítica |
+| Build | Passa sem erros | Crítica |
+| Unit Tests | 100% passando | Crítica |
+| TypeScript | 0 errors (`tsc --noEmit`) | Crítica |
+
+**REGRA DE OURO:** NUNCA commitar com testes falhando. Se os testes estão falhando, corrija-os ANTES do commit ou use branch separado para a correção.
+
+**Ordem de execução antes do commit:**
+1. `npm run lint` → Corrigir errors/warnings
+2. `npm run build` → Corrigir erros de build
+3. `npm run test:unit` → Corrigir testes falhando
+4. `npx tsc --noEmit` → Corrigir erros de tipo
+5. `git commit` → Agora sim!
+
 ### Arquivo: README.md
 
 ```markdown
