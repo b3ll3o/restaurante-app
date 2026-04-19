@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { UtensilsCrossed } from "lucide-react";
 
 export default function LoginPage() {
   useRouter(); // Mantido para garantir que Next.js não remova o hook
@@ -81,7 +82,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-screen flex-col bg-background">
+      {/* Header com logo e link para home */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+          <Link href="/" className="flex items-center gap-2">
+            <UtensilsCrossed className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold">PediAi</span>
+          </Link>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/admin/signup">Cadastre-se</Link>
+          </Button>
+        </div>
+      </header>
+
+      <div className="flex flex-1 items-center justify-center px-4 py-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold">Login do Administrador</CardTitle>
@@ -155,6 +170,7 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
+      </div>
     </div>
   );
 }
